@@ -1,0 +1,32 @@
+[tool.poetry]
+name = "edge-finder"
+version = "0.1.0"
+description = ""
+authors = ["Nathan"]
+readme = "README.md"
+packages = [{include = "edge_finder"}]
+
+[tool.poetry.dependencies]
+python = "^3.11"
+fastapi = "^0.95.1"
+uvicorn = {version = "^0.21.1", extras = ["standard"]}
+sqlalchemy = {version = "^2.0.9", extras = ["mypy"]}
+fastapi-crudrouter = "^0.8.6"
+
+[tool.poetry.group.dev.dependencies]
+taskipy = "^1.10.4"
+isort = "^5.12.0"
+blue = "^0.9.1"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.isort]
+profile = "black"
+
+[tool.taskipy.tasks]
+format = "blue . && isort ."
+lint = "blue --check --diff . && isort --check --diff ."
+run = "uvicorn main:app --reload"
+commit = "git add . && git commit -m '.' && git push"
