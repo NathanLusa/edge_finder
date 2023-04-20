@@ -28,7 +28,7 @@ class StatusCRUDRouter(SQLAlchemyCRUDRouter):
         create_route: Union[bool, DEPENDENCIES] = True,
         update_route: Union[bool, DEPENDENCIES] = True,
         delete_one_route: Union[bool, DEPENDENCIES] = True,
-        delete_all_route: Union[bool, DEPENDENCIES] = True,        
+        delete_all_route: Union[bool, DEPENDENCIES] = True,
         cancelar_route: Union[bool, DEPENDENCIES] = True,
         liberar_route: Union[bool, DEPENDENCIES] = True,
         voltar_route: Union[bool, DEPENDENCIES] = True,
