@@ -27,7 +27,7 @@ for base_declarative in BaseDeclarativeList:
 async def read_root(request: Request, db: Session = Depends(get_db)):
     veiculos = []
     veiculos = list(
-        db.query(VeiculoModel).order_by(VeiculoModel.created_at.desc())
+        db.query(VeiculoModel).join(VeiculoHistoricoModel).order_by(VeiculoHistoricoModel.valor)
     )
 
     # print(veiculos[0].historicos[0].datahora)
