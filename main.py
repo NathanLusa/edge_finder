@@ -12,7 +12,7 @@ from app.router.veiculo import historico_router, imagem_router, veiculo_router
 templates = Jinja2Templates(directory='templates')
 
 app = FastAPI()
-app.mount('/static', StaticFiles(directory='static'), name='static')
+# app.mount('/static', StaticFiles(directory='static'), name='static')
 
 # app.include_router(UsuarioRouter)
 app.include_router(veiculo_router)
@@ -25,7 +25,7 @@ for base_declarative in BaseDeclarativeList:
 
 @app.get('/')
 async def read_root(request: Request, db: Session = Depends(get_db)):
-    veiculos = db.query(VeiculoModel).join(VeiculoModel.historicos, isouter=True).order_by(desc(VeiculoHistoricoModel.datahora))
+    veiculos = list(db.query(VeiculoModel).all())
 
     # print(veiculos[0].historicos[0].datahora)
     return templates.TemplateResponse(
