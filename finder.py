@@ -35,6 +35,10 @@ def save_veiculo_historico(veiculo_historico):
     print(response.json())
 
 
+def save_veiculo_imagem(veiculo_imagem):
+    response = requests.post(IMAGEM_ENDPOINT, json=veiculo_imagem)
+    print(response.json())
+
 def get_veiculo(url):
     for veiculo in veiculos:
         if veiculo['url'] == url:
@@ -96,6 +100,7 @@ def find(url):
                     'modelo': 'Edge',
                     'ano': year,
                     'url': url,
+                    'titulo': title,
                 }
             )
 
@@ -109,6 +114,12 @@ def find(url):
             }
         )
         
+        save_veiculo_imagem(
+            {
+                'veiculo_id': veiculo['id'],
+                'url': img,
+            }
+        )            
 
 
 if __name__ == '__main__':
@@ -116,5 +127,5 @@ if __name__ == '__main__':
     # print(veiculos)
     __uf = 'pr'
     find(
-        f'https://{__uf}.olx.com.br/autos-e-pecas/carros-vans-e-utilitarios/ford/edge?pe=80000&re=33&rs=29'
+        f'https://www.olx.com.br/autos-e-pecas/carros-vans-e-utilitarios/ford/edge/estado-{__uf}?pe=80000&re=33&rs=29'
     )

@@ -28,6 +28,7 @@ class Veiculo(BaseSchema):
     modelo: str
     ano: int
     url: str
+    titulo: str
     # historicos: List[VeiculoHistorico] = []
     # imagens: List[VeiculoImagem] = []
 

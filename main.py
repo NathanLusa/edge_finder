@@ -25,7 +25,8 @@ for base_declarative in BaseDeclarativeList:
 
 @app.get('/')
 async def read_root(request: Request, db: Session = Depends(get_db)):
-    veiculos = list(db.query(VeiculoModel).all())
+    veiculos = []
+    veiculos = list(db.query(VeiculoModel).order_by(VeiculoModel.created_at.desc()))
 
     # print(veiculos[0].historicos[0].datahora)
     return templates.TemplateResponse(
@@ -33,5 +34,6 @@ async def read_root(request: Request, db: Session = Depends(get_db)):
         {
             'request': request,
             'veiculos': veiculos,
+            'colunas': range(1, 13)
         },
     )
