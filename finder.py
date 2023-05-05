@@ -5,6 +5,8 @@ from datetime import datetime
 import requests
 from bs4 import BeautifulSoup
 
+DEVELOP = True
+
 HEADERS = {
     'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/39.0.2171.95 Safari/537.36'
 }
@@ -101,15 +103,15 @@ def get_content(url):
     if not os.path.exists(FILE_PATH):
         os.makedirs(FILE_PATH)
 
-    if not os.path.exists(FILE_PATH + FILE_NAME):
+    if os.path.exists(FILE_PATH + FILE_NAME) and DEVELOP:
+        with open(FILE_PATH + FILE_NAME, 'rb') as f:
+            content = f.read()
+    else:
         print('Download')
         response = requests.get(url, headers=HEADERS)
         content = response.content
         with open(FILE_PATH + FILE_NAME, 'wb') as f:
             f.write(response.content)
-    else:
-        with open(FILE_PATH + FILE_NAME, 'rb') as f:
-            content = f.read()
 
     return content
 
