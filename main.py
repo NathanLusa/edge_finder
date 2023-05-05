@@ -5,7 +5,7 @@ from sqlalchemy import desc
 from sqlalchemy.orm import Session, aliased
 
 from app.database import BaseDeclarativeList, engine, get_db
-from app.models.veiculo import VeiculoModel, VeiculoHistoricoModel
+from app.models.veiculo import VeiculoHistoricoModel, VeiculoModel
 from app.router.usuario import router as UsuarioRouter
 from app.router.veiculo import historico_router, imagem_router, veiculo_router
 
@@ -26,14 +26,12 @@ for base_declarative in BaseDeclarativeList:
 @app.get('/')
 async def read_root(request: Request, db: Session = Depends(get_db)):
     veiculos = []
-    veiculos = list(db.query(VeiculoModel).order_by(VeiculoModel.created_at.desc()))
+    veiculos = list(
+        db.query(VeiculoModel).order_by(VeiculoModel.created_at.desc())
+    )
 
     # print(veiculos[0].historicos[0].datahora)
     return templates.TemplateResponse(
         'index.html',
-        {
-            'request': request,
-            'veiculos': veiculos,
-            'colunas': range(1, 13)
-        },
+        {'request': request, 'veiculos': veiculos, 'colunas': range(1, 13)},
     )

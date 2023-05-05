@@ -1,6 +1,6 @@
-from datetime import datetime
 import os
 import re
+from datetime import datetime
 
 import requests
 from bs4 import BeautifulSoup
@@ -38,6 +38,7 @@ def save_veiculo_historico(veiculo_historico):
 def save_veiculo_imagem(veiculo_imagem):
     response = requests.post(IMAGEM_ENDPOINT, json=veiculo_imagem)
     print(response.json())
+
 
 def get_veiculo(url):
     for veiculo in veiculos:
@@ -113,13 +114,13 @@ def find(url):
                 'descricao': title,
             }
         )
-        
+
         save_veiculo_imagem(
             {
                 'veiculo_id': veiculo['id'],
                 'url': img,
             }
-        )            
+        )
 
 
 if __name__ == '__main__':

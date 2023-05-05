@@ -14,70 +14,57 @@
 <body>
     <h1>Hello world</h1>
 
-    <!-- <div class="container-fluid border p-5">
-        <div class="row">
-            {% for index in colunas %}
-            <div class="col-lg-3 col-md-4 col-sm-6 col-xs-12 border mb-1 mxs-1">
-                <h4>Coluna {{ index }}</h4>
-            </div>
-            {% endfor %}
-        </div>
-    </div> -->
-
-
-    <div class="container-fluid p-5">
-        <div class="row">
-            {% for veiculo in veiculos %}
-            <div class="col-lg-3 col-md-4 col-sm-6 col-xs-12 bosrder mb-3">
-                <div class="card h-100" style="max-height: 670px;">
-                    <div id="carouselExampleIndicators" class="carousel slide card-img-top">
-                        <div class="carousel-inner">
-                            {% if veiculo.imagens %}
-                            {% for imagem in veiculo.imagens %}
-                            <img src="{{ imagem.url }}" class="d-block w-100" alt="..." style="max-height: 400px;">
-                            {% endfor %}
-                            {% else %}
-                            <svg class="bd-placeholder-img bd-placeholder-img-lg d-block w-100" width="800" height="400"
-                                xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Placeholder: First slide"
-                                preserveAspectRatio="xMidYMid slice" focusable="false">
-                                <rect width="100%" height="100%" fill="#777"></rect><text x="50%" y="50%" fill="#555"
-                                    dy=".3em"></text>
-                            </svg>
-                            {% endif %}
-                        </div>
-                        <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleIndicators"
-                            data-bs-slide="prev">
-                            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                            <span class="visually-hidden">Previous</span>
-                        </button>
-                        <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleIndicators"
-                            data-bs-slide="next">
-                            <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                            <span class="visually-hidden">Next</span>
-                        </button>
+    <div class="container p-5">
+        {% for veiculo in veiculos %}
+        <div class="row mb-3 border">
+            <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 m-3">
+                <div id="carouselExampleIndicators" class="carousel slide card-img-top">
+                    <div class="carousel-inner">
+                        {% if veiculo.imagens %}
+                        {% for imagem in veiculo.imagens %}
+                        <img src="{{ imagem.url }}" class="d-block w-100" alt="..." style="max-height: 400px;">
+                        {% endfor %}
+                        {% else %}
+                        <svg class="bd-placeholder-img bd-placeholder-img-lg d-block w-100" width="800" height="400"
+                            xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Placeholder: First slide"
+                            preserveAspectRatio="xMidYMid slice" focusable="false">
+                            <rect width="100%" height="100%" fill="#777"></rect><text x="50%" y="50%" fill="#555"
+                                dy=".3em"></text>
+                        </svg>
+                        {% endif %}
                     </div>
-
-                    <div class="card-body overflow-scroll">
-                        <h5 class="card-title"><a href="{{ veiculo.url }}" target="_blank">{{ veiculo.titulo }}</a></h5>
-                        <div class="card-text mb-3 bg-body-tertiary w-100">
-                            <hr class="hr" />
-                            {% for historico in veiculo.historicos|sort(attribute='datahora', reverse=True) %}
-                            <h6>{{ historico.descricao }}</h6>
-                            <h6><span class="badge bg-primary"><i class="fa-solid fa-sack-dollar"></i></span> {{
-                                historico.valor }}</h6>
-                            <h6><span class="badge bg-primary"><i class="fa-regular fa-gauge"></i></span> {{
-                                historico.quilometragem }}</h6>
-                            <h6><span class="badge bg-primary"><i class="fa-solid fa-clock"></i></span> {{
-                                historico.datahora }}</h6>
-                            <hr class="hr" />
-                            {% endfor %}
-                        </div>
+                    <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleIndicators"
+                        data-bs-slide="prev">
+                        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                        <span class="visually-hidden">Previous</span>
+                    </button>
+                    <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleIndicators"
+                        data-bs-slide="next">
+                        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                        <span class="visually-hidden">Next</span>
+                    </button>
+                </div>
+            </div>
+            <div class="col-xl-5 col-lg-5 col-md-12 col-sm-12 mt-3">
+                <div class="overflow-scroll" style="max-height: 400px">
+                    <h5><a href="{{ veiculo.url }}" target="_blank">{{ veiculo.titulo }}</a></h5>
+                    <div mb-3 bg-body-tertiary w-100">
+                        <hr class="hr" />
+                        {% for historico in veiculo.historicos|sort(attribute='datahora', reverse=True) %}
+                        <h6>{{ historico.descricao }}</h6>
+                        <h6><span class="badge bg-primary"><i class="fa-solid fa-sack-dollar"></i></span> {{
+                            historico.valor }}</h6>
+                        <h6><span class="badge bg-primary"><i class="fa-regular fa-gauge"></i></span> {{
+                            historico.quilometragem }}</h6>
+                        <h6><span class="badge bg-primary"><i class="fa-solid fa-clock"></i></span> {{
+                            historico.datahora }}</h6>
+                        <hr class="hr" />
+                        {% endfor %}
                     </div>
                 </div>
             </div>
-            {% endfor %}
-
         </div>
+        {% endfor %}
     </div>
 
     <script src="https://kit.fontawesome.com/417f08d9c2.js" crossorigin="anonymous"></script>
