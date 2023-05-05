@@ -28,7 +28,7 @@ class VeiculoHistoricoModel(Base):
     __tablename__ = 'veiculohistorico'
 
     valor = Column(Float)
-    quilometragem = Column(Float)
+    quilometragem = Column(Integer)
     descricao = Column(String(500))
     datahora = Column(DateTime)
     veiculo_id = Column(Integer, ForeignKey('veiculo.id'))

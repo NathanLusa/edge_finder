@@ -6,7 +6,7 @@ from core.schemas import BaseSchema
 
 class VeiculoHistorico(BaseSchema):
     valor: float
-    quilometragem: float
+    quilometragem: int
     descricao: str
     datahora: datetime
     veiculo_id: int

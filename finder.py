@@ -24,26 +24,75 @@ def load_veiculos():
     return response.json()
 
 
-def save_veiculo(veiculo):
-    response = requests.post(VEICULO_ENDPOINT, json=veiculo)
-    veiculos.append(response.json())
+def load_historicos():
+    response = requests.get(HISTORICO_ENDPOINT)
     return response.json()
 
 
-def save_veiculo_historico(veiculo_historico):
+def load_imagens():
+    response = requests.get(IMAGEM_ENDPOINT)
+    return response.json()
+
+
+def load_veiculo_historicos(veiculos, historicos):
+    for veiculo in veiculos:
+        veiculo['historicos'] = []
+        for historico in historicos:
+            if historico['veiculo_id'] == veiculo['id']:
+                veiculo['historicos'].append(historico)
+
+
+def load_veiculo_imagens(veiculos, imagens):
+    for veiculo in veiculos:
+        veiculo['imagens'] = []
+        for imagem in imagens:
+            if imagem['veiculo_id'] == veiculo['id']:
+                veiculo['imagens'].append(imagem)
+
+
+def save_veiculo(veiculo):
+    response = requests.post(VEICULO_ENDPOINT, json=veiculo)
+    veiculos.append(response.json())
+    veiculo = response.json()
+    veiculo['historicos'] = []
+    veiculo['imagens'] = []
+    return veiculo
+
+
+def save_veiculo_historico(veiculo, veiculo_historico):
     response = requests.post(HISTORICO_ENDPOINT, json=veiculo_historico)
-    print(response.json())
+    historico = response.json()
+    veiculo['historicos'].append(historico)
 
 
-def save_veiculo_imagem(veiculo_imagem):
+def save_veiculo_imagem(veiculo, veiculo_imagem):
     response = requests.post(IMAGEM_ENDPOINT, json=veiculo_imagem)
-    print(response.json())
+    imagem = response.json()
+    veiculo['imagens'].append(imagem)
 
 
 def get_veiculo(url):
     for veiculo in veiculos:
         if veiculo['url'] == url:
             return veiculo
+
+    return None
+
+
+def get_veiculo_historico(veiculo, historico):
+    for hist in veiculo['historicos']:
+        if (hist['valor'] == historico['valor']) and (
+            hist['quilometragem'] == historico['quilometragem']
+        ):
+            return hist
+
+    return None
+
+
+def get_veiculo_imagem(veiculo, url):
+    for imagem in veiculo['imagens']:
+        if imagem['url'] == url:
+            return imagem
 
     return None
 
@@ -105,26 +154,39 @@ def find(url):
                 }
             )
 
-        save_veiculo_historico(
-            {
-                'veiculo_id': veiculo['id'],
-                'datahora': datetime.now().isoformat(),
-                'valor': price,
-                'quilometragem': km,
-                'descricao': title,
-            }
-        )
+        hist = {
+            'veiculo_id': veiculo['id'],
+            'datahora': datetime.now().isoformat(),
+            'valor': price,
+            'quilometragem': int(km.replace('.', '').replace(',', ''))
+            if km
+            else 0,
+            'descricao': title,
+        }
+        historico = get_veiculo_historico(veiculo, hist)
+        if not historico:
+            # breakpoint()
+            save_veiculo_historico(veiculo, hist)
 
-        save_veiculo_imagem(
-            {
-                'veiculo_id': veiculo['id'],
-                'url': img,
-            }
-        )
+        imagem = get_veiculo_imagem(veiculo, img)
+        if not imagem:
+            save_veiculo_imagem(
+                veiculo,
+                {
+                    'veiculo_id': veiculo['id'],
+                    'url': img,
+                },
+            )
 
 
 if __name__ == '__main__':
     veiculos = load_veiculos()
+    historicos = load_historicos()
+    imagens = load_imagens()
+
+    load_veiculo_historicos(veiculos, historicos)
+    load_veiculo_imagens(veiculos, imagens)
+
     # print(veiculos)
     __uf = 'pr'
     find(
