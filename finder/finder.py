@@ -1,40 +1,19 @@
-import hashlib
-import os
 import re
 from datetime import datetime
 
 import requests
 from bs4 import BeautifulSoup
-
-DEVELOP = True
-# DEVELOP = False
-
-HEADERS = {
-    'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/39.0.2171.95 Safari/537.36'
-}
-FILE_PATH = 'files/'
-
-ENDPOINT = 'http://localhost:8000'
-VEICULO_ENDPOINT = ENDPOINT + '/veiculo'
-HISTORICO_ENDPOINT = ENDPOINT + '/veiculohistorico'
-IMAGEM_ENDPOINT = ENDPOINT + '/veiculoimagem'
+from services import (
+    get_historicos,
+    get_imagens,
+    get_veiculos,
+    save_veiculo,
+    save_veiculo_historico,
+    save_veiculo_imagem,
+)
+from utils import get_content
 
 veiculos = []
-
-
-def load_veiculos():
-    response = requests.get(VEICULO_ENDPOINT)
-    return response.json()
-
-
-def load_historicos():
-    response = requests.get(HISTORICO_ENDPOINT)
-    return response.json()
-
-
-def load_imagens():
-    response = requests.get(IMAGEM_ENDPOINT)
-    return response.json()
 
 
 def load_veiculo_historicos(veiculos, historicos):
@@ -51,27 +30,6 @@ def load_veiculo_imagens(veiculos, imagens):
         for imagem in imagens:
             if imagem['veiculo_id'] == veiculo['id']:
                 veiculo['imagens'].append(imagem)
-
-
-def save_veiculo(veiculo):
-    response = requests.post(VEICULO_ENDPOINT, json=veiculo)
-    veiculos.append(response.json())
-    veiculo = response.json()
-    veiculo['historicos'] = []
-    veiculo['imagens'] = []
-    return veiculo
-
-
-def save_veiculo_historico(veiculo, veiculo_historico):
-    response = requests.post(HISTORICO_ENDPOINT, json=veiculo_historico)
-    historico = response.json()
-    veiculo['historicos'].append(historico)
-
-
-def save_veiculo_imagem(veiculo, veiculo_imagem):
-    response = requests.post(IMAGEM_ENDPOINT, json=veiculo_imagem)
-    imagem = response.json()
-    veiculo['imagens'].append(imagem)
 
 
 def get_veiculo(url):
@@ -98,30 +56,6 @@ def get_veiculo_imagem(veiculo, url):
             return imagem
 
     return None
-
-
-def get_file_name(url):
-    md5 =  hashlib.md5()
-    md5.update(url.encode('utf-8'))
-    return md5.hexdigest()
-
-
-def get_content(url):
-    file_name = f'{get_file_name(url)}.html'
-    if not os.path.exists(FILE_PATH):
-        os.makedirs(FILE_PATH)
-
-    if os.path.exists(FILE_PATH + file_name) and DEVELOP:
-        with open(FILE_PATH + file_name, 'rb') as f:
-            content = f.read()
-    else:
-        print('Download')
-        response = requests.get(url, headers=HEADERS)
-        content = response.content
-        with open(FILE_PATH + file_name, 'wb') as f:
-            f.write(response.content)
-
-    return content
 
 
 def find(url):
@@ -163,6 +97,7 @@ def find(url):
                     'titulo': title,
                 }
             )
+            veiculos.append(veiculo)
 
         hist = {
             'veiculo_id': veiculo['id'],
@@ -190,14 +125,13 @@ def find(url):
 
 
 if __name__ == '__main__':
-    veiculos = load_veiculos()
-    historicos = load_historicos()
-    imagens = load_imagens()
+    veiculos = get_veiculos()
+    historicos = get_historicos()
+    imagens = get_imagens()
 
     load_veiculo_historicos(veiculos, historicos)
     load_veiculo_imagens(veiculos, imagens)
 
-    # print(veiculos)
     __uf = 'pr'
     find(
         f'https://www.olx.com.br/autos-e-pecas/carros-vans-e-utilitarios/ford/edge/estado-{__uf}?pe=80000&re=33&rs=29'
