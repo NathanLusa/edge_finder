@@ -1,61 +1,19 @@
 import re
 from datetime import datetime
 
-import requests
 from bs4 import BeautifulSoup
+from models import Veiculo, VeiculoList
 from services import (
     get_historicos,
     get_imagens,
     get_veiculos,
-    save_veiculo,
-    save_veiculo_historico,
-    save_veiculo_imagem,
+    post_veiculo,
+    post_veiculo_historico,
+    post_veiculo_imagem,
 )
 from utils import get_content
 
-veiculos = []
-
-
-def load_veiculo_historicos(veiculos, historicos):
-    for veiculo in veiculos:
-        veiculo['historicos'] = []
-        for historico in historicos:
-            if historico['veiculo_id'] == veiculo['id']:
-                veiculo['historicos'].append(historico)
-
-
-def load_veiculo_imagens(veiculos, imagens):
-    for veiculo in veiculos:
-        veiculo['imagens'] = []
-        for imagem in imagens:
-            if imagem['veiculo_id'] == veiculo['id']:
-                veiculo['imagens'].append(imagem)
-
-
-def get_veiculo(url):
-    for veiculo in veiculos:
-        if veiculo['url'] == url:
-            return veiculo
-
-    return None
-
-
-def get_veiculo_historico(veiculo, historico):
-    for hist in veiculo['historicos']:
-        if (hist['valor'] == historico['valor']) and (
-            hist['quilometragem'] == historico['quilometragem']
-        ):
-            return hist
-
-    return None
-
-
-def get_veiculo_imagem(veiculo, url):
-    for imagem in veiculo['imagens']:
-        if imagem['url'] == url:
-            return imagem
-
-    return None
+veiculos = VeiculoList()
 
 
 def find(url):
@@ -86,9 +44,9 @@ def find(url):
         year_span = li.find('span', {'aria-label': re.compile(r'Ano')})
         year = year_span.text if year_span else ''
 
-        veiculo = get_veiculo(url)
+        veiculo = veiculos.get_veiculo(url)
         if not veiculo:
-            veiculo = save_veiculo(
+            veiculo_json = post_veiculo(
                 {
                     'marca': 'Ford',
                     'modelo': 'Edge',
@@ -97,10 +55,12 @@ def find(url):
                     'titulo': title,
                 }
             )
+            veiculo = Veiculo()
+            veiculo.load_from_json(veiculo_json, [], [])
             veiculos.append(veiculo)
 
         hist = {
-            'veiculo_id': veiculo['id'],
+            'veiculo_id': veiculo.id,
             'datahora': datetime.now().isoformat(),
             'valor': price,
             'quilometragem': int(km.replace('.', '').replace(',', ''))
@@ -108,29 +68,28 @@ def find(url):
             else 0,
             'descricao': title,
         }
-        historico = get_veiculo_historico(veiculo, hist)
+        historico = veiculo.get_historico(hist)
         if not historico:
-            # breakpoint()
-            save_veiculo_historico(veiculo, hist)
+            historico_json = post_veiculo_historico(hist)
+            veiculo.add_historico(historico_json)
 
-        imagem = get_veiculo_imagem(veiculo, img)
+        imagem = veiculo.get_imagem(img)
         if not imagem:
-            save_veiculo_imagem(
-                veiculo,
+            imagem_json = post_veiculo_imagem(
                 {
-                    'veiculo_id': veiculo['id'],
+                    'veiculo_id': veiculo.id,
                     'url': img,
                 },
             )
+            veiculo.add_imagem(imagem_json)
 
 
 if __name__ == '__main__':
-    veiculos = get_veiculos()
+    veiculo_list = get_veiculos()
     historicos = get_historicos()
     imagens = get_imagens()
 
-    load_veiculo_historicos(veiculos, historicos)
-    load_veiculo_imagens(veiculos, imagens)
+    veiculos.load_from_json(veiculo_list, historicos, imagens)
 
     __uf = 'pr'
     find(

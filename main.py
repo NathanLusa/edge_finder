@@ -29,7 +29,8 @@ async def read_root(request: Request, db: Session = Depends(get_db)):
     veiculos = list(
         db.query(VeiculoModel)
         .join(VeiculoHistoricoModel)
-        .order_by(VeiculoHistoricoModel.valor)
+        .order_by(desc(VeiculoModel.id))
+        # .order_by(VeiculoHistoricoModel.valor)
     )
 
     # print(veiculos[0].historicos[0].datahora)

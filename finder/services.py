@@ -21,21 +21,16 @@ def get_imagens():
     return response.json()
 
 
-def save_veiculo(veiculo):
+def post_veiculo(veiculo):
     response = requests.post(VEICULO_ENDPOINT, json=veiculo)
-    veiculo = response.json()
-    veiculo['historicos'] = []
-    veiculo['imagens'] = []
-    return veiculo
+    return response.json()
 
 
-def save_veiculo_historico(veiculo, veiculo_historico):
+def post_veiculo_historico(veiculo_historico):
     response = requests.post(HISTORICO_ENDPOINT, json=veiculo_historico)
-    historico = response.json()
-    veiculo['historicos'].append(historico)
+    return response.json()
 
 
-def save_veiculo_imagem(veiculo, veiculo_imagem):
+def post_veiculo_imagem(veiculo_imagem):
     response = requests.post(IMAGEM_ENDPOINT, json=veiculo_imagem)
-    imagem = response.json()
-    veiculo['imagens'].append(imagem)
+    return response.json()
