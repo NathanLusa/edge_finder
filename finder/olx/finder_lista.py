@@ -8,7 +8,7 @@ from utils import get_content
 
 def _find(veiculos, url):
     print(url)
-    content = get_content(url)
+    content, _ = get_content(url)
     soup = BeautifulSoup(content, 'html5lib')
     main_list = soup.find(id='ad-list')
     item_list = main_list.find_all('li') if main_list else []
