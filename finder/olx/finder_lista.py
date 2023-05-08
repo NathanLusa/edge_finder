@@ -2,8 +2,8 @@ import re
 from datetime import datetime
 
 from bs4 import BeautifulSoup
-from finder.models import Veiculo, VeiculoList
-from finder.services import (
+from services.models import Veiculo, VeiculoList
+from services.services import (
     get_historicos,
     get_imagens,
     get_veiculos,
@@ -11,12 +11,10 @@ from finder.services import (
     post_veiculo_historico,
     post_veiculo_imagem,
 )
-from finder.utils import get_content
-
-veiculos = VeiculoList()
+from utils import get_content
 
 
-def find(url):
+def _find(veiculos, url):
     print(url)
     content = get_content(url)
     soup = BeautifulSoup(content, 'html5lib')
@@ -84,14 +82,16 @@ def find(url):
             veiculo.add_imagem(imagem_json)
 
 
-if __name__ == '__main__':
+def find_lista():
     veiculo_list = get_veiculos()
     historicos = get_historicos()
     imagens = get_imagens()
 
+    veiculos = VeiculoList()
     veiculos.load_from_json(veiculo_list, historicos, imagens)
 
-    __uf = 'pr'
-    find(
-        f'https://www.olx.com.br/autos-e-pecas/carros-vans-e-utilitarios/ford/edge/estado-{__uf}?pe=80000&re=33&rs=29'
+    _uf = 'pr'
+    _find(
+        veiculos,
+        f'https://www.olx.com.br/autos-e-pecas/carros-vans-e-utilitarios/ford/edge/estado-{_uf}?pe=80000&re=33&rs=29'
     )
