@@ -2,38 +2,29 @@ from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
-from selenium.webdriver.support import expected_conditions as EC
 from selenium.common.exceptions import TimeoutException
 from selenium.common.exceptions import NoSuchElementException
 from time import sleep
 from webdriver_manager.chrome import ChromeDriverManager
 from bs4 import BeautifulSoup
 import getpass
-import os
-import time
-import sqlite3
+from datetime import datetime
 
+from services.models import Veiculo, VeiculoList
+from services.services import *
 from utils import get_content, save_content
 
-# Set username.
 USER = getpass.getuser()
-
-# Declare global variables.
-ELECTRONICS = 'https://www.facebook.com/marketplace/category/electronics?deliveryMethod=local_pick_up&exact=false'
-APPLIANCES = 'https://www.facebook.com/marketplace/category/appliances?deliveryMethod=local_pick_up&exact=false'
-FURNITURE = 'https://www.facebook.com/marketplace/category/furniture?deliveryMethod=local_pick_up&exact=false'
-LOCATIONS = ['pullman', 'colfax', 'moscow']
 
 
 class Selenium():
-    # Define a method to initialize the browser.
     def __init__(self):
         # Close the Chrome instance if it is already running.
         # os.system("taskkill /f /im chrome.exe")
 
         # Set the options for the Chrome browser.
         chrome_options = Options()
-        # chrome_options.add_argument("--headless")
+
         # Add a user data directory as an argument for options.
         # chrome_options.add_argument(f"--user-data-dir=C:\\Users\\{USER}\\AppData\\Local\\Google\\Chrome\\User Data")
         chrome_options.add_argument('--user-data-dir=/usr/local/share/chromedriver')
@@ -46,7 +37,6 @@ class Selenium():
         self.browser = webdriver.Chrome(
             ChromeDriverManager().install(), options=chrome_options)
 
-    # Define a method to get the page source using Selenium.
     def get_page_source(self, url):
         # Try to get the page source.
         try:
@@ -81,13 +71,11 @@ class Selenium():
             print("Element not found.")
             return None
 
-    # Define a method to close the browser.
     def close_browser(self):
         self.browser.quit()
 
-    # Define a method tp scrape the Facebook Marketplace page using Selenium, BeautifulSoup, and SQLite.
     def scrape_facebook_marketplace(self, url, need_login):
-        # Get the page source using Selenium.
+        lista = []
         # page_source = self.get_page_source(url)
         # page_source = get_content(url, self.get_page_source)
 
@@ -102,62 +90,121 @@ class Selenium():
             sleep(5)
     
         page_source, file_name = get_content(url, self.get_page_source)
-        print('Download...', file_name, len(page_source)) # 1253302, 1584453
+        print('Download...', file_name, len(page_source))
 
-        # Parse the page source using BeautifulSoup.
         soup = BeautifulSoup(page_source, 'html.parser')
         [x.extract() for x in soup.findAll('script')]
         save_content(url, str(soup), 'w')
         
-        # Get the items.
-        div = soup.find_all('div', class_='x9f619 x78zum5 x1r8uery xdt5ytf x1iyjqo2 xs83m0k x1e558r4 x150jy0e x1iorvi4 xjkvuk6 xnpuxes x291uyu x1uepa24')
-        print(div)
-        
-        # Iterate through the items.
-        for d in div[0]:
-            # try:
-            # Get the item image.
-            image = d.find('img', class_='xt7dq6l xl1xv1r x6ikm8r x10wlt62 xh8yej3')['src']
-            # Get the item title from span.
-            title = d.find('span', 'x1lliihq x6ikm8r x10wlt62 x1n2onr6').text
-            # Get the item price.
-            # price = d.find('span', 'x193iq5w xeuugli x13faqbe x1vvkbs x1xmvt09 x1lliihq x1s928wv xhkezso x1gmr53x x1cpjm7i x1fgarty x1943h6x xudqn12 x676frb x1lkfr7t x1lbecb7 x1s688f xzsf02u').text
-            price = d.find('span', 'x193iq5w xeuugli x13faqbe x1vvkbs xlh3980 xvmahel x1n0sxbx x1lliihq x1s928wv xhkezso x1gmr53x x1cpjm7i x1fgarty x1943h6x x4zkp8e x3x7a5m x1lkfr7t x1lbecb7 x1s688f xzsf02u').text
-            # Get the item URL.
-            url = d.find('a', class_='x1i10hfl xjbqb8w x6umtig x1b1mbwd xaqea5y xav7gou x9f619 x1ypdohk xt0psk2 xe8uvvx xdj266r x11i5rnm xat24cr x1mh8g0r xexx8yu x4uap5 x18d9i69 xkhd6sd x16tdsg8 x1hl2dhg xggy1nq x1a2a7pz x1heor9g x1lku1pv')['href']
-            # Get the item location.
-            # location = d.find('span', 'x1lliihq x6ikm8r x10wlt62 x1n2onr6 xlyipyv xuxw1ft x1j85h84').text
-            location = d.find('span', 'x193iq5w xeuugli x13faqbe x1vvkbs xlh3980 xvmahel x1n0sxbx x1lliihq x1s928wv xhkezso x1gmr53x x1cpjm7i x1fgarty x1943h6x x4zkp8e x676frb x1nxh6w3 x1sibtaa xo1l8bm xi81zsa').text
+        div = soup.find('div', class_='xkrivgy x1gryazu x1n2onr6')
+        div = div.find_all('div', class_='x9f619 x78zum5 x1r8uery xdt5ytf x1iyjqo2 xs83m0k x1e558r4 x150jy0e x1iorvi4 xjkvuk6 xnpuxes x291uyu x1uepa24')
+
+        for d in div:
+            image = d.find('img', class_='xt7dq6l xl1xv1r x6ikm8r x10wlt62 xh8yej3')['src'] if d.find('img', class_='xt7dq6l xl1xv1r x6ikm8r x10wlt62 xh8yej3') else ''
+            title = d.find('span', 'x1lliihq x6ikm8r x10wlt62 x1n2onr6').text if d.find('span', 'x1lliihq x6ikm8r x10wlt62 x1n2onr6') else ''
+            price = d.find('span', 'x193iq5w xeuugli x13faqbe x1vvkbs xlh3980 xvmahel x1n0sxbx x1lliihq x1s928wv xhkezso x1gmr53x x1cpjm7i x1fgarty x1943h6x x4zkp8e x3x7a5m x1lkfr7t x1lbecb7 x1s688f xzsf02u').text if d.find('span', 'x193iq5w xeuugli x13faqbe x1vvkbs xlh3980 xvmahel x1n0sxbx x1lliihq x1s928wv xhkezso x1gmr53x x1cpjm7i x1fgarty x1943h6x x4zkp8e x3x7a5m x1lkfr7t x1lbecb7 x1s688f xzsf02u') else ''
+            url = d.find('a', class_='x1i10hfl xjbqb8w x6umtig x1b1mbwd xaqea5y xav7gou x9f619 x1ypdohk xt0psk2 xe8uvvx xdj266r x11i5rnm xat24cr x1mh8g0r xexx8yu x4uap5 x18d9i69 xkhd6sd x16tdsg8 x1hl2dhg xggy1nq x1a2a7pz x1heor9g x1lku1pv')['href'] if d.find('a', class_='x1i10hfl xjbqb8w x6umtig x1b1mbwd xaqea5y xav7gou x9f619 x1ypdohk xt0psk2 xe8uvvx xdj266r x11i5rnm xat24cr x1mh8g0r xexx8yu x4uap5 x18d9i69 xkhd6sd x16tdsg8 x1hl2dhg xggy1nq x1a2a7pz x1heor9g x1lku1pv') else ''
+            url = (f'https://www.facebook.com{url}')
+            location = d.find('span', 'x193iq5w xeuugli x13faqbe x1vvkbs xlh3980 xvmahel x1n0sxbx x1lliihq x1s928wv xhkezso x1gmr53x x1cpjm7i x1fgarty x1943h6x x4zkp8e x676frb x1nxh6w3 x1sibtaa xo1l8bm xi81zsa').text if d.find('span', 'x193iq5w xeuugli x13faqbe x1vvkbs xlh3980 xvmahel x1n0sxbx x1lliihq x1s928wv xhkezso x1gmr53x x1cpjm7i x1fgarty x1943h6x x4zkp8e x676frb x1nxh6w3 x1sibtaa xo1l8bm xi81zsa') else ''
             
-            # Print the item information.
+            lista.append({
+                'titulo': title,
+                'preco': price,
+                'imagem': image,
+                'url': url,
+            })
+            
             print(f"Image: {image}")
             print(f"Price: {price}")
             print(f"Title: {title}")
             print(f"Location: {location}")
-            # print(f"Category: {category}")
-            url = (f"www.facebook.com{url}")
             print(f"URL: {url}")
             print("------------------------")
-            # Add the item to the database including the image.
-            # c.execute("INSERT INTO facebook_marketplace_posts (title, image, price, location, category, url) VALUES (?, ?, ?, ?, ?, ?)", (title, image, price, location, category, url))
-            # conn.commit()
-            # except:
-            #     pass
-
-            
-        # Close the database connection.
-        # conn.close()
         
-        # Close the browser.
         self.close_browser()
+
+        return lista
         
 
 def find_lista_facebook():
-    # url = 'https://www.facebook.com/marketplace/search/?deliveryMethod=local_pick_up&query=ford%20edge'
-    # url = 'https://www.facebook.com/marketplace/search?query=ford%20edge'
-    url = 'https://www.facebook.com/marketplace/curitiba/search/?query=ford%20edge&exact=false'
+    url = 'https://www.facebook.com/marketplace/curitiba/search/?query=ford%20edge&exact=true'
 
-    # Initialize the Selenium class.
     sel = Selenium()
-    # Call the scrape_facebook_marketplace method.
-    sel.scrape_facebook_marketplace(url, False)
+    lista = sel.scrape_facebook_marketplace(url, False)
+
+    veiculo_list = get_veiculos()
+    historicos = get_historicos()
+    imagens = get_imagens()
+
+    veiculos = VeiculoList()
+    veiculos.load_from_json(veiculo_list, historicos, imagens)
+
+    for i in lista:
+        # year_span = li.find('span', {'aria-label': re.compile(r'Ano')})
+        # year = year_span.text if year_span else ''
+        
+        year = 0
+        url = i['url']
+        title = i['titulo']
+        price = i['preco']
+        image = i['imagem']
+
+        if (not url) or (url == '') or (url == 'https://www.facebook.com'):
+            continue
+
+        if 'FORD EDGE' not in title.upper():
+            continue
+
+        veiculo = veiculos.get_veiculo(url)
+        if not veiculo:
+            veiculo_json = post_veiculo(
+                {
+                    'marca': 'Ford',
+                    'modelo': 'Edge',
+                    'ano': year,
+                    'url': url,
+                    'titulo': title,
+                }
+            )
+            veiculo = Veiculo()
+            veiculo.load_from_json(veiculo_json, [], [])
+            veiculos.append(veiculo)
+
+
+        imagem = veiculo.get_imagem(image)
+        if not imagem:
+            imagem_json = post_veiculo_imagem(
+                {
+                    'veiculo_id': veiculo.id,
+                    'url': image,
+                },
+            )
+            veiculo.add_imagem(imagem_json)
+
+        description = title
+        try:
+            price = round(float(price.split('\xa0')[1]) * 1000, 2)
+        except:
+            print('O preço do negócio é: ', price)
+            price = 0.0
+
+        km = 0
+        # for prop in json_data['ad']['properties']:
+        #     if prop['name'] == 'mileage':
+        #         km = prop['value']
+        #         km = int(km) * 1000 if int(km) <= 1000 else int(km)
+        #         break
+
+        hist = {
+            'veiculo_id': veiculo.id,
+            'datahora': datetime.now().isoformat(),
+            'valor': price,
+            'quilometragem': km,
+            'descricao': description,
+        }
+
+        historico = veiculo.get_historico(hist)
+        if not historico:
+            historico_json = post_veiculo_historico(hist)
+            veiculo.add_historico(historico_json)
+

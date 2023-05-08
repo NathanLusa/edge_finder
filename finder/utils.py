@@ -32,7 +32,7 @@ def save_content(url, content, save_type='wb'):
         f.write(content)
         
 
-def get_content(url, get_content_method):
+def get_content(url, get_content_method=None):
     file_name = f'{get_file_name(url)}.html'
     if not os.path.exists(FILE_PATH):
         os.makedirs(FILE_PATH)
@@ -44,7 +44,7 @@ def get_content(url, get_content_method):
         print(url)
         print('Download')
         time.sleep(2)
-        content = get_content_method(url)
+        content = get_content_method(url) if get_content_method else get_content_requests(url)
         save_content(url, content, 'w')
 
     return content, file_name
