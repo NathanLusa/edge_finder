@@ -15,7 +15,7 @@ from services.services import *
 from utils import get_content, save_content
 
 USER = getpass.getuser()
-
+SITE = 'https://www.facebook.com'
 
 class Selenium():
     def __init__(self):
@@ -104,7 +104,7 @@ class Selenium():
             title = d.find('span', 'x1lliihq x6ikm8r x10wlt62 x1n2onr6').text if d.find('span', 'x1lliihq x6ikm8r x10wlt62 x1n2onr6') else ''
             price = d.find('span', 'x193iq5w xeuugli x13faqbe x1vvkbs xlh3980 xvmahel x1n0sxbx x1lliihq x1s928wv xhkezso x1gmr53x x1cpjm7i x1fgarty x1943h6x x4zkp8e x3x7a5m x1lkfr7t x1lbecb7 x1s688f xzsf02u').text if d.find('span', 'x193iq5w xeuugli x13faqbe x1vvkbs xlh3980 xvmahel x1n0sxbx x1lliihq x1s928wv xhkezso x1gmr53x x1cpjm7i x1fgarty x1943h6x x4zkp8e x3x7a5m x1lkfr7t x1lbecb7 x1s688f xzsf02u') else ''
             url = d.find('a', class_='x1i10hfl xjbqb8w x6umtig x1b1mbwd xaqea5y xav7gou x9f619 x1ypdohk xt0psk2 xe8uvvx xdj266r x11i5rnm xat24cr x1mh8g0r xexx8yu x4uap5 x18d9i69 xkhd6sd x16tdsg8 x1hl2dhg xggy1nq x1a2a7pz x1heor9g x1lku1pv')['href'] if d.find('a', class_='x1i10hfl xjbqb8w x6umtig x1b1mbwd xaqea5y xav7gou x9f619 x1ypdohk xt0psk2 xe8uvvx xdj266r x11i5rnm xat24cr x1mh8g0r xexx8yu x4uap5 x18d9i69 xkhd6sd x16tdsg8 x1hl2dhg xggy1nq x1a2a7pz x1heor9g x1lku1pv') else ''
-            url = (f'https://www.facebook.com{url}')
+            url = (f'{SITE}{url}')
             location = d.find('span', 'x193iq5w xeuugli x13faqbe x1vvkbs xlh3980 xvmahel x1n0sxbx x1lliihq x1s928wv xhkezso x1gmr53x x1cpjm7i x1fgarty x1943h6x x4zkp8e x676frb x1nxh6w3 x1sibtaa xo1l8bm xi81zsa').text if d.find('span', 'x193iq5w xeuugli x13faqbe x1vvkbs xlh3980 xvmahel x1n0sxbx x1lliihq x1s928wv xhkezso x1gmr53x x1cpjm7i x1fgarty x1943h6x x4zkp8e x676frb x1nxh6w3 x1sibtaa xo1l8bm xi81zsa') else ''
             
             lista.append({
@@ -133,6 +133,8 @@ def find_lista_facebook():
     lista = sel.scrape_facebook_marketplace(url, False)
 
     veiculo_list = get_veiculos()
+    veiculo_list = [x for x in veiculo_list if x['site'] == SITE]
+
     historicos = get_historicos()
     imagens = get_imagens()
 
@@ -149,7 +151,7 @@ def find_lista_facebook():
         price = i['preco']
         image = i['imagem']
 
-        if (not url) or (url == '') or (url == 'https://www.facebook.com'):
+        if (not url) or (url == '') or (url == SITE):
             continue
 
         if 'FORD EDGE' not in title.upper():
@@ -164,6 +166,7 @@ def find_lista_facebook():
                     'ano': year,
                     'url': url,
                     'titulo': title,
+                    'site': SITE,
                 }
             )
             veiculo = Veiculo()

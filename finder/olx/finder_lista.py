@@ -5,6 +5,7 @@ from services.models import Veiculo, VeiculoList
 from services.services import get_veiculos, post_veiculo
 from utils import get_content
 
+SITE = 'https://www.olx.com.br'
 
 def _find(veiculos, url):
     print(url)
@@ -31,6 +32,7 @@ def _find(veiculos, url):
                     'ano': year,
                     'url': url,
                     'titulo': title,
+                    'site': SITE,
                 }
             )
             veiculo = Veiculo()
@@ -40,6 +42,7 @@ def _find(veiculos, url):
 
 def find_lista():
     veiculo_list = get_veiculos()
+    veiculo_list = [x for x in veiculo_list if x['site'] == SITE]
 
     veiculos = VeiculoList()
     veiculos.load_from_json(veiculo_list, [], [])

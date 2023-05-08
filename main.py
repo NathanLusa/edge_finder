@@ -25,16 +25,19 @@ for base_declarative in BaseDeclarativeList:
 
 @app.get('/')
 async def read_root(request: Request, db: Session = Depends(get_db)):
-    veiculos = []
-    veiculos = list(
-        db.query(VeiculoModel)
-        .join(VeiculoHistoricoModel)
-        .order_by(desc(VeiculoModel.id))
-        # .order_by(VeiculoHistoricoModel.valor)
-    )
+    order = desc(VeiculoModel.id)
+    order = VeiculoHistoricoModel.valor
 
-    # print(veiculos[0].historicos[0].datahora)
+    veiculos = db.query(VeiculoModel).join(VeiculoHistoricoModel).order_by(order)
+
     return templates.TemplateResponse(
         'index.html',
-        {'request': request, 'veiculos': veiculos, 'colunas': range(1, 13)},
+        {
+            'request': request, 
+            'sites': [
+                {'nome': 'Olx', 'veiculos': list(veiculos.filter(VeiculoModel.site == 'https://www.olx.com.br'))},
+                {'nome': 'Facebook', 'veiculos': list(veiculos.filter(VeiculoModel.site == 'https://www.facebook.com'))},
+            ],
+            'colunas': range(1, 13),
+        },
     )

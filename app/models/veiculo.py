@@ -20,6 +20,7 @@ class VeiculoModel(Base):
     ano = Column(Integer)
     url = Column(String(500), unique=True)
     titulo = Column(String(500))
+    site = Column(String(500))
     historicos = relationship('VeiculoHistoricoModel', backref='veiculo')
     imagens = relationship('VeiculoImagemModel', backref='veiculo')
 

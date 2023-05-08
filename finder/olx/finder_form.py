@@ -13,6 +13,7 @@ from services.services import (
 )
 from utils import get_content
 
+SITE = 'https://www.olx.com.br'
 
 def _find(veiculo):
     content, file_name = get_content(veiculo.url)
@@ -66,6 +67,8 @@ def find_form():
     veiculo_list = get_veiculos()
     historicos = get_historicos()
     imagens = get_imagens()
+
+    veiculo_list = [x for x in veiculo_list if x['site'] == SITE]
 
     veiculos = VeiculoList()
     veiculos.load_from_json(veiculo_list, historicos, imagens)

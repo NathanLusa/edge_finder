@@ -53,6 +53,7 @@ class Veiculo:
     ano: int
     url: str
     titulo: str
+    site: str
     historicos = VeiculoHistoricoList()
     imagens = VeiculoImagemList()
 
@@ -63,6 +64,7 @@ class Veiculo:
         self.ano = veiculo['ano']
         self.url = veiculo['url']
         self.titulo = veiculo['titulo']
+        self.site = veiculo['site']
 
         for historico in historicos:
             if self.id == historico['veiculo_id']:

@@ -45,6 +45,6 @@ def get_content(url, get_content_method=None):
         print('Download')
         time.sleep(2)
         content = get_content_method(url) if get_content_method else get_content_requests(url)
-        save_content(url, content, 'w')
+        save_content(url, str(content), 'w')
 
     return content, file_name
