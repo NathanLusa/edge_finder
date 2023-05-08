@@ -18,7 +18,21 @@ def get_file_name(url):
     return md5.hexdigest()
 
 
-def get_content(url):
+def get_content_requests(url):
+    response = requests.get(url, headers=HEADERS)
+    return response.content
+
+
+def save_content(url, content, save_type='wb'):
+    file_name = f'{get_file_name(url)}.html'
+    if not os.path.exists(FILE_PATH):
+        os.makedirs(FILE_PATH)
+
+    with open(FILE_PATH + file_name, save_type) as f:
+        f.write(content)
+        
+
+def get_content(url, get_content_method):
     file_name = f'{get_file_name(url)}.html'
     if not os.path.exists(FILE_PATH):
         os.makedirs(FILE_PATH)
@@ -27,11 +41,10 @@ def get_content(url):
         with open(FILE_PATH + file_name, 'rb') as f:
             content = f.read()
     else:
+        print(url)
         print('Download')
         time.sleep(2)
-        response = requests.get(url, headers=HEADERS)
-        content = response.content
-        with open(FILE_PATH + file_name, 'wb') as f:
-            f.write(response.content)
+        content = get_content_method(url)
+        save_content(url, content, 'w')
 
     return content, file_name
