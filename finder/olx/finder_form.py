@@ -1,4 +1,5 @@
-import re
+import json
+import time
 from datetime import datetime
 
 from bs4 import BeautifulSoup
@@ -7,88 +8,67 @@ from services.services import (
     get_historicos,
     get_imagens,
     get_veiculos,
-    post_veiculo,
     post_veiculo_historico,
     post_veiculo_imagem,
 )
 from utils import get_content
 
 
-def _find(veiculo, veiculos):
-    print(veiculo.url)
-    content = get_content(veiculo.url)
+def _find(veiculo):
+    content, file_name = get_content(veiculo.url)
+    print(veiculo.url, file_name)
+
     soup = BeautifulSoup(content, 'html5lib')
-    # main_list = soup.find(id='ad-list')
-    # item_list = main_list.find_all('li') if main_list else []
+    main_list = soup.find(id='initial-data')
 
-    # for li in item_list:
-    #     if not li.a:
-    #         continue
+    if not main_list:
+        print(f'Page not found?')
+        return
 
-    #     url = li.a['href']
-    #     title = li.find('h2').text
-    #     img = li.find('img')['src']
+    json_data = json.loads(main_list['data-json'])
 
-    #     span_price = li.find('span', class_='main-price')
-    #     price = (
-    #         round(float(span_price.text.split(' ')[1]) * 1000, 2)
-    #         if span_price
-    #         else 0
-    #     )
+    for img in json_data['ad']['images']:
+        imagem = veiculo.get_imagem(img['original'])
+        if not imagem:
+            imagem_json = post_veiculo_imagem(
+                {
+                    'veiculo_id': veiculo.id,
+                    'url': img['original'],
+                },
+            )
+            veiculo.add_imagem(imagem_json)
 
-    #     km_span = li.find('span', {'aria-label': re.compile(r'quil')})
-    #     km = km_span.text.split(' ')[1] if km_span else ''
+    description = json_data['ad']['body']
+    price = round(float(json_data['ad']['priceValue'].split(' ')[1]) * 1000, 2)
 
-    #     year_span = li.find('span', {'aria-label': re.compile(r'Ano')})
-    #     year = year_span.text if year_span else ''
+    km = 0
+    for prop in json_data['ad']['properties']:
+        if prop['name'] == 'mileage':
+            km = prop['value']
+            km = int(km) * 1000 if int(km) <= 1000 else int(km)
+            break
 
-    #     veiculo = veiculos.get_veiculo(url)
-    #     if not veiculo:
-    #         veiculo_json = post_veiculo(
-    #             {
-    #                 'marca': 'Ford',
-    #                 'modelo': 'Edge',
-    #                 'ano': year,
-    #                 'url': url,
-    #                 'titulo': title,
-    #             }
-    #         )
-    #         veiculo = Veiculo()
-    #         veiculo.load_from_json(veiculo_json, [], [])
-    #         veiculos.append(veiculo)
+    hist = {
+        'veiculo_id': veiculo.id,
+        'datahora': datetime.now().isoformat(),
+        'valor': price,
+        'quilometragem': km,
+        'descricao': description,
+    }
 
-    #     hist = {
-    #         'veiculo_id': veiculo.id,
-    #         'datahora': datetime.now().isoformat(),
-    #         'valor': price,
-    #         'quilometragem': int(km.replace('.', '').replace(',', ''))
-    #         if km
-    #         else 0,
-    #         'descricao': title,
-    #     }
-    #     historico = veiculo.get_historico(hist)
-    #     if not historico:
-    #         historico_json = post_veiculo_historico(hist)
-    #         veiculo.add_historico(historico_json)
-
-    #     imagem = veiculo.get_imagem(img)
-    #     if not imagem:
-    #         imagem_json = post_veiculo_imagem(
-    #             {
-    #                 'veiculo_id': veiculo.id,
-    #                 'url': img,
-    #             },
-    #         )
-    #         veiculo.add_imagem(imagem_json)
+    historico = veiculo.get_historico(hist)
+    if not historico:
+        historico_json = post_veiculo_historico(hist)
+        veiculo.add_historico(historico_json)
 
 
 def find_form():
     veiculo_list = get_veiculos()
-    historicos = [] # get_historicos()
+    historicos = get_historicos()
     imagens = get_imagens()
 
     veiculos = VeiculoList()
     veiculos.load_from_json(veiculo_list, historicos, imagens)
 
-    for veiculo in veiculos[0]:
-        _find(veiculo, veiculos)
+    for veiculo in veiculos:
+        _find(veiculo)

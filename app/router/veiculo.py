@@ -18,7 +18,7 @@ veiculo_router = CRUDRouter(
     db=get_db,
     db_model=VeiculoModel,
     schema=Veiculo,
-    paginate=100,
+    paginate=1000,
     delete_all_route=False,
 )
 
@@ -26,7 +26,7 @@ historico_router = CRUDRouter(
     db=get_db,
     db_model=VeiculoHistoricoModel,
     schema=VeiculoHistorico,
-    paginate=250,
+    paginate=2500,
     # get_all_route=False,
     delete_all_route=False,
 )
@@ -35,7 +35,7 @@ imagem_router = CRUDRouter(
     db=get_db,
     db_model=VeiculoImagemModel,
     schema=VeiculoImagem,
-    paginate=250,
+    paginate=2500,
     # get_all_route=False,
     delete_all_route=False,
 )

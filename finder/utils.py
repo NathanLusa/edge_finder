@@ -1,5 +1,6 @@
 import hashlib
 import os
+import time
 
 import requests
 
@@ -27,9 +28,10 @@ def get_content(url):
             content = f.read()
     else:
         print('Download')
+        time.sleep(2)
         response = requests.get(url, headers=HEADERS)
         content = response.content
         with open(FILE_PATH + file_name, 'wb') as f:
             f.write(response.content)
 
-    return content
+    return content, file_name

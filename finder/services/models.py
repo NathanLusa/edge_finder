@@ -94,13 +94,11 @@ class Veiculo:
 
 
 class VeiculoList(List[Veiculo]):
-
     def load_from_json(self, veiculos, historicos, imagens):
         for item in veiculos:
             veiculo = Veiculo()
             veiculo.load_from_json(item, historicos, imagens)
             self.append(veiculo)
-
 
     def get_veiculo(self, url):
         for veiculo in self:
