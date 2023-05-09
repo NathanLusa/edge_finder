@@ -2,10 +2,12 @@ import re
 
 from bs4 import BeautifulSoup
 from services.models import Veiculo, VeiculoList
+from services.schemas import VeiculoSchema
 from services.services import get_veiculos, post_veiculo
 from utils import get_content
 
 SITE = 'https://www.olx.com.br'
+
 
 def _find(veiculos, url):
     print(url)
@@ -21,20 +23,20 @@ def _find(veiculos, url):
         url = li.a['href']
         title = li.find('h2').text
         year_span = li.find('span', {'aria-label': re.compile(r'Ano')})
-        year = year_span.text if year_span else ''
+        year = year_span.text.strip() if year_span else ''
 
         veiculo = veiculos.get_veiculo(url)
         if not veiculo:
-            veiculo_json = post_veiculo(
-                {
-                    'marca': 'Ford',
-                    'modelo': 'Edge',
-                    'ano': year,
-                    'url': url,
-                    'titulo': title,
-                    'site': SITE,
-                }
+            veiculo_schema = VeiculoSchema(
+                marca='Ford',
+                modelo='Edge',
+                ano=year,
+                url=url,
+                titulo=title,
+                site=SITE,
+                status='ativo',
             )
+            veiculo_json = post_veiculo(veiculo_schema.to_json())
             veiculo = Veiculo()
             veiculo.load_from_json(veiculo_json, [], [])
             veiculos.append(veiculo)

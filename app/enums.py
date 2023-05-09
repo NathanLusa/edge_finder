@@ -1,9 +1,10 @@
 import enum
 
+
 class VeiculoStatus(enum.Enum):
     ativo = 'ativo'
     inativo = 'inativo'
-    
+
 
 class ContaTipoEnum(enum.IntEnum):
     CORRENTE = 0

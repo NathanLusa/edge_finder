@@ -29,15 +29,34 @@ async def read_root(request: Request, db: Session = Depends(get_db)):
     order = desc(VeiculoModel.id)
     order = VeiculoHistoricoModel.valor
 
-    veiculos = db.query(VeiculoModel).join(VeiculoHistoricoModel).filter(VeiculoModel.status == VeiculoStatus.ativo).order_by(order)
+    veiculos = (
+        db.query(VeiculoModel)
+        .join(VeiculoHistoricoModel)
+        .filter(VeiculoModel.status == VeiculoStatus.ativo)
+        .order_by(order)
+    )
 
     return templates.TemplateResponse(
         'index.html',
         {
-            'request': request, 
+            'request': request,
             'sites': [
-                {'nome': 'Olx', 'veiculos': list(veiculos.filter(VeiculoModel.site == 'https://www.olx.com.br'))},
-                {'nome': 'Facebook', 'veiculos': list(veiculos.filter(VeiculoModel.site == 'https://www.facebook.com'))},
+                {
+                    'nome': 'Olx',
+                    'veiculos': list(
+                        veiculos.filter(
+                            VeiculoModel.site == 'https://www.olx.com.br'
+                        )
+                    ),
+                },
+                {
+                    'nome': 'Facebook',
+                    'veiculos': list(
+                        veiculos.filter(
+                            VeiculoModel.site == 'https://www.facebook.com'
+                        )
+                    ),
+                },
             ],
             'colunas': range(1, 13),
         },

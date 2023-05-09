@@ -29,7 +29,6 @@ def post_veiculo(veiculo):
 def post_veiculo_historico(veiculo_historico):
     response = requests.post(HISTORICO_ENDPOINT, json=veiculo_historico)
     res = response
-    print(veiculo_historico)
     return response.json()
 
 

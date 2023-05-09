@@ -4,6 +4,7 @@ from datetime import datetime
 
 from bs4 import BeautifulSoup
 from services.models import Veiculo, VeiculoList
+from services.schemas import VeiculoHistoricoSchema, VeiculoImagemSchema
 from services.services import (
     get_historicos,
     get_imagens,
@@ -14,6 +15,7 @@ from services.services import (
 from utils import get_content
 
 SITE = 'https://www.olx.com.br'
+
 
 def _find(veiculo):
     content, file_name = get_content(veiculo.url)
@@ -33,12 +35,10 @@ def _find(veiculo):
     for img in json_data['ad']['images']:
         imagem = veiculo.get_imagem(img['original'])
         if not imagem:
-            imagem_json = post_veiculo_imagem(
-                {
-                    'veiculo_id': veiculo.id,
-                    'url': img['original'],
-                },
+            imagem_schema = VeiculoImagemSchema(
+                veiculo_id=veiculo.id, url=img['original']
             )
+            imagem_json = post_veiculo_imagem(imagem_schema.to_json())
             veiculo.add_imagem(imagem_json)
 
     description = json_data['ad']['body']
@@ -51,17 +51,16 @@ def _find(veiculo):
             km = int(km) * 1000 if int(km) <= 1000 else int(km)
             break
 
-    hist = {
-        'veiculo_id': veiculo.id,
-        'datahora': datetime.now().isoformat(),
-        'valor': price,
-        'quilometragem': km,
-        'descricao': description,
-    }
-
-    historico = veiculo.get_historico(hist)
+    hist = VeiculoHistoricoSchema(
+        veiculo_id=veiculo.id,
+        datahora=datetime.now().isoformat(),
+        valor=price,
+        quilometragem=km,
+        descricao=description,
+    )
+    historico = veiculo.get_historico(hist.to_json())
     if not historico:
-        historico_json = post_veiculo_historico(hist)
+        historico_json = post_veiculo_historico(hist.to_json())
         veiculo.add_historico(historico_json)
 
 

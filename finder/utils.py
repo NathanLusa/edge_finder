@@ -30,7 +30,7 @@ def save_content(url, content, save_type='wb'):
 
     with open(FILE_PATH + file_name, save_type) as f:
         f.write(content)
-        
+
 
 def get_content(url, get_content_method=None):
     file_name = f'{get_file_name(url)}.html'
@@ -44,7 +44,11 @@ def get_content(url, get_content_method=None):
         print(url)
         print('Download')
         time.sleep(2)
-        content = get_content_method(url) if get_content_method else get_content_requests(url)
+        content = (
+            get_content_method(url)
+            if get_content_method
+            else get_content_requests(url)
+        )
         content = content.encode('utf-8') if type(content) is str else content
         save_content(url, content, 'wb')
 
