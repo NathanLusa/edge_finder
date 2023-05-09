@@ -27,7 +27,7 @@ for base_declarative in BaseDeclarativeList:
 @app.get('/')
 async def read_root(request: Request, db: Session = Depends(get_db)):
     order = desc(VeiculoModel.id)
-    order = VeiculoHistoricoModel.valor
+    # order = VeiculoHistoricoModel.valor
 
     veiculos = (
         db.query(VeiculoModel)

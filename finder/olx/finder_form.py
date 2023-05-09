@@ -17,8 +17,8 @@ from utils import get_content
 SITE = 'https://www.olx.com.br'
 
 
-def _find(veiculo):
-    content, file_name = get_content(veiculo.url)
+def _find(veiculo, force):
+    content, file_name = get_content(veiculo.url, force=force)
     print(veiculo.url, file_name)
 
     soup = BeautifulSoup(content, 'html5lib')
@@ -64,7 +64,7 @@ def _find(veiculo):
         veiculo.add_historico(historico_json)
 
 
-def find_form():
+def find_form(force):
     veiculo_list = get_veiculos()
     historicos = get_historicos()
     imagens = get_imagens()
@@ -75,4 +75,4 @@ def find_form():
     veiculos.load_from_json(veiculo_list, historicos, imagens)
 
     for veiculo in veiculos:
-        _find(veiculo)
+        _find(veiculo, force)

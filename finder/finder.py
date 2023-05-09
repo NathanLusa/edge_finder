@@ -3,6 +3,7 @@ from olx.finder_form import find_form
 from olx.finder_lista import find_lista
 
 if __name__ == '__main__':
-    find_lista()
-    find_form()
-    find_lista_facebook()
+    _force = False
+    find_lista(_force)
+    find_form(_force)
+    # find_lista_facebook(_force)

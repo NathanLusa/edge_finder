@@ -80,7 +80,7 @@ class Selenium:
     def close_browser(self):
         self.browser.quit()
 
-    def scrape_facebook_marketplace(self, url, need_login):
+    def scrape_facebook_marketplace(self, url, need_login, force):
         lista = []
         # page_source = self.get_page_source(url)
         # page_source = get_content(url, self.get_page_source)
@@ -101,7 +101,7 @@ class Selenium:
             btn_login.click() if btn_login else None
             sleep(5)
 
-        page_source, file_name = get_content(url, self.get_page_source)
+        page_source, file_name = get_content(url, get_content_method=self.get_page_source, force=force)
         print('Download...', file_name, len(page_source))
 
         soup = BeautifulSoup(page_source, 'html.parser')
@@ -185,83 +185,88 @@ class Selenium:
         return lista
 
 
-def find_lista_facebook():
-    url = 'https://www.facebook.com/marketplace/curitiba/search/?query=ford%20edge&exact=true'
-
-    sel = Selenium()
-    lista = sel.scrape_facebook_marketplace(url, False)
+def find_lista_facebook(force):
+    urls = [
+        'https://www.facebook.com/marketplace/curitiba/search/?query=ford%20edge&exact=true', # Curitiba
+        'https://www.facebook.com/marketplace/105615689472731/search/?query=ford%20edge&exact=true', # Pato Branco
+        'https://www.facebook.com/marketplace/florianopolis/search/?query=ford%20edge&exact=true', # Florianápolis
+        'https://www.facebook.com/marketplace/109342319085733/search/?query=ford%20edge&exact=true', # São Sosé
+        'https://www.facebook.com/marketplace/113399188670230/search/?query=ford%20edge&exact=true', # Chapecó
+    ]
 
     veiculo_list = get_veiculos()
     veiculo_list = [x for x in veiculo_list if x['site'] == SITE]
-
     historicos = get_historicos()
     imagens = get_imagens()
 
     veiculos = VeiculoList()
     veiculos.load_from_json(veiculo_list, historicos, imagens)
 
-    for i in lista:
-        # year_span = li.find('span', {'aria-label': re.compile(r'Ano')})
-        # year = year_span.text if year_span else ''
+    for url in urls:
+        sel = Selenium()
+        lista = sel.scrape_facebook_marketplace(url, False, force)
+        for i in lista:
+            # year_span = li.find('span', {'aria-label': re.compile(r'Ano')})
+            # year = year_span.text if year_span else ''
 
-        year = 0
-        url = i['url']
-        title = i['titulo']
-        price = i['preco']
-        image = i['imagem']
+            year = 0
+            url = i['url']
+            title = i['titulo']
+            price = i['preco']
+            image = i['imagem']
 
-        if (not url) or (url == '') or (url == SITE):
-            continue
+            if (not url) or (url == '') or (url == SITE):
+                continue
 
-        if 'FORD EDGE' not in title.upper():
-            continue
+            if 'FORD EDGE' not in title.upper():
+                continue
 
-        veiculo = veiculos.get_veiculo(url)
-        if not veiculo:
-            veiculo_schema = VeiculoSchema(
-                marca='Ford',
-                modelo='Edge',
-                ano=year,
-                url=url,
-                titulo=title,
-                site=SITE,
-                status='ativo',
+            veiculo = veiculos.get_veiculo(url)
+            if not veiculo:
+                veiculo_schema = VeiculoSchema(
+                    marca='Ford',
+                    modelo='Edge',
+                    ano=year,
+                    url=url,
+                    titulo=title,
+                    site=SITE,
+                    status='ativo',
+                )
+                veiculo_json = post_veiculo(veiculo_schema.to_json())
+                veiculo = Veiculo()
+                veiculo.load_from_json(veiculo_json, [], [])
+                veiculos.append(veiculo)
+
+            imagem = veiculo.get_imagem(image)
+            if not imagem:
+                imagem_schema = VeiculoImagemSchema(
+                    veiculo_id=veiculo.id, url=image
+                )
+                imagem_json = post_veiculo_imagem(imagem_schema.to_json())
+                veiculo.add_imagem(imagem_json)
+
+            description = title
+            try:
+                price = round(float(price.split('\xa0')[1]) * 1000, 2)
+            except:
+                print('O preço do negócio é: ', price)
+                price = 0.0
+
+            km = 0
+            # for prop in json_data['ad']['properties']:
+            #     if prop['name'] == 'mileage':
+            #         km = prop['value']
+            #         km = int(km) * 1000 if int(km) <= 1000 else int(km)
+            #         break
+
+            hist = VeiculoHistoricoSchema(
+                veiculo_id=veiculo.id,
+                datahora=datetime.now().isoformat(),
+                valor=price,
+                quilometragem=km,
+                descricao=description,
             )
-            veiculo_json = post_veiculo(veiculo_schema.to_json())
-            veiculo = Veiculo()
-            veiculo.load_from_json(veiculo_json, [], [])
-            veiculos.append(veiculo)
-
-        imagem = veiculo.get_imagem(image)
-        if not imagem:
-            imagem_schema = VeiculoImagemSchema(
-                veiculo_id=veiculo.id, url=image
-            )
-            imagem_json = post_veiculo_imagem(imagem_schema.to_json())
-            veiculo.add_imagem(imagem_json)
-
-        description = title
-        try:
-            price = round(float(price.split('\xa0')[1]) * 1000, 2)
-        except:
-            print('O preço do negócio é: ', price)
-            price = 0.0
-
-        km = 0
-        # for prop in json_data['ad']['properties']:
-        #     if prop['name'] == 'mileage':
-        #         km = prop['value']
-        #         km = int(km) * 1000 if int(km) <= 1000 else int(km)
-        #         break
-
-        hist = VeiculoHistoricoSchema(
-            veiculo_id=veiculo.id,
-            datahora=datetime.now().isoformat(),
-            valor=price,
-            quilometragem=km,
-            descricao=description,
-        )
-        historico = veiculo.get_historico(hist.to_json())
-        if not historico:
-            historico_json = post_veiculo_historico(hist.to_json())
-            veiculo.add_historico(historico_json)
+            historico = veiculo.get_historico(hist.to_json())
+            if not historico:
+                historico_json = post_veiculo_historico(hist.to_json())
+                veiculo.add_historico(historico_json)
