@@ -45,6 +45,7 @@ def get_content(url, get_content_method=None):
         print('Download')
         time.sleep(2)
         content = get_content_method(url) if get_content_method else get_content_requests(url)
-        save_content(url, str(content), 'w')
+        content = content.encode('utf-8') if type(content) is str else content
+        save_content(url, content, 'wb')
 
     return content, file_name

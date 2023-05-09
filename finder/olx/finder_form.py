@@ -26,6 +26,8 @@ def _find(veiculo):
         print(f'Page not found?')
         return
 
+    # print(main_list['data-json'])
+    # breakpoint()
     json_data = json.loads(main_list['data-json'])
 
     for img in json_data['ad']['images']:
