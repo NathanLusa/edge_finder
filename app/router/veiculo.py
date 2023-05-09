@@ -1,11 +1,10 @@
-from typing import List
-
 from fastapi import Depends, HTTPException
 from fastapi_crudrouter import SQLAlchemyCRUDRouter as CRUDRouter
-from sqlalchemy.exc import IntegrityError
+from pydantic import BaseModel
 from sqlalchemy.orm import Session
 
 from app.database import get_db
+from app.enums import VeiculoStatus
 from app.models.veiculo import VeiculoHistoricoModel, VeiculoImagemModel, VeiculoModel
 from app.schemas.veiculo import Veiculo, VeiculoHistorico, VeiculoImagem
 
@@ -39,3 +38,16 @@ imagem_router = CRUDRouter(
     # get_all_route=False,
     delete_all_route=False,
 )
+
+
+class VeiculoStatusRequest(BaseModel):
+    status: VeiculoStatus
+
+@veiculo_router.post('/{item_id}/status', response_model=Veiculo)
+def update_status(item_id: int, status: VeiculoStatusRequest, db: Session = Depends(get_db)):
+    veiculo = db.query(VeiculoModel).filter(VeiculoModel.id == item_id).first()
+    if veiculo is None:
+        raise HTTPException(status_code=404, detail="Veiculo não encontrado")
+    veiculo.status = status.status
+    db.commit()
+    return veiculo

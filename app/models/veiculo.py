@@ -1,6 +1,7 @@
 from sqlalchemy import (
     Column,
     DateTime,
+    Enum,
     Float,
     ForeignKey,
     Integer,
@@ -10,6 +11,7 @@ from sqlalchemy import (
 from sqlalchemy.orm import relationship
 
 from app.database import Base
+from app.enums import VeiculoStatus
 
 
 class VeiculoModel(Base):
@@ -21,8 +23,12 @@ class VeiculoModel(Base):
     url = Column(String(500), unique=True)
     titulo = Column(String(500))
     site = Column(String(500))
+    status = Column(Enum(VeiculoStatus), default=VeiculoStatus.ativo)
     historicos = relationship('VeiculoHistoricoModel', backref='veiculo')
     imagens = relationship('VeiculoImagemModel', backref='veiculo')
+
+    def is_ativo(self):
+        return self.status == VeiculoStatus.ativo
 
 
 class VeiculoHistoricoModel(Base):

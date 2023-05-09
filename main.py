@@ -5,6 +5,7 @@ from sqlalchemy import desc
 from sqlalchemy.orm import Session, aliased
 
 from app.database import BaseDeclarativeList, engine, get_db
+from app.enums import VeiculoStatus
 from app.models.veiculo import VeiculoHistoricoModel, VeiculoModel
 from app.router.usuario import router as UsuarioRouter
 from app.router.veiculo import historico_router, imagem_router, veiculo_router
@@ -12,7 +13,7 @@ from app.router.veiculo import historico_router, imagem_router, veiculo_router
 templates = Jinja2Templates(directory='templates')
 
 app = FastAPI()
-# app.mount('/static', StaticFiles(directory='static'), name='static')
+app.mount('/static', StaticFiles(directory='static'), name='static')
 
 # app.include_router(UsuarioRouter)
 app.include_router(veiculo_router)
@@ -28,7 +29,7 @@ async def read_root(request: Request, db: Session = Depends(get_db)):
     order = desc(VeiculoModel.id)
     order = VeiculoHistoricoModel.valor
 
-    veiculos = db.query(VeiculoModel).join(VeiculoHistoricoModel).order_by(order)
+    veiculos = db.query(VeiculoModel).join(VeiculoHistoricoModel).filter(VeiculoModel.status == VeiculoStatus.ativo).order_by(order)
 
     return templates.TemplateResponse(
         'index.html',

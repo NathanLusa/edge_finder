@@ -1,6 +1,7 @@
 from datetime import datetime
 from typing import List
 
+from app.enums import VeiculoStatus
 from core.schemas import BaseSchema
 
 
@@ -30,6 +31,7 @@ class Veiculo(BaseSchema):
     url: str
     titulo: str
     site: str
+    status: VeiculoStatus
     # historicos: List[VeiculoHistorico] = []
     # imagens: List[VeiculoImagem] = []
 
