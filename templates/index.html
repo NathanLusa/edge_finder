@@ -16,10 +16,14 @@
     <div class="container p-5">
         <h1>Edge finder</h1>
 
+        <!-- SITES -->
         <div class="accordion accordion-flush" id="accordionFlushExample">
 
+            <!-- ITEM DO SITE -->
             {% for site in sites %}
             <div class="accordion-item">
+
+                <!-- ITEM DO SITE | CABECALHO -->
                 <h2 class="accordion-header">
                     <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
                         data-bs-target="#accordion-{{ site.nome }}" aria-expanded="false"
@@ -30,18 +34,23 @@
                         </h5>
                     </button>
                 </h2>
+
+                <!-- ITEM DO SITE | CORPO (LISTA) -->
                 <div id="accordion-{{ site.nome }}" class="accordion-collapse collapse"
                     data-bs-parent="#accordionFlushExample">
                     <div class="accordion-body">
+
+                        <!-- ITENS -->
                         {% for veiculo in site.veiculos %}
                         <div class="row mb-3 border">
 
+                            <!-- ESQUREDA | IMAGEM -->
                             <div class="col-xl-4 col-lg-4 col-md-12 col-sm-12 m-3">
 
-                                <div id="carousel-{{veiculo.id}}" class="carousel slide">
+                                <div id="carousel-{{veiculo.id}}-x" class="carousel slide">
                                     <div class="carousel-inner">
                                         {% if veiculo.imagens %}
-                                        {% for imagem in veiculo.imagens %}
+                                        {% for imagem in veiculo.imagensXX %}
                                         <div class="carousel-item {% if loop.first %} active {% endif %}">
                                             <img src="{{ imagem.url }}" class="d-block w-100" alt="..."
                                                 style="max-height: 300px; max-width: 400px;">
@@ -60,18 +69,19 @@
                                         {% endif %}
                                     </div>
                                     <button class="carousel-control-prev" type="button"
-                                        data-bs-target="#carousel-{{veiculo.id}}" data-bs-slide="prev">
+                                        data-bs-target="#carousel-{{veiculo.id}}-x" data-bs-slide="prev">
                                         <span class="carousel-control-prev-icon" aria-hidden="true"></span>
                                         <span class="visually-hidden">Previous</span>
                                     </button>
                                     <button class="carousel-control-next" type="button"
-                                        data-bs-target="#carousel-{{veiculo.id}}" data-bs-slide="next">
+                                        data-bs-target="#carousel-{{veiculo.id}}-x" data-bs-slide="next">
                                         <span class="carousel-control-next-icon" aria-hidden="true"></span>
                                         <span class="visually-hidden">Next</span>
                                     </button>
                                 </div>
                             </div>
 
+                            <!-- DIREITA | DESCRICAO -->
                             <div class="col-xl-7 col-lg-7 col-md-12 col-sm-12 mt-3">
                                 <div class="overflow-scroll" style="max-height: 400px">
                                     <div class="d-flex justify-content-between">
@@ -115,7 +125,13 @@
 
     </div>
 
+
+    <div id="teste" class="row mb-3 border">
+
+    </div>
+
     <script src="{{ url_for('static', path='/js/index.js') }}"></script>
+    <script src="{{ url_for('static', path='/js/components/item.js') }}"></script>
 
     <script src="https://kit.fontawesome.com/417f08d9c2.js" crossorigin="anonymous"></script>
 

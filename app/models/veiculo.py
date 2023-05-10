@@ -24,8 +24,8 @@ class VeiculoModel(Base):
     titulo = Column(String(500))
     site = Column(String(500))
     status = Column(Enum(VeiculoStatus), default=VeiculoStatus.ativo)
-    historicos = relationship('VeiculoHistoricoModel', backref='veiculo')
-    imagens = relationship('VeiculoImagemModel', backref='veiculo')
+    historicos = relationship('VeiculoHistoricoModel', backref='veiculo', lazy='joined')
+    imagens = relationship('VeiculoImagemModel', backref='veiculo', lazy='joined')
 
     def is_ativo(self):
         return self.status == VeiculoStatus.ativo

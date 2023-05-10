@@ -15,3 +15,15 @@ checkbox_list.forEach((checkbox) => {
       });
   });
 });
+
+const teste = document.getElementById("teste");
+
+async function load() {
+  const veiculos = await get_veiculos();
+
+  for (const veiculoX of veiculos) {
+    teste.innerHTML += await get_item(veiculoX);
+  }
+}
+
+window.onload = async () => await load();

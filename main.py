@@ -49,15 +49,32 @@ async def read_root(request: Request, db: Session = Depends(get_db)):
                         )
                     ),
                 },
-                {
-                    'nome': 'Facebook',
-                    'veiculos': list(
-                        veiculos.filter(
-                            VeiculoModel.site == 'https://www.facebook.com'
-                        )
-                    ),
-                },
+                # {
+                #     'nome': 'Facebook',
+                #     'veiculos': list(
+                #         veiculos.filter(
+                #             VeiculoModel.site == 'https://www.facebook.com'
+                #         )
+                #     ),
+                # },
             ],
             'colunas': range(1, 13),
         },
     )
+
+
+@app.get('/veiculolista')
+async def veiculo_lista(db: Session = Depends(get_db)):
+    order = desc(VeiculoModel.id)
+    # order = VeiculoHistoricoModel.valor
+
+    veiculos = (
+        db.query(VeiculoModel)
+        .join(VeiculoHistoricoModel)
+        .filter(VeiculoModel.status == VeiculoStatus.ativo)
+        .filter(VeiculoModel.site == 'https://www.olx.com.br')
+        .order_by(order)
+        .all()
+    )
+
+    return veiculos
