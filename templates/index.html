@@ -50,10 +50,10 @@
                                 <div id="carousel-{{veiculo.id}}-x" class="carousel slide">
                                     <div class="carousel-inner">
                                         {% if veiculo.imagens %}
-                                        {% for imagem in veiculo.imagensXX %}
+                                        {% for imagem in veiculo.imagens %}
                                         <div class="carousel-item {% if loop.first %} active {% endif %}">
                                             <img src="{{ imagem.url }}" class="d-block w-100" alt="..."
-                                                style="max-height: 300px; max-width: 400px;">
+                                                style="max-height: 300px; max-width: 400px;" loading="lazy">
                                         </div>
                                         {% endfor %}
                                         {% else %}
@@ -126,7 +126,7 @@
     </div>
 
 
-    <div id="teste" class="row mb-3 border">
+    <div id="teste" class="row mb-3 borderX">
 
     </div>
 

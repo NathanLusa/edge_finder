@@ -39,7 +39,7 @@ async function get_item(veiculo) {
                         }">
                             <img src="${
                               imagem.url
-                            }" class="d-block w-100" alt="..." style="max-height: 300px; max-width: 400px;">
+                            }" class="d-block w-100" alt="..." style="max-height: 300px; max-width: 400px;" loading="lazy">
                         </div>            
                         `
                       )

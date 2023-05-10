@@ -18,12 +18,52 @@ checkbox_list.forEach((checkbox) => {
 
 const teste = document.getElementById("teste");
 
-async function load() {
-  const veiculos = await get_veiculos();
+async function get_site(site) {
+  return `
+    <div class="accordion-item">
 
-  for (const veiculoX of veiculos) {
-    teste.innerHTML += await get_item(veiculoX);
+    <!-- ITEM DO SITE | CABECALHO -->
+    <h2 class="accordion-header">
+        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+            data-bs-target="#Xaccordion-${
+              site.nome
+            }" aria-expanded="false" aria-controls="accordion-${site.nome}">
+            <h5>
+                <span class="badge rounded-pill bg-danger">${0}</span>
+                ${site.nome}
+            </h5>
+        </button>
+    </h2>
+
+    <!-- ITEM DO SITE | CORPO (LISTA) -->
+    <div id="Xaccordion-${
+      site.nome
+    }" class="accordion-collapse collapse" data-bs-parent="#accordionFlushExample">
+        <div class="accordion-body">
+          ${() => {
+            for (const veiculoX of site.veiculos) {
+              get_item(veiculoX);
+            }
+          }}
+        </div>
+        </div>
+    </div>
+  `;
+}
+
+async function load() {
+  const sites = await get_veiculos();
+
+  let _html = "";
+
+  for (const site of sites) {
+    _html += await get_site(site);
+    // for (const veiculoX of site.veiculos) {
+    //   _html += await get_item(veiculoX);
+    // }
   }
+
+  teste.innerHTML = _html;
 }
 
 window.onload = async () => await load();
