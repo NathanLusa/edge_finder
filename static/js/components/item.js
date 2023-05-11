@@ -37,7 +37,7 @@ async function get_item(veiculo) {
                         <div class="carousel-item${
                           index == 0 ? " active" : ""
                         }">
-                            <img src="${
+                            <img srXc="${
                               imagem.url
                             }" class="d-block w-100" alt="..." style="max-height: 300px; max-width: 400px;" loading="lazy">
                         </div>            
@@ -98,4 +98,125 @@ async function get_item(veiculo) {
     `;
 
   return _html;
+}
+
+// const Sites = function () {};
+
+// Sites.prototype.get_template() = async function() {
+//   const site = {'nome': 'Teste', 'veiculos': []}
+//   let template = `
+//     <div class="accordion-item">
+
+//       <!-- ITEM DO SITE | CABECALHO -->
+//       <h2 class="accordion-header">
+//           <button class="accordion-button " type="button" data-bs-toggle="collapse"
+//               data-bs-target="#Xaccordion-${site.nome}" aria-expanded="true" aria-controls="accordion-${site.nome}">
+//               <h5>
+//                   <span class="badge rounded-pill bg-danger">${0}</span>
+//                   ${site.nome}
+//               </h5>
+//           </button>
+//       </h2>
+
+//       <!-- ITEM DO SITE | CORPO (LISTA) -->
+//       <div id="Xaccordion-${site.nome}" class="accordion-collapse collapse show" data-bs-parent="#accordionFlushExample">
+//           <div class="accordion-body">
+//             ${site.veiculos.map((veiculoX) =>
+//               get_item(veiculoX).then((data) => data)
+//             )}}
+//           </div>
+//           </div>
+//       </div>
+//     `;
+//   return template;
+// };
+
+class SiteItem {
+  constructor(site) {
+    this.site = site;
+    this.veiculo_item = new VeiculoItem();
+  }
+
+  async get_template() {
+    return `
+    <div class="accordion-item">
+
+      <!-- ITEM DO SITE | CABECALHO -->
+      <h2 class="accordion-header">
+          <button class="accordion-button " type="button" data-bs-toggle="collapse"
+              data-bs-target="#Xaccordion-${
+                this.site.nome
+              }" aria-expanded="true" aria-controls="accordion-${
+      this.site.nome
+    }">
+              <h5>
+                  <span class="badge rounded-pill bg-danger">${
+                    this.site.veiculos.length
+                  }</span>
+                  ${this.site.nome}
+              </h5>
+          </button>
+      </h2>
+
+      <!-- ITEM DO SITE | CORPO (LISTA) -->
+      <div id="Xaccordion-${
+        this.site.nome
+      }" class="accordion-collapse collapse show" data-bs-parent="#accordionFlushExample">
+          <div class="accordion-body">
+            ${await this.veiculo_item.get_template(this.site.veiculos)}
+          </div>
+          </div>
+      </div>
+    `;
+  }
+}
+
+class VeiculoItem {
+  constructor() {}
+
+  async get_template(veiculos) {
+    let template = "";
+
+    for (const veiculo of veiculos) {
+      template += await get_item(veiculo);
+    }
+    return template;
+  }
+}
+
+class ContentPane {
+  constructor(site) {
+    this.site = site;
+  }
+
+  async getTemplate() {
+    const filmsTemplate = await new Films().render();
+    let template = `
+        <div class="contentPane" id="contentPane">
+        ${filmsTemplate}
+        ${this.site}
+        </div>
+    `;
+    return template;
+  }
+}
+
+class Films {
+  constructor() {}
+
+  async render() {
+    var template = this.getTemplate();
+    const val = await template;
+    return val;
+    //based on the value resolved by promise,
+    //appropriate template should be returned to parent
+  }
+
+  async getTemplate() {
+    //make network call
+    //create template based on server response
+    return await new Promise((resolve) => {
+      resolve("123");
+    });
+  }
 }
