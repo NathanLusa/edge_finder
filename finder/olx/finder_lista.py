@@ -53,5 +53,5 @@ def find_lista(force):
     _find(
         veiculos,
         f'https://www.olx.com.br/autos-e-pecas/carros-vans-e-utilitarios/ford/edge/estado-{_uf}?pe=80000&re=33&rs=29',
-        force
+        force,
     )

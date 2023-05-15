@@ -17,121 +17,12 @@
         <h1>Edge finder</h1>
 
         <!-- SITES -->
-        <div class="accordion accordion-flush" id="accordionFlushExample">
-
-            <!-- ITEM DO SITE -->
-            {% for site in sites %}
-            <div class="accordion-item">
-
-                <!-- ITEM DO SITE | CABECALHO -->
-                <h2 class="accordion-header">
-                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
-                        data-bs-target="#accordion-{{ site.nome }}" aria-expanded="false"
-                        aria-controls="accordion-{{ site.nome }}">
-                        <h5>
-                            <span class="badge rounded-pill bg-danger">{{ site.veiculos | count }}</span>
-                            {{ site.nome }}
-                        </h5>
-                    </button>
-                </h2>
-
-                <!-- ITEM DO SITE | CORPO (LISTA) -->
-                <div id="accordion-{{ site.nome }}" class="accordion-collapse collapse"
-                    data-bs-parent="#accordionFlushExample">
-                    <div class="accordion-body">
-
-                        <!-- ITENS -->
-                        {% for veiculo in site.veiculos %}
-                        <div class="row mb-3 border">
-
-                            <!-- ESQUREDA | IMAGEM -->
-                            <div class="col-xl-4 col-lg-4 col-md-12 col-sm-12 m-3">
-
-                                <div id="carousel-{{veiculo.id}}-x" class="carousel slide">
-                                    <div class="carousel-inner">
-                                        {% if veiculo.imagens %}
-                                        {% for imagem in veiculo.imagens %}
-                                        <div class="carousel-item {% if loop.first %} active {% endif %}">
-                                            <img src="{{ imagem.url }}" class="d-block w-100" alt="..."
-                                                style="max-height: 300px; max-width: 400px;" loading="lazy">
-                                        </div>
-                                        {% endfor %}
-                                        {% else %}
-                                        <div class="carousel-item active">
-                                            <svg class="bd-placeholder-img bd-placeholder-img-lg d-block w-100"
-                                                width="800" height="400" xmlns="http://www.w3.org/2000/svg" role="img"
-                                                aria-label="Placeholder: First slide"
-                                                preserveAspectRatio="xMidYMid slice" focusable="false">
-                                                <rect width="100%" height="100%" fill="#777"></rect><text x="50%"
-                                                    y="50%" fill="#555" dy=".3em"></text>
-                                            </svg>
-                                        </div>
-                                        {% endif %}
-                                    </div>
-                                    <button class="carousel-control-prev" type="button"
-                                        data-bs-target="#carousel-{{veiculo.id}}-x" data-bs-slide="prev">
-                                        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                                        <span class="visually-hidden">Previous</span>
-                                    </button>
-                                    <button class="carousel-control-next" type="button"
-                                        data-bs-target="#carousel-{{veiculo.id}}-x" data-bs-slide="next">
-                                        <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                                        <span class="visually-hidden">Next</span>
-                                    </button>
-                                </div>
-                            </div>
-
-                            <!-- DIREITA | DESCRICAO -->
-                            <div class="col-xl-7 col-lg-7 col-md-12 col-sm-12 mt-3">
-                                <div class="overflow-scroll" style="max-height: 400px">
-                                    <div class="d-flex justify-content-between">
-                                        <h5><a href="{{ veiculo.url }}" target="_blank">{{ veiculo.id }} - {{
-                                                veiculo.titulo
-                                                }}</a></h5>
-
-                                        <div class="form-check form-switch">
-                                            <input class="form-check-input veiculo-status" type="checkbox"
-                                                data-veiculo_id="{{ veiculo.id }}" {% if veiculo.is_ativo %} checked {%
-                                                endif %}>
-                                        </div>
-                                    </div>
-
-                                    <div mb-3 bg-body-tertiary w-100">
-                                        <hr class="hr" />
-                                        {% for historico in veiculo.historicos|sort(attribute='datahora', reverse=True)
-                                        %}
-                                        <h6>{{ historico.descricao }}</h6>
-                                        <h6><span class="badge bg-primary"><i
-                                                    class="fa-solid fa-sack-dollar"></i></span> {{
-                                            historico.valor }}</h6>
-                                        <h6><span class="badge bg-primary"><i class="fa-regular fa-gauge"></i></span> {{
-                                            historico.quilometragem }}</h6>
-                                        <h6><span class="badge bg-primary"><i class="fa-solid fa-clock"></i></span> {{
-                                            historico.datahora }}</h6>
-                                        <hr class="hr" />
-                                        {% endfor %}
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        {% endfor %}
-
-                    </div>
-                </div>
-            </div>
-            {% endfor %}
-
+        <div class="accordion accordion-flush" id="accordionFlush">
         </div>
 
     </div>
 
-
-    <div id="teste" class="row mb-3 borderX">
-
-    </div>
-
-    <script src="{{ url_for('static', path='/js/index.js') }}"></script>
-    <script src="{{ url_for('static', path='/js/components/item.js') }}"></script>
+    <script type="module" src="{{ url_for('static', path='/js/index.js') }}"></script>
 
     <script src="https://kit.fontawesome.com/417f08d9c2.js" crossorigin="anonymous"></script>
 

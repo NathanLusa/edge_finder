@@ -101,7 +101,9 @@ class Selenium:
             btn_login.click() if btn_login else None
             sleep(5)
 
-        page_source, file_name = get_content(url, get_content_method=self.get_page_source, force=force)
+        page_source, file_name = get_content(
+            url, get_content_method=self.get_page_source, force=force
+        )
         print('Download...', file_name, len(page_source))
 
         soup = BeautifulSoup(page_source, 'html.parser')
@@ -187,11 +189,11 @@ class Selenium:
 
 def find_lista_facebook(force):
     urls = [
-        'https://www.facebook.com/marketplace/curitiba/search/?query=ford%20edge&exact=true', # Curitiba
-        'https://www.facebook.com/marketplace/105615689472731/search/?query=ford%20edge&exact=true', # Pato Branco
-        'https://www.facebook.com/marketplace/florianopolis/search/?query=ford%20edge&exact=true', # Florianápolis
-        'https://www.facebook.com/marketplace/109342319085733/search/?query=ford%20edge&exact=true', # São Sosé
-        'https://www.facebook.com/marketplace/113399188670230/search/?query=ford%20edge&exact=true', # Chapecó
+        'https://www.facebook.com/marketplace/curitiba/search/?query=ford%20edge&exact=true',  # Curitiba
+        'https://www.facebook.com/marketplace/105615689472731/search/?query=ford%20edge&exact=true',  # Pato Branco
+        'https://www.facebook.com/marketplace/florianopolis/search/?query=ford%20edge&exact=true',  # Florianápolis
+        'https://www.facebook.com/marketplace/109342319085733/search/?query=ford%20edge&exact=true',  # São Sosé
+        'https://www.facebook.com/marketplace/113399188670230/search/?query=ford%20edge&exact=true',  # Chapecó
     ]
 
     veiculo_list = get_veiculos()
