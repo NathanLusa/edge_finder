@@ -1,10 +1,10 @@
 import { createSite } from "./components/Site.js";
+import { get_veiculos } from "./services.js";
 
-async function get_veiculos() {
-  const response = await fetch("http://127.0.0.1:8000/veiculolista");
-  const json = await response.json();
-  return json;
-}
+const divFilter = document.getElementById("filter");
+const teste = document.getElementById("accordionFlush");
+const btn = document.getElementById("btn-teste");
+let sites = [];
 
 function setCheckBoxChangeStatusEvent() {
   const checkbox_list = document.querySelectorAll("input.veiculo-status");
@@ -26,11 +26,26 @@ function setCheckBoxChangeStatusEvent() {
   });
 }
 
-const teste = document.getElementById("accordionFlush");
+btn.onclick = (e) => {
+  console.log(sites);
+  sites = sites.sort((a, b) => {
+    const nameA = a.nome.toUpperCase(); // ignore upper and lowercase
+    const nameB = b.nome.toUpperCase(); // ignore upper and lowercase
+    if (nameA < nameB) {
+      return -1;
+    }
+    if (nameA > nameB) {
+      return 1;
+    }
 
-async function load() {
-  const sites = await get_veiculos();
+    // names must be equal
+    return 0;
+  });
+  console.log(sites);
+  render();
+};
 
+async function render() {
   let _html = "";
 
   for (const site of sites) {
@@ -42,4 +57,36 @@ async function load() {
   setCheckBoxChangeStatusEvent();
 }
 
-window.onload = async () => await load();
+/////
+get_veiculos().then((data) => {
+  sites = data;
+  render();
+
+  // Make filters
+
+  let status = new Set();
+
+  for (const site of sites) {
+    for (const veiculo of site.veiculos) {
+      status.add(veiculo.status);
+    }
+  }
+
+  for (const item of status) {
+    const checkbox = document.createElement("input");
+    checkbox.type = "checkbox";
+    checkbox.id = item;
+    checkbox.dataset.veiculo_id = item;
+    checkbox.className = "veiculo-status";
+    checkbox.checked = item === "ativo";
+    divFilter.appendChild(checkbox);
+
+    const label = document.createElement("label");
+    label.htmlFor = item;
+    label.innerText = item;
+    divFilter.appendChild(label);
+    divFilter.appendChild(document.createElement("br"));
+  }
+});
+
+// window.onload = async () => await render();

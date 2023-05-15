@@ -78,12 +78,14 @@ async def veiculo_lista(db: Session = Depends(get_db)):
 
     sites = [
         {
+            'id': 2,
             'nome': 'Olx',
             'veiculos': veiculos.filter(
                 VeiculoModel.site == 'https://www.olx.com.br'
             ).all(),
         },
         {
+            'id': 1,
             'nome': 'Facebook',
             'veiculos': veiculos.filter(
                 VeiculoModel.site == 'https://www.facebook.com'
