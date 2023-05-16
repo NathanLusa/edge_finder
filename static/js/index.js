@@ -1,5 +1,5 @@
 import { createSite } from "./components/Site.js";
-import { get_veiculos } from "./services.js";
+import { get_veiculos, verificar_imagens } from "./services.js";
 
 const divFilter = document.getElementById("filter");
 const teste = document.getElementById("accordionFlush");
@@ -27,6 +27,8 @@ function setCheckBoxChangeStatusEvent() {
 }
 
 btn.onclick = (e) => {
+  // verificar_imagens(teste);
+  return;
   console.log(sites);
   sites = sites.sort((a, b) => {
     const nameA = a.nome.toUpperCase(); // ignore upper and lowercase
@@ -63,30 +65,6 @@ get_veiculos().then((data) => {
   render();
 
   // Make filters
-
-  let status = new Set();
-
-  for (const site of sites) {
-    for (const veiculo of site.veiculos) {
-      status.add(veiculo.status);
-    }
-  }
-
-  for (const item of status) {
-    const checkbox = document.createElement("input");
-    checkbox.type = "checkbox";
-    checkbox.id = item;
-    checkbox.dataset.veiculo_id = item;
-    checkbox.className = "veiculo-status";
-    checkbox.checked = item === "ativo";
-    divFilter.appendChild(checkbox);
-
-    const label = document.createElement("label");
-    label.htmlFor = item;
-    label.innerText = item;
-    divFilter.appendChild(label);
-    divFilter.appendChild(document.createElement("br"));
-  }
 });
 
 // window.onload = async () => await render();

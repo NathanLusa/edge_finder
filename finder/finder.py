@@ -4,6 +4,7 @@ from olx.finder_lista import find_lista
 
 if __name__ == '__main__':
     _force = False
+    # _force = True
     find_lista(_force)
     find_form(_force)
     find_lista_facebook(_force)

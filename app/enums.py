@@ -6,6 +6,12 @@ class VeiculoStatus(enum.Enum):
     inativo = 'inativo'
 
 
+class VeiculoImagemStatus(enum.Enum):
+    ativo = 'ativo'
+    inativo = 'inativo'
+    token_invalido = 'token_invalido'
+
+
 class ContaTipoEnum(enum.IntEnum):
     CORRENTE = 0
     POUPANCA = 1

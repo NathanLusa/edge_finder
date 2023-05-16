@@ -31,10 +31,12 @@ class VeiculoHistoricoList(List[VeiculoHistorico]):
 class VeiculoImagem:
     id: int
     url: str
+    status: str
 
     def load_from_json(self, imagem):
         self.id = imagem['id']
         self.url = imagem['url']
+        self.status = imagem['status']
 
 
 class VeiculoImagemList(List[VeiculoImagem]):

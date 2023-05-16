@@ -1,7 +1,7 @@
 from datetime import datetime
 from typing import List
 
-from app.enums import VeiculoStatus
+from app.enums import VeiculoStatus, VeiculoImagemStatus
 from core.schemas import BaseSchema
 
 
@@ -19,6 +19,7 @@ class VeiculoHistorico(BaseSchema):
 class VeiculoImagem(BaseSchema):
     url: str
     veiculo_id: int
+    status: VeiculoImagemStatus
 
     class Config:
         orm_mode = True

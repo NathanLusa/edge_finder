@@ -1,3 +1,5 @@
+import requests
+
 from fastapi import Depends, FastAPI, Request
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
@@ -5,8 +7,8 @@ from sqlalchemy import desc
 from sqlalchemy.orm import Session, aliased
 
 from app.database import BaseDeclarativeList, engine, get_db
-from app.enums import VeiculoStatus
-from app.models.veiculo import VeiculoHistoricoModel, VeiculoModel
+from app.enums import VeiculoStatus, VeiculoImagemStatus
+from app.models.veiculo import VeiculoHistoricoModel, VeiculoImagemModel, VeiculoModel
 from app.router.usuario import router as UsuarioRouter
 from app.router.veiculo import historico_router, imagem_router, veiculo_router
 
@@ -23,6 +25,31 @@ app.include_router(imagem_router)
 for base_declarative in BaseDeclarativeList:
     base_declarative.metadata.create_all(bind=engine)
 
+
+@app.post('/verificarimagens')
+async def verificar_imagens(db: Session = Depends(get_db)):
+    imagens = (
+        db.query(VeiculoImagemModel)
+        .filter(VeiculoImagemModel.status == VeiculoImagemStatus.ativo)
+        .filter(VeiculoImagemModel.url.like('%fbcdn%'))
+        .all()
+    )
+
+    for imagem in imagens:
+        response = requests.get(imagem.url)
+        print(imagem.url, imagem.status, response.status_code)
+        status = imagem.status
+        if response.status_code == 403:
+            status = VeiculoImagemStatus.token_invalido
+        elif response.status_code == 404:
+            status = VeiculoImagemStatus.inativo
+
+        imagem.status = status
+        db.commit()
+
+    imagens = db.query(VeiculoImagemModel).filter(VeiculoImagemModel.status != VeiculoImagemStatus.ativo).all()
+
+    return {'status': 'ok', 'imagens': imagens}
 
 @app.get('/')
 async def read_root(request: Request, db: Session = Depends(get_db)):
@@ -75,6 +102,8 @@ async def veiculo_lista(db: Session = Depends(get_db)):
         .filter(VeiculoModel.status == VeiculoStatus.ativo)
         .order_by(order)
     )
+        # .outerjoin(VeiculoImagemModel, onclause=( (VeiculoModel.id == VeiculoImagemModel.veiculo_id) & (VeiculoImagemModel.status != VeiculoImagemStatus.ativo) ))
+        # .filter(VeiculoImagemModel.status != VeiculoImagemStatus.ativo)
 
     sites = [
         {

@@ -4,3 +4,20 @@ export async function get_veiculos() {
   // return json;
   return new Promise((resolve) => resolve(json));
 }
+
+export function verificar_imagens(element) {
+  const response = fetch("http://127.0.0.1:8000/verificarimagens", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+  });
+  // .then((response) => response.json())
+  // .then((json) => {
+  //   element.innerHTML = "";
+  //   for (const imagen of json.imagens) {
+  //     console.log(imagen.url);
+  //     // element.innerHTML += `<img src="${imagen.url}" alt="imagem" width="200px" height="200px">`;
+  //   }
+  // });
+}
