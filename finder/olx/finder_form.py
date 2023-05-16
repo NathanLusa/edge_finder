@@ -36,7 +36,7 @@ def _find(veiculo, force):
         imagem = veiculo.get_imagem(img['original'])
         if not imagem:
             imagem_schema = VeiculoImagemSchema(
-                veiculo_id=veiculo.id, url=img['original']
+                veiculo_id=veiculo.id, url=img['original'], status='ativo'
             )
             imagem_json = post_veiculo_imagem(imagem_schema.to_json())
             veiculo.add_imagem(imagem_json)

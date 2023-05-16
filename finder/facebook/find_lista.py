@@ -242,7 +242,7 @@ def find_lista_facebook(force):
             imagem = veiculo.get_imagem(image)
             if not imagem:
                 imagem_schema = VeiculoImagemSchema(
-                    veiculo_id=veiculo.id, url=image
+                    veiculo_id=veiculo.id, url=image, status='ativo'
                 )
                 imagem_json = post_veiculo_imagem(imagem_schema.to_json())
                 veiculo.add_imagem(imagem_json)

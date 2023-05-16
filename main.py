@@ -93,8 +93,9 @@ async def read_root(request: Request, db: Session = Depends(get_db)):
 
 @app.get('/veiculolista')
 async def veiculo_lista(db: Session = Depends(get_db)):
-    order = desc(VeiculoModel.id)
-    order = VeiculoHistoricoModel.valor
+    # order = desc(VeiculoModel.id)
+    order = VeiculoModel.id
+    # order = VeiculoHistoricoModel.valor
 
     veiculos = (
         db.query(VeiculoModel)
@@ -118,6 +119,13 @@ async def veiculo_lista(db: Session = Depends(get_db)):
             'nome': 'Facebook',
             'veiculos': veiculos.filter(
                 VeiculoModel.site == 'https://www.facebook.com'
+            ).all(),
+        },
+        {
+            'id': 3,
+            'nome': 'SoCarrao',
+            'veiculos': veiculos.filter(
+                VeiculoModel.site == 'https://www.socarrao.com.br'
             ).all(),
         },
     ]
