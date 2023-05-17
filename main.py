@@ -94,8 +94,9 @@ async def read_root(request: Request, db: Session = Depends(get_db)):
 @app.get('/veiculolista')
 async def veiculo_lista(db: Session = Depends(get_db)):
     # order = desc(VeiculoModel.id)
-    order = VeiculoModel.id
+    # order = VeiculoModel.id
     # order = VeiculoHistoricoModel.valor
+    order = desc(VeiculoHistoricoModel.datahora)
 
     veiculos = (
         db.query(VeiculoModel)
@@ -108,14 +109,14 @@ async def veiculo_lista(db: Session = Depends(get_db)):
 
     sites = [
         {
-            'id': 2,
+            'id': 1,
             'nome': 'Olx',
             'veiculos': veiculos.filter(
                 VeiculoModel.site == 'https://www.olx.com.br'
             ).all(),
         },
         {
-            'id': 1,
+            'id': 2,
             'nome': 'Facebook',
             'veiculos': veiculos.filter(
                 VeiculoModel.site == 'https://www.facebook.com'

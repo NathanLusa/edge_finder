@@ -187,7 +187,7 @@ class Selenium:
         return lista
 
 
-def find_lista_facebook(force):
+def find_facebook(force):
     urls = [
         'https://www.facebook.com/marketplace/curitiba/search/?query=ford%20edge&exact=true',  # Curitiba
         'https://www.facebook.com/marketplace/105615689472731/search/?query=ford%20edge&exact=true',  # Pato Branco

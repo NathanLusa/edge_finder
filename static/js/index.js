@@ -72,7 +72,9 @@ btn.onclick = (e) => {
       const veiculo = site.veiculos.find(
         (veiculo) => veiculo.id === historico.veiculo_id
       );
-      veiculos.push(veiculo);
+      if (!veiculos.find((xveiculo) => xveiculo.id === veiculo.id)) {
+        veiculos.push(veiculo);
+      }
     }
 
     site.veiculos = veiculos;
