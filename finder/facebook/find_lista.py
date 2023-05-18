@@ -14,6 +14,7 @@ from services.schemas import VeiculoHistoricoSchema, VeiculoImagemSchema, Veicul
 from services.services import *
 from utils import get_content, save_content
 from webdriver_manager.chrome import ChromeDriverManager
+import time
 
 USER = getpass.getuser()
 SITE = 'https://www.facebook.com'
@@ -80,35 +81,40 @@ class Selenium:
     def close_browser(self):
         self.browser.quit()
 
-    def scrape_facebook_marketplace(self, url, need_login, force):
-        lista = []
-        # page_source = self.get_page_source(url)
-        # page_source = get_content(url, self.get_page_source)
-
-        if need_login:
-            self.browser.get('https://facebook.com')
-            login_input = self.browser.find_element(by=By.ID, value='email')
-            pass_input = self.browser.find_element(by=By.ID, value='pass')
-            btn_login = self.browser.find_element(
-                by=By.XPATH, value='//*[@data-testid="royal_login_button"]'
-            )
-            login_input.send_keys(
-                'ceviu1234@gmail.com'
-            ) if login_input else None
-            pass_input.send_keys(
-                'YZL7dTV62WRkkM8Y6#t$'
-            ) if pass_input else None
-            btn_login.click() if btn_login else None
-            sleep(5)
-
-        page_source, file_name = get_content(
-            url, get_content_method=self.get_page_source, force=force
+    def login(self):
+        self.browser.get('https://facebook.com')
+        login_input = self.browser.find_element(by=By.ID, value='email')
+        pass_input = self.browser.find_element(by=By.ID, value='pass')
+        btn_login = self.browser.find_element(
+            by=By.XPATH, value='//*[@data-testid="royal_login_button"]'
         )
+        login_input.send_keys(
+            'ceviu1234@gmail.com'
+        ) if login_input else None
+        pass_input.send_keys(
+            'YZL7dTV62WRkkM8Y6#t$'
+        ) if pass_input else None
+        btn_login.click() if btn_login else None
+        sleep(5)
+        print('Login realizado com sucesso!')
+
+    def get_soup(self, url, force):
+        page_source, file_name = get_content(url, get_content_method=self.get_page_source, force=force)
         print('Download...', file_name, len(page_source))
 
         soup = BeautifulSoup(page_source, 'html.parser')
         [x.extract() for x in soup.findAll('script')]
         save_content(url, str(soup), 'w')
+
+        return soup
+
+    def scrape_facebook_marketplace(self, url, need_login, force):
+        lista = []
+
+        if need_login:
+            self.login()
+
+        soup = self.get_soup(url, force)
 
         div = soup.find('div', class_='xkrivgy x1gryazu x1n2onr6')
         div = div.find_all(
@@ -186,8 +192,15 @@ class Selenium:
 
         return lista
 
+    def scrape_facebook_marketplace_item(self, url, need_login, force):
+        if need_login:
+            self.login()
+
+        soup = self.get_soup(url, force)
+
 
 def find_facebook(force):
+    _need_login = False
     urls = [
         'https://www.facebook.com/marketplace/curitiba/search/?query=ford%20edge&exact=true',  # Curitiba
         'https://www.facebook.com/marketplace/105615689472731/search/?query=ford%20edge&exact=true',  # Pato Branco
@@ -204,9 +217,13 @@ def find_facebook(force):
     veiculos = VeiculoList()
     veiculos.load_from_json(veiculo_list, historicos, imagens)
 
+    sel = Selenium()
+    sel.scrape_facebook_marketplace(veiculos[0].url, _need_login, force)
+
+    return
     for url in urls:
         sel = Selenium()
-        lista = sel.scrape_facebook_marketplace(url, False, force)
+        lista = sel.scrape_facebook_marketplace(url, _need_login, force)
         for i in lista:
             # year_span = li.find('span', {'aria-label': re.compile(r'Ano')})
             # year = year_span.text if year_span else ''

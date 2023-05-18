@@ -93,14 +93,14 @@ async def read_root(request: Request, db: Session = Depends(get_db)):
 
 @app.get('/veiculolista')
 async def veiculo_lista(db: Session = Depends(get_db)):
-    # order = desc(VeiculoModel.id)
+    order = desc(VeiculoModel.id)
     # order = VeiculoModel.id
     # order = VeiculoHistoricoModel.valor
-    order = desc(VeiculoHistoricoModel.datahora)
+    # order = desc(VeiculoHistoricoModel.datahora)
 
     veiculos = (
         db.query(VeiculoModel)
-        .join(VeiculoHistoricoModel)
+        # .join(VeiculoHistoricoModel)
         .filter(VeiculoModel.status == VeiculoStatus.ativo)
         .order_by(order)
     )
