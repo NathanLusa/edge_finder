@@ -31,6 +31,7 @@ def save_content(url, content, save_type='wb'):
 
 
 def get_content(url, get_content_method=None, force=False):
+    content = None
     file_name = f'{get_file_name(url)}.html'
     if not os.path.exists(FILE_PATH):
         os.makedirs(FILE_PATH)

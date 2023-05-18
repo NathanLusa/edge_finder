@@ -4,6 +4,8 @@ import enum
 class VeiculoStatus(enum.Enum):
     ativo = 'ativo'
     inativo = 'inativo'
+    vendido = 'vendido'
+    indisponivel = 'indisponivel'
 
 
 class VeiculoImagemStatus(enum.Enum):

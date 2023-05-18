@@ -1,5 +1,6 @@
 import getpass
 import json
+import time
 from datetime import datetime
 from time import sleep
 
@@ -14,14 +15,16 @@ from services.schemas import VeiculoHistoricoSchema, VeiculoImagemSchema, Veicul
 from services.services import *
 from utils import get_content, save_content
 from webdriver_manager.chrome import ChromeDriverManager
-import time
 
 USER = getpass.getuser()
 SITE = 'https://www.facebook.com'
 
 
 class Selenium:
-    def __init__(self):
+    def __init__(self, scroll_times=0, veiculo_indisponivel=None):
+        self.scroll_times = scroll_times
+        self.veiculo_indisponivel = veiculo_indisponivel
+
         # Close the Chrome instance if it is already running.
         # os.system("taskkill /f /im chrome.exe")
 
@@ -55,7 +58,7 @@ class Selenium:
             # WebDriverWait(self.browser, 10).until(EC.presence_of_element_located(
             #     (By.CSS_SELECTOR, "div[class=' x1gslohp x1e56ztr']")))
 
-            for i in range(1, 7):
+            for i in range(1, self.scroll_times):
                 # Scroll down to the bottom of the page to load all items.
                 self.browser.execute_script(
                     'window.scrollTo(0, document.body.scrollHeight);'
@@ -88,18 +91,19 @@ class Selenium:
         btn_login = self.browser.find_element(
             by=By.XPATH, value='//*[@data-testid="royal_login_button"]'
         )
-        login_input.send_keys(
-            'ceviu1234@gmail.com'
-        ) if login_input else None
-        pass_input.send_keys(
-            'YZL7dTV62WRkkM8Y6#t$'
-        ) if pass_input else None
+        login_input.send_keys('ceviu1234@gmail.com') if login_input else None
+        pass_input.send_keys('YZL7dTV62WRkkM8Y6#t$') if pass_input else None
         btn_login.click() if btn_login else None
         sleep(5)
         print('Login realizado com sucesso!')
 
     def get_soup(self, url, force):
-        page_source, file_name = get_content(url, get_content_method=self.get_page_source, force=force)
+        page_source, file_name = get_content(
+            url, get_content_method=self.get_page_source, force=force
+        )
+        if not page_source:
+            return None
+
         print('Download...', file_name, len(page_source))
 
         soup = BeautifulSoup(page_source, 'html.parser')
@@ -181,14 +185,14 @@ class Selenium:
                 }
             )
 
-            print(f'Image: {image}')
-            print(f'Price: {price}')
-            print(f'Title: {title}')
-            print(f'Location: {location}')
-            print(f'URL: {url}')
-            print('------------------------')
+            # print(f'Image: {image}')
+            # print(f'Price: {price}')
+            # print(f'Title: {title}')
+            # print(f'Location: {location}')
+            # print(f'URL: {url}')
+            # print('------------------------')
 
-        self.close_browser()
+        # self.close_browser()
 
         return lista
 
@@ -197,16 +201,118 @@ class Selenium:
             self.login()
 
         soup = self.get_soup(url, force)
+        if not soup:
+            return
+
+        try:
+            if 'unavailable_product' in self.browser.current_url:
+                self.veiculo_indisponivel(
+                    url
+                ) if self.veiculo_indisponivel else None
+                return
+
+            div_lateral = soup.find(
+                'div',
+                class_='xb57i2i x1q594ok x5lxg6s x78zum5 xdt5ytf x6ikm8r x1ja2u2z x1pq812k x1rohswg xfk6m8 x1yqm8si xjx87ck x1l7klhg xs83m0k x2lwn1j xx8ngbg xwo3gff x1oyok0e x1odjw0f x1e4zzel x1n2onr6 xq1qtft x1iyjqo2 xqtp20y xx6bls6 xh8yej3 xiylbte',
+            )
+            if not div_lateral:
+                div_lateral = soup.find(
+                    'div',
+                    class_='xb57i2i x1q594ok x5lxg6s x78zum5 xdt5ytf x6ikm8r x1ja2u2z x1pq812k x1rohswg xfk6m8 x1yqm8si xjx87ck x1l7klhg x1iyjqo2 xs83m0k x2lwn1j xx8ngbg xwo3gff x1oyok0e x1odjw0f x1e4zzel x1n2onr6 xq1qtft xh8yej3',
+                )
+
+            desc = ''
+            div_desc = div_lateral.find(
+                'div', class_='xz9dl7a x4uap5 xsag5q8 xkhd6sd x126k92a'
+            )
+            if div_desc:
+                span_desc = div_desc.find(
+                    'span',
+                    class_='x193iq5w xeuugli x13faqbe x1vvkbs xlh3980 xvmahel x1n0sxbx x1lliihq x1s928wv xhkezso x1gmr53x x1cpjm7i x1fgarty x1943h6x x4zkp8e x3x7a5m x6prxxf xvq8zen xo1l8bm xzsf02u',
+                )
+                desc = span_desc.text if span_desc else ''
+
+            km = 0
+            div_km = div_lateral.find(
+                'div', class_='xamitd3 x1r8uery x1iyjqo2 xs83m0k xeuugli'
+            )
+            if div_km:
+                span_km = div_km.find(
+                    'span',
+                    class_='x193iq5w xeuugli x13faqbe x1vvkbs xlh3980 xvmahel x1n0sxbx x1lliihq x1s928wv xhkezso x1gmr53x x1cpjm7i x1fgarty x1943h6x x4zkp8e x3x7a5m x6prxxf xvq8zen xo1l8bm xzsf02u',
+                )
+                km = span_km.text if span_km else ''
+                km = float(km.split(' ')[0])*1000 if km else 0.0
+
+            div_price = div_lateral.find('div', class_='x1xmf6yo')
+            span_price = div_price.find(
+                'span',
+                class_='x193iq5w xeuugli x13faqbe x1vvkbs xlh3980 xvmahel x1n0sxbx x1lliihq x1s928wv xhkezso x1gmr53x x1cpjm7i x1fgarty x1943h6x x4zkp8e x3x7a5m x1lkfr7t x1lbecb7 x1s688f xzsf02u',
+            )
+            if not span_price:
+                span_price = div_price.find(
+                    'span',
+                    class_='x193iq5w xeuugli x13faqbe x1vvkbs xlh3980 xvmahel x1n0sxbx x1lliihq x1s928wv xhkezso x1gmr53x x1cpjm7i x1fgarty x1943h6x x4zkp8e x3x7a5m x1lkfr7t x1lbecb7 xk50ysn xzsf02u',
+                )
+            try:
+                price = span_price.text
+                price = round(float(price.split('\xa0')[1]) * 1000, 2)
+            except:
+                print('O preço do negócio é: ', price)
+                price = 0.0
+
+            div_images = soup.find_all(
+                'div',
+                class_='xhk9q7s x1otrzb0 x1i1ezom x1o6z2jb x1rg5ohu x2lah0s x6ikm8r x10wlt62 xc9qbxq x14qfxbe x1mnrxsn x1w0mnb',
+            )
+            imagens = []
+            for d in div_images:
+                img = d.find('img')
+                img = img['src'] if img else ''
+                imagens.append(img)
+                # print(img['src'])
+
+            # print('Desc: ', desc)
+            # print('KM: ', km)
+            # print('Price: ', price)
+            # print('Image: ', img != '')
+            return {
+                'description': desc,
+                'km': km,
+                'price': price,
+                'image': imagens
+            }
+        except:
+            breakpoint()
+            # self.close_browser()
+            raise
+
+        # self.close_browser()
 
 
 def find_facebook(force):
     _need_login = False
     urls = [
-        'https://www.facebook.com/marketplace/curitiba/search/?query=ford%20edge&exact=true',  # Curitiba
-        'https://www.facebook.com/marketplace/105615689472731/search/?query=ford%20edge&exact=true',  # Pato Branco
-        'https://www.facebook.com/marketplace/florianopolis/search/?query=ford%20edge&exact=true',  # Florianápolis
-        'https://www.facebook.com/marketplace/109342319085733/search/?query=ford%20edge&exact=true',  # São Sosé
-        'https://www.facebook.com/marketplace/113399188670230/search/?query=ford%20edge&exact=true',  # Chapecó
+        {
+            'url': 'https://www.facebook.com/marketplace/curitiba/search/?query=ford%20edge&exact=true',  # Curitiba
+            'scroll_times': 7,
+        },
+        {
+            'url': 'https://www.facebook.com/marketplace/105615689472731/search/?query=ford%20edge&exact=true',  # Pato Branco
+            'scroll_times': 2,
+        },
+        {
+            'url': 'https://www.facebook.com/marketplace/florianopolis/search/?query=ford%20edge&exact=true',  # Florianápolis
+            'scroll_times': 5,
+        },
+        {
+            'url': 'https://www.facebook.com/marketplace/109342319085733/search/?query=ford%20edge&exact=true',  # São Sosé
+            'scroll_times': 5,
+        },
+        {
+            'url': 'https://www.facebook.com/marketplace/113399188670230/search/?query=ford%20edge&exact=true',  # Chapecó
+            'scroll_times': 4,
+        },
     ]
 
     veiculo_list = get_veiculos()
@@ -217,75 +323,119 @@ def find_facebook(force):
     veiculos = VeiculoList()
     veiculos.load_from_json(veiculo_list, historicos, imagens)
 
-    sel = Selenium()
-    sel.scrape_facebook_marketplace(veiculos[0].url, _need_login, force)
+    def veiculo_indisponivel_method(url):
+        veiculo = veiculos.get_veiculo(url)
+        if veiculo:
+            post_veiculo_status(veiculo.id, 'indisponivel')
 
-    return
-    for url in urls:
-        sel = Selenium()
-        lista = sel.scrape_facebook_marketplace(url, _need_login, force)
-        for i in lista:
-            # year_span = li.find('span', {'aria-label': re.compile(r'Ano')})
-            # year = year_span.text if year_span else ''
+    sel = Selenium(veiculo_indisponivel=veiculo_indisponivel_method)
+    try:
+        for item in urls:
+            url = item['url']
+            scroll_times = item['scroll_times']
+            sel.scroll_times = scroll_times
 
-            year = 0
-            url = i['url']
-            title = i['titulo']
-            price = i['preco']
-            image = i['imagem']
+            lista = sel.scrape_facebook_marketplace(url, _need_login, force)
+            for i in lista:
+                # year_span = li.find('span', {'aria-label': re.compile(r'Ano')})
+                # year = year_span.text if year_span else ''
 
-            if (not url) or (url == '') or (url == SITE):
+                year = 0
+                url = i['url']
+                title = i['titulo']
+                # price = i['preco']
+                # image = i['imagem']
+
+                if (not url) or (url == '') or (url == SITE):
+                    lista.remove(i)
+                    continue
+
+                if 'FORD EDGE' not in title.upper():
+                    lista.remove(i)
+                    continue
+
+                veiculo = veiculos.get_veiculo(url)
+                if not veiculo:
+                    veiculo_schema = VeiculoSchema(
+                        marca='Ford',
+                        modelo='Edge',
+                        ano=year,
+                        url=url,
+                        titulo=title,
+                        site=SITE,
+                        status='ativo',
+                    )
+                    veiculo_json = post_veiculo(veiculo_schema.to_json())
+                    veiculo = Veiculo()
+                    veiculo.load_from_json(veiculo_json, [], [])
+                    veiculos.append(veiculo)
+
+                # imagem = veiculo.get_imagem(image)
+                # if not imagem:
+                #     imagem_schema = VeiculoImagemSchema(
+                #         veiculo_id=veiculo.id, url=image, status='ativo'
+                #     )
+                #     imagem_json = post_veiculo_imagem(imagem_schema.to_json())
+                #     veiculo.add_imagem(imagem_json)
+
+                # description = title
+                # try:
+                #     price = round(float(price.split('\xa0')[1]) * 1000, 2)
+                # except:
+                #     print('O preço do negócio é: ', price)
+                #     price = 0.0
+
+                # km = 0
+                # # for prop in json_data['ad']['properties']:
+                # #     if prop['name'] == 'mileage':
+                # #         km = prop['value']
+                # #         km = int(km) * 1000 if int(km) <= 1000 else int(km)
+                # #         break
+
+                # hist = VeiculoHistoricoSchema(
+                #     veiculo_id=veiculo.id,
+                #     datahora=datetime.now().isoformat(),
+                #     valor=price,
+                #     quilometragem=km,
+                #     descricao=description,
+                # )
+                # historico = veiculo.get_historico(hist.to_json())
+                # if not historico:
+                #     historico_json = post_veiculo_historico(hist.to_json())
+                #     veiculo.add_historico(historico_json)
+
+        # sel = Selenium(scroll_times=scroll_times)
+        veiculos_ativos = [x for x in veiculos if x.status == 'ativo' and x.id >= 793]
+        for veiculo in veiculos_ativos:
+            sel.scroll_times = 0
+            item = sel.scrape_facebook_marketplace_item(veiculo.url, _need_login, force)
+
+            if not item:
+                print('Url not found?', url)
                 continue
 
-            if 'FORD EDGE' not in title.upper():
-                continue
+            for image in item['image']:
+                imagem = veiculo.get_imagem(image)
+                if not imagem:
+                    imagem_schema = VeiculoImagemSchema(
+                        veiculo_id=veiculo.id, url=image, status='ativo'
+                    )
+                    imagem_json = post_veiculo_imagem(imagem_schema.to_json())
+                    veiculo.add_imagem(imagem_json)
 
-            veiculo = veiculos.get_veiculo(url)
-            if not veiculo:
-                veiculo_schema = VeiculoSchema(
-                    marca='Ford',
-                    modelo='Edge',
-                    ano=year,
-                    url=url,
-                    titulo=title,
-                    site=SITE,
-                    status='ativo',
-                )
-                veiculo_json = post_veiculo(veiculo_schema.to_json())
-                veiculo = Veiculo()
-                veiculo.load_from_json(veiculo_json, [], [])
-                veiculos.append(veiculo)
-
-            imagem = veiculo.get_imagem(image)
-            if not imagem:
-                imagem_schema = VeiculoImagemSchema(
-                    veiculo_id=veiculo.id, url=image, status='ativo'
-                )
-                imagem_json = post_veiculo_imagem(imagem_schema.to_json())
-                veiculo.add_imagem(imagem_json)
-
-            description = title
-            try:
-                price = round(float(price.split('\xa0')[1]) * 1000, 2)
-            except:
-                print('O preço do negócio é: ', price)
-                price = 0.0
-
-            km = 0
-            # for prop in json_data['ad']['properties']:
-            #     if prop['name'] == 'mileage':
-            #         km = prop['value']
-            #         km = int(km) * 1000 if int(km) <= 1000 else int(km)
-            #         break
 
             hist = VeiculoHistoricoSchema(
                 veiculo_id=veiculo.id,
                 datahora=datetime.now().isoformat(),
-                valor=price,
-                quilometragem=km,
-                descricao=description,
+                valor=item['price'],
+                quilometragem=item['km'],
+                descricao=item['description'],
             )
+            print(hist.veiculo_id, hist.descricao[:10])
             historico = veiculo.get_historico(hist.to_json())
             if not historico:
                 historico_json = post_veiculo_historico(hist.to_json())
                 veiculo.add_historico(historico_json)
+
+    finally:
+        sel.close_browser()

@@ -1,7 +1,7 @@
 from datetime import datetime
 from typing import List
 
-from app.enums import VeiculoStatus, VeiculoImagemStatus
+from app.enums import VeiculoImagemStatus, VeiculoStatus
 from core.schemas import BaseSchema
 
 

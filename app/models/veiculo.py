@@ -11,7 +11,7 @@ from sqlalchemy import (
 from sqlalchemy.orm import relationship
 
 from app.database import Base
-from app.enums import VeiculoStatus, VeiculoImagemStatus
+from app.enums import VeiculoImagemStatus, VeiculoStatus
 
 
 class VeiculoModel(Base):
@@ -50,6 +50,8 @@ class VeiculoImagemModel(Base):
 
     url = Column(String(500))
     veiculo_id = Column(Integer, ForeignKey('veiculo.id'))
-    status = Column(Enum(VeiculoImagemStatus), default=VeiculoImagemStatus.ativo)
+    status = Column(
+        Enum(VeiculoImagemStatus), default=VeiculoImagemStatus.ativo
+    )
 
     __table_args__ = (UniqueConstraint('url', 'veiculo_id'),)

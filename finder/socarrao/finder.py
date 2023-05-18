@@ -1,9 +1,8 @@
 import json
 from datetime import datetime
-from unidecode import unidecode
 
 from services.models import Veiculo, VeiculoList
-from services.schemas import VeiculoSchema, VeiculoHistoricoSchema, VeiculoImagemSchema
+from services.schemas import VeiculoHistoricoSchema, VeiculoImagemSchema, VeiculoSchema
 from services.services import (
     get_historicos,
     get_imagens,
@@ -12,8 +11,8 @@ from services.services import (
     post_veiculo_historico,
     post_veiculo_imagem,
 )
+from unidecode import unidecode
 from utils import get_content
-
 
 SITE = 'https://www.socarrao.com.br'
 URL_FOTOS = 'https://fotos.socarrao.com.br'
@@ -52,15 +51,15 @@ def _find(veiculos, url, force):
             veiculo.load_from_json(veiculo_json, [], [])
             veiculos.append(veiculo)
 
-
         for img in _veiculo['veiculo_foto']:
             img_url = f'{URL_FOTOS}/{_veiculo["revenda_id"]}/{_veiculo["veiculo_id"]}/{img}'
             imagem = veiculo.get_imagem(img_url)
             if not imagem:
-                imagem_schema = VeiculoImagemSchema(veiculo_id=veiculo.id, url=img_url, status='ativo')
+                imagem_schema = VeiculoImagemSchema(
+                    veiculo_id=veiculo.id, url=img_url, status='ativo'
+                )
                 imagem_json = post_veiculo_imagem(imagem_schema.to_json())
                 veiculo.add_imagem(imagem_json)
-
 
         description = _veiculo['veiculo_observacao']
         price = round(float(_veiculo['veiculo_valor']), 2)
@@ -80,7 +79,6 @@ def _find(veiculos, url, force):
             veiculo.add_historico(historico_json)
 
 
-
 def find_socarrao(force):
     veiculo_list = get_veiculos()
     historicos = get_historicos()
@@ -91,4 +89,4 @@ def find_socarrao(force):
     veiculos = VeiculoList()
     veiculos.load_from_json(veiculo_list, historicos, imagens)
 
-    _find(veiculos, URL, force);
+    _find(veiculos, URL, force)

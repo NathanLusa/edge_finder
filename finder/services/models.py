@@ -56,8 +56,13 @@ class Veiculo:
     url: str
     titulo: str
     site: str
-    historicos = VeiculoHistoricoList()
-    imagens = VeiculoImagemList()
+    status: str
+    historicos: VeiculoHistoricoList
+    imagens: VeiculoImagemList
+    
+    def __init__(self) -> None:
+        self.historicos = VeiculoHistoricoList()
+        self.imagens = VeiculoImagemList()
 
     def load_from_json(self, veiculo, historicos, imagens):
         self.id = veiculo['id']
@@ -67,6 +72,7 @@ class Veiculo:
         self.url = veiculo['url']
         self.titulo = veiculo['titulo']
         self.site = veiculo['site']
+        self.status = veiculo['status']
 
         for historico in historicos:
             if self.id == historico['veiculo_id']:
@@ -86,9 +92,13 @@ class Veiculo:
         self.historicos.append(historico)
 
     def add_imagem(self, imagem_json):
-        imagem = VeiculoImagem()
-        imagem.load_from_json(imagem_json)
-        self.imagens.append(imagem)
+        try:
+            imagem = VeiculoImagem()
+            imagem.load_from_json(imagem_json)
+            self.imagens.append(imagem)
+        except:
+            print(imagem_json)
+            raise
 
     def get_historico(self, historico):
         return self.historicos.get_historico(historico)

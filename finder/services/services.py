@@ -35,3 +35,10 @@ def post_veiculo_historico(veiculo_historico):
 def post_veiculo_imagem(veiculo_imagem):
     response = requests.post(IMAGEM_ENDPOINT, json=veiculo_imagem)
     return response.json()
+
+
+def post_veiculo_status(veiculo_id, status):
+    response = requests.post(
+        f'{VEICULO_ENDPOINT}/{veiculo_id}/status', json={'status': status}
+    )
+    return response.json()
