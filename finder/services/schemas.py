@@ -40,3 +40,7 @@ class VeiculoSchema(BaseSchema):
     titulo: str
     site: str
     status: str = 'ativo'
+
+    # def __init__(self, **kwargs):
+    #     super().__init__(**kwargs)
+    #     self.url = self.url.split('?')[0]

@@ -35,6 +35,7 @@ def _find(veiculos, url, force):
         year = _veiculo['ano_modelo']
         title = _veiculo['veiculo_modelo']
 
+        url = url.split('?')[0]
         veiculo = veiculos.get_veiculo(url)
         if not veiculo:
             veiculo_schema = VeiculoSchema(

@@ -354,6 +354,7 @@ def find_facebook(force):
                     lista.remove(i)
                     continue
 
+                url = url.split('?')[0]
                 veiculo = veiculos.get_veiculo(url)
                 if not veiculo:
                     veiculo_schema = VeiculoSchema(
@@ -405,7 +406,7 @@ def find_facebook(force):
                 #     veiculo.add_historico(historico_json)
 
         # sel = Selenium(scroll_times=scroll_times)
-        veiculos_ativos = [x for x in veiculos if x.status == 'ativo' and x.id >= 793]
+        veiculos_ativos = [x for x in veiculos if x.status == 'ativo' and x.id >= 935]
         for veiculo in veiculos_ativos:
             sel.scroll_times = 0
             item = sel.scrape_facebook_marketplace_item(veiculo.url, _need_login, force)

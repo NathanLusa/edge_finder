@@ -25,6 +25,7 @@ def _find(veiculos, url, force):
         year_span = li.find('span', {'aria-label': re.compile(r'Ano')})
         year = year_span.text.strip() if year_span else ''
 
+        url = url.split('?')[0]
         veiculo = veiculos.get_veiculo(url)
         if not veiculo:
             veiculo_schema = VeiculoSchema(

@@ -6,6 +6,7 @@ class VeiculoStatus(enum.Enum):
     inativo = 'inativo'
     vendido = 'vendido'
     indisponivel = 'indisponivel'
+    duplicado = 'duplicado'
 
 
 class VeiculoImagemStatus(enum.Enum):

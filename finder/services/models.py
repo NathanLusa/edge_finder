@@ -1,13 +1,26 @@
+import json
 from datetime import datetime
 from typing import List
 
 
-class VeiculoHistorico:
+class BaseModel:
+    # def __init__(self, **kwargs):
+    #     for key, value in kwargs.items():
+    #         setattr(self, key, value)
+
+    def to_json(self):
+        # breakpoint()
+        # print((lambda o: o.__dict__))
+        return json.loads(json.dumps(self, default=lambda o: o.__dict__,))
+
+
+class VeiculoHistorico(BaseModel):
     id: int
     valor: float
     quilometragem: int
     descricao: str
     datahora: datetime
+    veiculo_id: int
 
     def load_from_json(self, historico):
         self.id = historico['id']
@@ -28,10 +41,11 @@ class VeiculoHistoricoList(List[VeiculoHistorico]):
         return None
 
 
-class VeiculoImagem:
+class VeiculoImagem(BaseModel):
     id: int
     url: str
     status: str
+    veiculo_id: int
 
     def load_from_json(self, imagem):
         self.id = imagem['id']
@@ -48,7 +62,7 @@ class VeiculoImagemList(List[VeiculoImagem]):
         return None
 
 
-class Veiculo:
+class Veiculo(BaseModel):
     id: int
     marca: str
     modelo: str
@@ -73,6 +87,8 @@ class Veiculo:
         self.titulo = veiculo['titulo']
         self.site = veiculo['site']
         self.status = veiculo['status']
+
+        # self.url = self.url.split('?')[0]
 
         for historico in historicos:
             if self.id == historico['veiculo_id']:
@@ -117,6 +133,14 @@ class VeiculoList(List[Veiculo]):
     def get_veiculo(self, url):
         for veiculo in self:
             if veiculo.url == url:
+                return veiculo
+
+        return None
+
+    def get_veiculo_url(self, url):
+        _url = url.split('?')[0]
+        for veiculo in self:
+            if veiculo.url.split('?')[0] == _url:
                 return veiculo
 
         return None

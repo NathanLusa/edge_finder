@@ -42,3 +42,18 @@ def post_veiculo_status(veiculo_id, status):
         f'{VEICULO_ENDPOINT}/{veiculo_id}/status', json={'status': status}
     )
     return response.json()
+
+
+def update_veiculo(veiculo):
+    response = requests.put(f'{VEICULO_ENDPOINT}/{veiculo["id"]}', json=veiculo)
+    return response.json()
+
+def update_veiculo_historico(veiculo_historico):
+    response = requests.put(f'{HISTORICO_ENDPOINT}/{veiculo_historico["id"]}', json=veiculo_historico)
+    return response.json()
+
+
+def update_veiculo_imagem(veiculo_imagem):
+    response = requests.put(f'{IMAGEM_ENDPOINT}/{veiculo_imagem["id"]}', json=veiculo_imagem)
+    return response.json()
+
