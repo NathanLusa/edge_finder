@@ -1,5 +1,7 @@
 export async function get_veiculos() {
+  console.log("load");
   const response = await fetch("http://127.0.0.1:8000/veiculolista");
+  console.log("end load");
   const json = await response.json();
   // return json;
   return new Promise((resolve) => resolve(json));

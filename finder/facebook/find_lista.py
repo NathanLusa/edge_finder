@@ -221,6 +221,9 @@ class Selenium:
                     class_='xb57i2i x1q594ok x5lxg6s x78zum5 xdt5ytf x6ikm8r x1ja2u2z x1pq812k x1rohswg xfk6m8 x1yqm8si xjx87ck x1l7klhg x1iyjqo2 xs83m0k x2lwn1j xx8ngbg xwo3gff x1oyok0e x1odjw0f x1e4zzel x1n2onr6 xq1qtft xh8yej3',
                 )
 
+            if not div_lateral:
+                return None
+
             desc = ''
             div_desc = div_lateral.find(
                 'div', class_='xz9dl7a x4uap5 xsag5q8 xkhd6sd x126k92a'
@@ -406,7 +409,8 @@ def find_facebook(force):
                 #     veiculo.add_historico(historico_json)
 
         # sel = Selenium(scroll_times=scroll_times)
-        veiculos_ativos = [x for x in veiculos if x.status == 'ativo' and x.id >= 935]
+        # veiculos_ativos = [x for x in veiculos if x.status == 'ativo' and x.id >= 935]
+        veiculos_ativos = [x for x in veiculos if x.status == 'ativo']
         for veiculo in veiculos_ativos:
             sel.scroll_times = 0
             item = sel.scrape_facebook_marketplace_item(veiculo.url, _need_login, force)

@@ -99,8 +99,8 @@ async def read_root(request: Request, db: Session = Depends(get_db)):
 async def veiculo_lista(db: Session = Depends(get_db)):
     order = desc(VeiculoModel.id)
     # order = VeiculoModel.id
-    order = VeiculoHistoricoModel.valor
-    # order = desc(VeiculoHistoricoModel.datahora)
+    # order = VeiculoHistoricoModel.valor
+    order = desc(VeiculoHistoricoModel.datahora)
     # order = desc(VeiculoHistoricoModel.id)
 
     veiculos = (
