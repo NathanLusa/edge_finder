@@ -1,6 +1,8 @@
 import { createSite } from "./components/Site.js";
 import { get_veiculos, verificar_imagens } from "./services.js";
 
+import Veiculo from "./components/Veiculo.js";
+
 const divFilter = document.getElementById("filter");
 const teste = document.getElementById("accordionFlush");
 const btn = document.getElementById("btn-teste");
@@ -129,7 +131,16 @@ async function addImageSrc() {
 /////
 get_veiculos().then((data) => {
   sites = data;
-  render();
+
+  let _html = "";
+  sites.map((site) => {
+    _html += `${Veiculo(site)}`;
+  });
+  teste.innerHTML = _html;
+
+  console.log("finish");
+
+  // render();
 
   // Make filters
 });
