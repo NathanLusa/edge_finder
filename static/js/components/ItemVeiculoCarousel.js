@@ -4,15 +4,15 @@ export function createItemVeiculoCarousel(veiculo) {
       .map(
         (imagem, index) => `
       <div class="carousel-item ${index == 0 ? " active" : ""}">
-              <img src="${
+              <img data-src="${
                 imagem.url
               }" class="d-block w-100" alt="..." style="max-height: 300px; max-width: 400px;" loading="lazy">
         </div>`
       )
       .join("");
 
-  // const imagens = veiculo.imagens.filter((imagem) => imagem.status == "ativo");
-  const imagens = [];
+  const imagens = veiculo.imagens.filter((imagem) => imagem.status == "ativo");
+  // const imagens = [];
   return `
         <div id="carousel-${veiculo.id}-x" class="carousel slide">
             <div class="carousel-inner">

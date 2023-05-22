@@ -85,13 +85,45 @@ btn.onclick = (e) => {
 async function render() {
   let _html = "";
 
+  console.log("start");
   for (const site of sites) {
     _html += createSite(site);
   }
+  console.log("end");
 
+  console.log("start innerHTML");
   teste.innerHTML = _html;
+  console.log("end innerHTML");
 
+  addImageSrc();
   setCheckBoxChangeStatusEvent();
+}
+
+function onVisible(element, callback) {
+  new IntersectionObserver((entries, observer) => {
+    entries.forEach((entry) => {
+      if (entry.intersectionRatio > 0) {
+        callback(element);
+        observer.disconnect();
+      }
+    });
+  }).observe(element);
+}
+
+async function addImageSrc() {
+  console.log("start image");
+
+  const carousel_list = [...document.getElementsByClassName("carousel")];
+  console.log(carousel_list);
+
+  carousel_list.map((carousel) => {
+    onVisible(carousel, () => {
+      const image_list = [...carousel.getElementsByTagName("img")];
+      image_list.map((img) => (img.src = img.getAttribute("data-src")));
+    });
+  });
+
+  console.log("end image");
 }
 
 /////

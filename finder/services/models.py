@@ -79,28 +79,32 @@ class Veiculo(BaseModel):
         self.imagens = VeiculoImagemList()
 
     def load_from_json(self, veiculo, historicos, imagens):
-        self.id = veiculo['id']
-        self.marca = veiculo['marca']
-        self.modelo = veiculo['modelo']
-        self.ano = veiculo['ano']
-        self.url = veiculo['url']
-        self.titulo = veiculo['titulo']
-        self.site = veiculo['site']
-        self.status = veiculo['status']
+        try:
+            self.id = veiculo['id']
+            self.marca = veiculo['marca']
+            self.modelo = veiculo['modelo']
+            self.ano = veiculo['ano']
+            self.url = veiculo['url']
+            self.titulo = veiculo['titulo']
+            self.site = veiculo['site']
+            self.status = veiculo['status']
 
-        # self.url = self.url.split('?')[0]
+            # self.url = self.url.split('?')[0]
 
-        for historico in historicos:
-            if self.id == historico['veiculo_id']:
-                hist = VeiculoHistorico()
-                hist.load_from_json(historico)
-                self.historicos.append(hist)
+            for historico in historicos:
+                if self.id == historico['veiculo_id']:
+                    hist = VeiculoHistorico()
+                    hist.load_from_json(historico)
+                    self.historicos.append(hist)
 
-        for imagem in imagens:
-            if self.id == imagem['veiculo_id']:
-                img = VeiculoImagem()
-                img.load_from_json(imagem)
-                self.imagens.append(img)
+            for imagem in imagens:
+                if self.id == imagem['veiculo_id']:
+                    img = VeiculoImagem()
+                    img.load_from_json(imagem)
+                    self.imagens.append(img)
+        except:
+            print(veiculo)
+            raise
 
     def add_historico(self, historico_json):
         historico = VeiculoHistorico()

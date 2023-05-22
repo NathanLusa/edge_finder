@@ -101,7 +101,6 @@ async def veiculo_lista(db: Session = Depends(get_db)):
     # order = VeiculoModel.id
     # order = VeiculoHistoricoModel.valor
     order = desc(VeiculoHistoricoModel.datahora)
-    # order = desc(VeiculoHistoricoModel.id)
 
     veiculos = (
         db.query(VeiculoModel)
