@@ -1,63 +1,66 @@
-// export class SiteSchema extends Object {
+function LoadFromObject(object, props, exclude_keys = []) {
+  [...Object.keys(props)].map((key) => {
+    if (!exclude_keys.includes(key)) {
+      object[key] = props[key];
+    }
+  });
+}
+
+function LoadArrayFromObject(object, props, key, schema) {
+  if (key in props) {
+    props[key].map((item) => object[key].push(new schema(item)));
+  }
+}
+
 export class SiteSchema {
   constructor(props) {
-    // super();
     this.id = 0;
     this.nome = "";
     this.veiculos = [];
 
-    // console.log(Object.keys(this));
-    // console.log(Object.keys(props));
-
-    [Object.keys(props)].map((key) => (this[key] = props[key]));
-
-    // this.id = id;
-    // this.nome = nome;
-    // this.veiculos = veiculos;
+    LoadFromObject(this, props, ["veiculos"]);
+    LoadArrayFromObject(this, props, "veiculos", VeiculoSchema);
   }
 }
 
 export class VeiculoSchema {
-  constructor(
-    id,
-    marca,
-    modelo,
-    ano,
-    url,
-    titulo,
-    site,
-    status,
-    historicos,
-    imagens
-  ) {
-    this.id = id;
-    this.marca = marca;
-    this.modelo = modelo;
-    this.ano = ano;
-    this.url = url;
-    this.titulo = titulo;
-    this.site = site;
-    this.status = status;
-    this.historicos = historicos;
-    this.imagens = imagens;
+  constructor(props) {
+    this.id = 0;
+    this.marca = "";
+    this.modelo = "";
+    this.ano = 0;
+    this.url = "";
+    this.titulo = "";
+    this.site = "";
+    this.status = "";
+    this.historicos = [];
+    this.imagens = [];
+
+    LoadFromObject(this, props, ["historicos", "imagens"]);
+    LoadArrayFromObject(this, props, "historicos", VeiculoHistoricoSchema);
+    LoadArrayFromObject(this, props, "imagens", VeiculoImagemSchema);
   }
 }
 
 export class VeiculoHistoricoSchema {
-  constructor(id, valor, quilometragem, descricao, datahora, veiculo_id) {
-    this.id = id;
-    this.valor = valor;
-    this.quilometragem = quilometragem;
-    this.descricao = descricao;
-    this.datahora = datahora;
-    this.veiculo_id = veiculo_id;
+  constructor(props) {
+    this.id = 0;
+    this.valor = 0.0;
+    this.quilometragem = 0;
+    this.descricao = "";
+    this.datahora = "";
+    this.veiculo_id = 0;
+
+    LoadFromObject(this, props);
   }
 }
 
 export class VeiculoImagemSchema {
-  constructor(id, url, veiculo_id) {
-    this.id = id;
-    this.url = url;
-    this.veiculo_id = veiculo_id;
+  constructor(props) {
+    this.id = 0;
+    this.url = "";
+    this.veiculo_id = 0;
+
+    LoadFromObject(this, props);
   }
 }

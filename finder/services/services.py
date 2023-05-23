@@ -1,9 +1,10 @@
 import requests
 
 ENDPOINT = 'http://localhost:8000'
-VEICULO_ENDPOINT = ENDPOINT + '/veiculo'
-HISTORICO_ENDPOINT = ENDPOINT + '/veiculohistorico'
-IMAGEM_ENDPOINT = ENDPOINT + '/veiculoimagem'
+ENDPOINT_API = ENDPOINT + '/api'
+VEICULO_ENDPOINT = ENDPOINT_API + '/veiculo'
+HISTORICO_ENDPOINT = ENDPOINT_API + '/veiculohistorico'
+IMAGEM_ENDPOINT = ENDPOINT_API + '/veiculoimagem'
 
 
 def get_veiculos():

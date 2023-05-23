@@ -1,7 +1,7 @@
 import { createSite } from "./components/Site.js";
 import { get_veiculos, verificar_imagens } from "./services.js";
 
-import Veiculo from "./components/Veiculo.js";
+import Site from "./components/Veiculo.js";
 
 const divFilter = document.getElementById("filter");
 const teste = document.getElementById("accordionFlush");
@@ -13,7 +13,7 @@ function setCheckBoxChangeStatusEvent() {
 
   checkbox_list.forEach((checkbox) => {
     checkbox.addEventListener("change", function () {
-      fetch("/veiculo/" + this.dataset.veiculo_id + "/status", {
+      fetch("/api/veiculo/" + this.dataset.veiculo_id + "/status", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -53,6 +53,10 @@ function orderByFloat(array, property) {
 }
 
 btn.onclick = (e) => {
+  fetch("/verificarimagens", {
+    method: "POST",
+  });
+  return;
   for (const site of sites) {
     const historicos = [];
     console.log(site.veiculos);
@@ -132,15 +136,15 @@ async function addImageSrc() {
 get_veiculos().then((data) => {
   sites = data;
 
-  let _html = "";
-  sites.map((site) => {
-    _html += `${Veiculo(site)}`;
-  });
-  teste.innerHTML = _html;
+  // let _html = "";
+  // sites.map((site) => {
+  //   _html += `${Site(site)}`;
+  // });
+  // teste.innerHTML = _html;
 
-  console.log("finish");
+  // console.log("finish");
 
-  // render();
+  render();
 
   // Make filters
 });

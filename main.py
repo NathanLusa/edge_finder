@@ -3,7 +3,7 @@ from fastapi import Depends, FastAPI, Request
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from sqlalchemy import desc
-from sqlalchemy.orm import Session, aliased
+from sqlalchemy.orm import Session, aliased, joinedload
 
 from app.database import BaseDeclarativeList, engine, get_db
 from app.enums import VeiculoImagemStatus, VeiculoStatus
@@ -17,9 +17,9 @@ app = FastAPI()
 app.mount('/static', StaticFiles(directory='static'), name='static')
 
 # app.include_router(UsuarioRouter)
-app.include_router(veiculo_router)
-app.include_router(historico_router)
-app.include_router(imagem_router)
+app.include_router(veiculo_router, prefix='/api')
+app.include_router(historico_router, prefix='/api')
+app.include_router(imagem_router, prefix='/api')
 
 for base_declarative in BaseDeclarativeList:
     base_declarative.metadata.create_all(bind=engine)
@@ -137,3 +137,33 @@ async def veiculo_lista(db: Session = Depends(get_db)):
 
     # return []
     return sites
+
+
+@app.get('/veiculo/{item_id}')
+async def veiculo_view(request: Request, item_id: int, db: Session = Depends(get_db)):
+    veiculo = (
+        db.query(VeiculoModel)
+        .filter(VeiculoModel.id == item_id)
+        .join(VeiculoImagemModel)
+        # .options(joinedload(VeiculoModel.imagens, innerjoin=True))
+        # .filter(VeiculoImagemModel.veiculo_id == VeiculoModel.id)
+        .where(VeiculoImagemModel.status == VeiculoImagemStatus.ativo)
+        # .first()
+    )
+
+    print(veiculo.statement)
+    # veiculo = veiculo.all()
+    # print(veiculo)
+    veiculo = veiculo.first()
+    print(len(veiculo.imagens.where(VeiculoImagemModel.status == VeiculoImagemStatus.ativo)))
+    # veiculo.imagens = [x for x in veiculo.imagens if x.status == VeiculoImagemStatus.ativo]
+    # print(len(veiculo.imagens))
+    
+    return templates.TemplateResponse(
+        'veiculo.html',
+        {
+            'request': request,
+            'veiculo': veiculo
+        }
+    )
+    

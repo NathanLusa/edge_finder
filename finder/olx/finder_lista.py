@@ -23,24 +23,30 @@ def _find(veiculos, url, force):
         url = li.a['href']
         title = li.find('h2').text
         year_span = li.find('span', {'aria-label': re.compile(r'Ano')})
-        year = year_span.text.strip() if year_span else ''
+        year = year_span.text.strip() if year_span else 0
 
-        url = url.split('?')[0]
-        veiculo = veiculos.get_veiculo(url)
-        if not veiculo:
-            veiculo_schema = VeiculoSchema(
-                marca='Ford',
-                modelo='Edge',
-                ano=year,
-                url=url,
-                titulo=title,
-                site=SITE,
-                status='ativo',
-            )
-            veiculo_json = post_veiculo(veiculo_schema.to_json())
-            veiculo = Veiculo()
-            veiculo.load_from_json(veiculo_json, [], [])
-            veiculos.append(veiculo)
+        try:
+            url = url.split('?')[0]
+            veiculo = veiculos.get_veiculo(url)
+            if not veiculo:
+                veiculo_schema = VeiculoSchema(
+                    marca='Ford',
+                    modelo='Edge',
+                    ano=year,
+                    url=url,
+                    titulo=title,
+                    site=SITE,
+                    status='ativo',
+                )
+                veiculo_json = post_veiculo(veiculo_schema.to_json())
+                veiculo = Veiculo()
+                veiculo.load_from_json(veiculo_json, [], [])
+                veiculos.append(veiculo)
+        except:
+            print('URL :', url)
+            print('JSON: ', veiculo_json if veiculo_json else '')
+            print('SCHEMA: ', veiculo_schema if veiculo_schema else '')
+            raise
 
 
 def find_lista(force):
