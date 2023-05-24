@@ -144,18 +144,18 @@ async def veiculo_view(request: Request, item_id: int, db: Session = Depends(get
     veiculo = (
         db.query(VeiculoModel)
         .filter(VeiculoModel.id == item_id)
-        .join(VeiculoImagemModel)
+        # .join(VeiculoImagemModel)
         # .options(joinedload(VeiculoModel.imagens, innerjoin=True))
         # .filter(VeiculoImagemModel.veiculo_id == VeiculoModel.id)
-        .where(VeiculoImagemModel.status == VeiculoImagemStatus.ativo)
-        # .first()
+        # .where(VeiculoImagemModel.status == VeiculoImagemStatus.ativo)
+        .first()
     )
 
-    print(veiculo.statement)
+    # print(veiculo.statement)
     # veiculo = veiculo.all()
     # print(veiculo)
-    veiculo = veiculo.first()
-    print(len(veiculo.imagens.where(VeiculoImagemModel.status == VeiculoImagemStatus.ativo)))
+    # veiculo = veiculo.first()
+    # print(len(veiculo.imagens.where(VeiculoImagemModel.status == VeiculoImagemStatus.ativo)))
     # veiculo.imagens = [x for x in veiculo.imagens if x.status == VeiculoImagemStatus.ativo]
     # print(len(veiculo.imagens))
     
