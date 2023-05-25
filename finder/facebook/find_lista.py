@@ -409,7 +409,7 @@ def find_facebook(force):
                 #     veiculo.add_historico(historico_json)
 
         # sel = Selenium(scroll_times=scroll_times)
-        veiculos_ativos = [x for x in veiculos if x.status == 'ativo' and x.id >= 950]
+        veiculos_ativos = [x for x in veiculos if x.status == 'ativo' and x.id >= 971]
         # veiculos_ativos = [x for x in veiculos if x.status == 'ativo']
         for veiculo in veiculos_ativos:
             sel.scroll_times = 0
