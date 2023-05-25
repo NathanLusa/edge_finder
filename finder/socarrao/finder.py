@@ -24,7 +24,7 @@ def remove_accents(input_str):
 
 
 def _find(veiculos, url, force):
-    content, _ = get_content(url, force=force)
+    status_code, content, _ = get_content(url, force=force)
     content = json.loads(content)
 
     for _veiculo in content['veiculos']:

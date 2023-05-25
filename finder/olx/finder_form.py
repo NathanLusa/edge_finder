@@ -11,6 +11,7 @@ from services.services import (
     get_veiculos,
     post_veiculo_historico,
     post_veiculo_imagem,
+    post_veiculo_status
 )
 from utils import get_content
 
@@ -18,8 +19,12 @@ SITE = 'https://www.olx.com.br'
 
 
 def _find(veiculo, force):
-    content, file_name = get_content(veiculo.url, force=force)
-    print(veiculo.url, file_name)
+    status_code, content, file_name = get_content(veiculo.url, force=force)
+    print(status_code, veiculo.url, file_name)
+
+    if status_code == 404:
+        post_veiculo_status(veiculo.id, 'indisponivel')
+        return
 
     soup = BeautifulSoup(content, 'html5lib')
     main_list = soup.find(id='initial-data')

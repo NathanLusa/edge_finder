@@ -71,9 +71,9 @@ if __name__ == '__main__':
     _force = False
     _force = True
 
-    find_socarrao(_force)
-    find_olx(_force)
-    find_olx_form(_force)
-    find_facebook(_force)
+    # find_socarrao(_force)
+    # find_olx(_force)
+    # find_olx_form(_force)
+    # find_facebook(_force)
 
     # ajustar_duplicados()

@@ -18,7 +18,7 @@ def get_file_name(url):
 
 def get_content_requests(url):
     response = requests.get(url, headers=HEADERS)
-    return response.content
+    return response.status_code, response.content
 
 
 def save_content(url, content, save_type='wb'):
@@ -31,8 +31,10 @@ def save_content(url, content, save_type='wb'):
 
 
 def get_content(url, get_content_method=None, force=False):
+    status_code = 200
     content = None
     file_name = f'{get_file_name(url)}.html'
+    
     if not os.path.exists(FILE_PATH):
         os.makedirs(FILE_PATH)
 
@@ -43,7 +45,7 @@ def get_content(url, get_content_method=None, force=False):
         print(url)
         print('Download')
         time.sleep(2)
-        content = (
+        status_code, content = (
             get_content_method(url)
             if get_content_method
             else get_content_requests(url)
@@ -51,4 +53,4 @@ def get_content(url, get_content_method=None, force=False):
         content = content.encode('utf-8') if type(content) is str else content
         save_content(url, content, 'wb')
 
-    return content, file_name
+    return status_code, content, file_name

@@ -1,19 +1,21 @@
 import {
-  SiteSchema,
-  VeiculoSchema,
-  VeiculoHistoricoSchema,
-  VeiculoImagemSchema,
+    SiteSchema,
+    VeiculoSchema,
+    VeiculoHistoricoSchema,
+    VeiculoImagemSchema,
 } from "../schemas.js";
 
-export default function Site(props) {
-  const site = new SiteSchema(props);
+// import "../schemas.js";
 
-  console.log(site);
+export default function Site(/** @type {string} */ props) {
+    const site = new SiteSchema(props);
 
-  return site.veiculos
-    .map((veiculo) => {
-      const _veiculo = new VeiculoSchema(veiculo);
-      return `<p>${_veiculo.titulo}</p>`;
-    })
-    .join("");
+    console.log(site);
+
+    return site.veiculos
+        .map((veiculo) => {
+            const _veiculo = new VeiculoSchema(veiculo);
+            return `<p>${_veiculo.titulo}</p>`;
+        })
+        .join("");
 }

@@ -1,4 +1,4 @@
-function LoadFromObject(object, props, exclude_keys = []) {
+function LoadFromObject(object, props, exclude_keys: string[] = []) {
     [...Object.keys(props)].map((key) => {
         if (!exclude_keys.includes(key)) {
             object[key] = props[key];
@@ -13,6 +13,10 @@ function LoadArrayFromObject(object, props, key, schema) {
 }
 
 export class SiteSchema {
+    id: Number
+    nome: string
+    veiculos: VeiculoSchema[]
+
     constructor(props) {
         this.id = 0;
         this.nome = "";
@@ -24,6 +28,17 @@ export class SiteSchema {
 }
 
 export class VeiculoSchema {
+    id: Number
+    marca: string
+    modelo: string
+    ano: Number    
+    url: string
+    titulo: string
+    site: string
+    status: string
+    historicos: VeiculoHistoricoSchema[];
+    imagens: VeiculoImagemSchema[];
+
     constructor(props) {
         this.id = 0;
         this.marca = "";
@@ -43,6 +58,13 @@ export class VeiculoSchema {
 }
 
 export class VeiculoHistoricoSchema {
+    id: Number
+    valor: Number
+    quilometragem: Number
+    descricao: string
+    datahora: string
+    veiculo_id: Number
+
     constructor(props) {
         this.id = 0;
         this.valor = 0.0;
@@ -56,6 +78,10 @@ export class VeiculoHistoricoSchema {
 }
 
 export class VeiculoImagemSchema {
+    id: Number
+    url: string
+    veiculo_id: Number
+
     constructor(props) {
         this.id = 0;
         this.url = "";

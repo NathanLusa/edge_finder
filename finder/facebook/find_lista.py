@@ -68,9 +68,11 @@ class Selenium:
                 sleep(5)
 
             # Get the page source.
-            page_source = self.browser.page_source
+            page_source = self.browser.page_source or ''
 
-            return page_source or ''
+            status_code = 200 
+            
+            return status_code, page_source
 
         # Catch any exceptions.
         except TimeoutException:
@@ -98,7 +100,7 @@ class Selenium:
         print('Login realizado com sucesso!')
 
     def get_soup(self, url, force):
-        page_source, file_name = get_content(
+        status_code, page_source, file_name = get_content(
             url, get_content_method=self.get_page_source, force=force
         )
         if not page_source:
