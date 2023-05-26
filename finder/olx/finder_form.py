@@ -74,7 +74,7 @@ def find_form(force):
     historicos = get_historicos()
     imagens = get_imagens()
 
-    veiculo_list = [x for x in veiculo_list if x['site'] == SITE]
+    veiculo_list = [x for x in veiculo_list if x['site'] == SITE and x['status'] == 'ativo']
 
     veiculos = VeiculoList()
     veiculos.load_from_json(veiculo_list, historicos, imagens)
