@@ -1,5 +1,5 @@
 function createItemVeiculoHistorico(historico) {
-    return `
+  return `
     <h6>${historico.descricao}</h6>
     <h6><span class="badge bg-primary"><i class="fa-solid fa-sack-dollar"></i></span> ${historico.valor}</h6>
     <h6><span class="badge bg-primary"><i class="fa-regular fa-gauge"></i></span> ${historico.quilometragem}</h6>
@@ -7,8 +7,9 @@ function createItemVeiculoHistorico(historico) {
     <hr class="hr" />
 `;
 }
+
 export function createItemVeiculoHistoricoList(veiculo) {
-    return veiculo.historicos
-        .map((historico) => createItemVeiculoHistorico(historico))
-        .join("");
+  return veiculo.historicos
+    .map((historico) => createItemVeiculoHistorico(historico))
+    .join("");
 }

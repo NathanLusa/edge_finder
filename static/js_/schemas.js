@@ -5,20 +5,24 @@ function LoadFromObject(object, props, exclude_keys = []) {
         }
     });
 }
+
 function LoadArrayFromObject(object, props, key, schema) {
     if (key in props) {
         props[key].map((item) => object[key].push(new schema(item)));
     }
 }
+
 export class SiteSchema {
     constructor(props) {
         this.id = 0;
         this.nome = "";
         this.veiculos = [];
+
         LoadFromObject(this, props, ["veiculos"]);
         LoadArrayFromObject(this, props, "veiculos", VeiculoSchema);
     }
 }
+
 export class VeiculoSchema {
     constructor(props) {
         this.id = 0;
@@ -31,11 +35,13 @@ export class VeiculoSchema {
         this.status = "";
         this.historicos = [];
         this.imagens = [];
+
         LoadFromObject(this, props, ["historicos", "imagens"]);
         LoadArrayFromObject(this, props, "historicos", VeiculoHistoricoSchema);
         LoadArrayFromObject(this, props, "imagens", VeiculoImagemSchema);
     }
 }
+
 export class VeiculoHistoricoSchema {
     constructor(props) {
         this.id = 0;
@@ -44,14 +50,17 @@ export class VeiculoHistoricoSchema {
         this.descricao = "";
         this.datahora = "";
         this.veiculo_id = 0;
+
         LoadFromObject(this, props);
     }
 }
+
 export class VeiculoImagemSchema {
     constructor(props) {
         this.id = 0;
         this.url = "";
         this.veiculo_id = 0;
+
         LoadFromObject(this, props);
     }
 }

@@ -1,7 +1,8 @@
 import { createItemVeiculoCarousel } from "./ItemVeiculoCarousel.js";
 import { createItemVeiculoHistoricoList } from "./ItemVeiculoHistorico.js";
+
 function createItemVeiculo(veiculo) {
-    return `
+  return `
     <div class="row mb-3 border">
 
         <!-- ESQUREDA | IMAGEM -->
@@ -16,11 +17,15 @@ function createItemVeiculo(veiculo) {
                     <h5>
                     <a href="/veiculo/${veiculo.id}" target="_blank">
                         ${veiculo.id} - ${veiculo.titulo}</a>
-                    <a href="${veiculo.url}" target="_blank"><i class="fa-solid fa-up-right-from-square"></i></a>
+                    <a href="${
+                      veiculo.url
+                    }" target="_blank"><i class="fa-solid fa-up-right-from-square"></i></a>
                     </h5>
 
                     <div class="form-check form-switch">
-                        <input class="form-check-input veiculo-status" type="checkbox" data-veiculo_id="${veiculo.id}" checked>
+                        <input class="form-check-input veiculo-status" type="checkbox" data-veiculo_id="${
+                          veiculo.id
+                        }" checked>
                     </div>
                 </div>
 
@@ -33,6 +38,7 @@ function createItemVeiculo(veiculo) {
     </div>
     `;
 }
+
 export function createItemVeiculoList(veiculos) {
-    return veiculos.map((veiculo) => createItemVeiculo(veiculo)).join("");
+  return veiculos.map((veiculo) => createItemVeiculo(veiculo)).join("");
 }
