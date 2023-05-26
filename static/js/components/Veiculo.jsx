@@ -3,10 +3,8 @@ export default function Site(site) {
     console.log(site);
     return (_a = site.veiculos) === null || _a === void 0 ? void 0 : _a.map((veiculo) => `<p><a href="${veiculo.url}" target="_blank"> ${veiculo.titulo}</a></p>`).join("");
 }
-// export default function Paragrafo() {
-//     return (
-//         <div>
-//             <p> 'Teste' </p>
-//         </div>
-//     );
-// }
+function Paragrafo() {
+    return (<div>
+            <p> 'Teste' </p>
+        </div>);
+}

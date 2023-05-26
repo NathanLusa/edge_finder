@@ -54,45 +54,46 @@ function orderByFloat(array: any[], property: any) {
     });
 }
 
-if (btn) btn.onclick = (e) => {
-    // fetch("/verificarimagens", {
-    //     method: "POST",
-    // });
-    // return;
+if (btn)
+    btn.onclick = (e) => {
+        // fetch("/verificarimagens", {
+        //     method: "POST",
+        // });
+        // return;
 
-    render();
-    return;
+        render();
+        return;
 
-    for (const site of sites) {
-        const historicos = [];
-        console.log(site.veiculos);
+        for (const site of sites) {
+            const historicos = [];
+            console.log(site.veiculos);
 
-        //coloca todos os históricos em um único array
-        for (const veiculo of site.veiculos) {
-            for (const historico of veiculo.historicos) {
-                historicos.push(historico);
+            //coloca todos os históricos em um único array
+            for (const veiculo of site.veiculos) {
+                for (const historico of veiculo.historicos) {
+                    historicos.push(historico);
+                }
             }
-        }
 
-        //ordena esse array
-        orderByFloat(historicos, "valor");
+            //ordena esse array
+            orderByFloat(historicos, "valor");
 
-        //cria um novo array de veiculos, incluindo pelo veiculo_id do histórico
-        const veiculos = [];
+            //cria um novo array de veiculos, incluindo pelo veiculo_id do histórico
+            const veiculos = [];
 
-        for (const historico of historicos) {
-            const veiculo = site.veiculos.find(
-                (veiculo: any) => veiculo.id === historico.veiculo_id
-            );
-            if (!veiculos.find((xveiculo) => xveiculo.id === veiculo.id)) {
-                veiculos.push(veiculo);
+            for (const historico of historicos) {
+                const veiculo = site.veiculos.find(
+                    (veiculo: any) => veiculo.id === historico.veiculo_id
+                );
+                if (!veiculos.find((xveiculo) => xveiculo.id === veiculo.id)) {
+                    veiculos.push(veiculo);
+                }
             }
-        }
 
-        site.veiculos = veiculos;
-    }
-    render();
-};
+            site.veiculos = veiculos;
+        }
+        render();
+    };
 
 async function render() {
     let _html = "";

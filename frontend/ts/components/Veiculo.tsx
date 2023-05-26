@@ -1,9 +1,4 @@
-import {
-    SiteSchema,
-    VeiculoSchema,
-    VeiculoHistoricoSchema,
-    VeiculoImagemSchema,
-} from "../schemas.js";
+import { SiteSchema } from "../schemas";
 
 export default function Site(site: SiteSchema) {
     console.log(site);
@@ -14,3 +9,11 @@ export default function Site(site: SiteSchema) {
         )
         .join("");
 }
+
+// export default function Paragrafo() {
+//     return (
+//         <div>
+//             <p> 'Teste' </p>
+//         </div>
+//     );
+// }
