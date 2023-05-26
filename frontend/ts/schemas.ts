@@ -12,12 +12,18 @@ function LoadArrayFromObject(object: any, props: any, key: string, schema: any) 
     }
 }
 
+type propSiteSchema = {
+    id: Number
+    nome: String
+    veiculos?: VeiculoSchema[]
+}
+
 export class SiteSchema {
     id = 0;
     nome = "";
     veiculos: VeiculoSchema[] = [];
     
-    constructor(props: any) {
+    constructor(props: propSiteSchema) {
         LoadFromObject(this, props, ["veiculos"]);
         LoadArrayFromObject(this, props, "veiculos", VeiculoSchema);
     }
