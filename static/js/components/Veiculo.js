@@ -1,6 +1,5 @@
-import { SiteSchema, } from "../schemas.js";
-export default function Site(props) {
-    const site = new SiteSchema(props);
+export default function Site(site) {
+    var _a;
     console.log(site);
-    return site.veiculos.map((veiculo) => `<p><a href="${veiculo.url}" target="_blank"> ${veiculo.titulo}</a></p>`).join("");
+    return (_a = site.veiculos) === null || _a === void 0 ? void 0 : _a.map((veiculo) => `<p><a href="${veiculo.url}" target="_blank"> ${veiculo.titulo}</a></p>`).join("");
 }
