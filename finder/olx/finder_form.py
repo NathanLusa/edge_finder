@@ -36,8 +36,9 @@ def _find(veiculo, force):
     # print(main_list['data-json'])
     # breakpoint()
     json_data = json.loads(main_list['data-json'])
+    if not 'images' in json_data['ad']: print(json_data)
 
-    for img in json_data['ad']['images']:
+    for img in json_data['ad']['images'] if 'images' in json_data['ad'] else []:
         imagem = veiculo.get_imagem(img['original'])
         if not imagem:
             imagem_schema = VeiculoImagemSchema(
@@ -46,11 +47,11 @@ def _find(veiculo, force):
             imagem_json = post_veiculo_imagem(imagem_schema.to_json())
             veiculo.add_imagem(imagem_json)
 
-    description = json_data['ad']['body']
-    price = round(float(json_data['ad']['priceValue'].split(' ')[1]) * 1000, 2)
+    description = json_data['ad']['body'] if 'body' in json_data['ad'] else ''
+    price = round(float(json_data['ad']['priceValue'].split(' ')[1]) * 1000, 2) if 'priceValue' in json_data['ad'] else 0.0
 
     km = 0
-    for prop in json_data['ad']['properties']:
+    for prop in json_data['ad']['properties'] if 'properties' in json_data['ad'] else []:
         if prop['name'] == 'mileage':
             km = prop['value']
             km = int(km) * 1000 if int(km) <= 1000 else int(km)
