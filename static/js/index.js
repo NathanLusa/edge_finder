@@ -7,55 +7,14 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-import { createSite } from "./components/Site.js";
+import { Site } from "./components/Site.js";
 import { get_veiculos } from "./services.js";
-import Site from "./components/Veiculo.js";
+import { arrayHasValue, orderByNumber, orderByString, orderByFloat, } from "./utils.js";
 const divFilter = document.getElementById("filter");
 const teste = document.getElementById("accordionFlush");
 const btn = document.getElementById("btn-teste");
 let sites = [];
-function setCheckBoxChangeStatusEvent() {
-    const checkbox_list = document.querySelectorAll("input.veiculo-status");
-    checkbox_list.forEach((checkbox) => {
-        checkbox.addEventListener("change", function () {
-            fetch("/api/veiculo/" + checkbox.dataset.veiculo_id + "/status", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify({
-                    status: checkbox.checked ? "ativo" : "inativo",
-                }),
-            })
-                .then((response) => response.json())
-                .then((data) => {
-                console.log(data);
-            });
-        });
-    });
-}
-function orderByString(property) {
-    sites = sites.sort((a, b) => {
-        const nameA = a[property].toUpperCase(); // ignore upper and lowercase
-        const nameB = b[property].toUpperCase(); // ignore upper and lowercase
-        if (nameA < nameB) {
-            return -1;
-        }
-        if (nameA > nameB) {
-            return 1;
-        }
-        // names must be equal
-        return 0;
-    });
-}
-function orderByFloat(array, property) {
-    array = array.sort((a, b) => {
-        const nameA = parseFloat(a[property]); // ignore upper and lowercase
-        const nameB = parseFloat(b[property]); // ignore upper and lowercase
-        return nameA - nameB;
-    });
-}
-if (btn)
+if (btn) {
     btn.onclick = (e) => {
         // fetch("/verificarimagens", {
         //     method: "POST",
@@ -86,12 +45,13 @@ if (btn)
         }
         render();
     };
+}
 function render() {
     return __awaiter(this, void 0, void 0, function* () {
         let _html = "";
         console.log("start");
         for (const site of sites) {
-            _html += createSite(site);
+            _html += Site(site);
         }
         console.log("end");
         console.log("start innerHTML");
@@ -99,7 +59,7 @@ function render() {
             teste.innerHTML = _html;
         console.log("end innerHTML");
         addImageSrc();
-        setCheckBoxChangeStatusEvent();
+        // setCheckBoxChangeStatusEvent();
     });
 }
 function onVisible(element, callback) {
@@ -126,17 +86,65 @@ function addImageSrc() {
         console.log("end image");
     });
 }
+function makeFilters(_sites) {
+    console.log("start makeFilter");
+    let sites = [];
+    let marcas = [];
+    let modelos = [];
+    let anos = [];
+    _sites.map((site) => {
+        var _a;
+        if (!arrayHasValue(sites, site.nome))
+            sites.push(site.nome);
+        (_a = site.veiculos) === null || _a === void 0 ? void 0 : _a.map((veiculo) => {
+            if (!arrayHasValue(marcas, veiculo.marca))
+                marcas.push(veiculo.marca);
+            if (!arrayHasValue(modelos, veiculo.modelo))
+                modelos.push(veiculo.modelo);
+            if (!arrayHasValue(anos, veiculo.ano))
+                anos.push(veiculo.ano);
+        });
+    });
+    // console.log(_sites);
+    // console.log(sites);
+    // console.log(marcas);
+    // console.log(modelos);
+    // console.log(anos);
+    // Create filters
+    function filterHTML(nome, lista) {
+        return `
+    <div class="btn-group">
+        <button class="btn btn-primary btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+            ${nome}
+        </button>
+        <ul class="dropdown-menu">
+            ${lista
+            .map((item) => `<li><a class="dropdown-item" href="#">${item}</a></li>`)
+            .join("")}
+        </ul>
+    </div>    
+    `;
+    }
+    orderByString(sites);
+    orderByString(marcas);
+    orderByString(modelos);
+    orderByNumber(anos);
+    const filterElement = document.getElementById("filter");
+    filterElement
+        ? (filterElement.innerHTML =
+            filterElement.innerHTML +
+                filterHTML("Sites", sites) +
+                filterHTML("Marcas", marcas) +
+                filterHTML("Modelos", modelos) +
+                filterHTML("Anos", anos))
+        : null;
+    console.log("end makeFilter");
+}
 /////
 get_veiculos().then((data) => {
     sites = data;
-    let _html = "";
-    sites.map((site) => {
-        _html += `${Site(site)}`;
-    });
-    if (teste)
-        teste.innerHTML = _html;
-    // console.log("finish");
-    // render();
-    // Make filters
+    console.log("finish");
+    render();
+    makeFilters(sites);
 });
 // window.onload = async () => await render();

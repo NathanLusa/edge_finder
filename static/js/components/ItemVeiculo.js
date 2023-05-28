@@ -1,12 +1,13 @@
-import { createItemVeiculoCarousel } from "./ItemVeiculoCarousel.js";
-import { createItemVeiculoHistoricoList } from "./ItemVeiculoHistorico.js";
-function createItemVeiculo(veiculo) {
+import { ItemVeiculoCarousel } from "./ItemVeiculoCarousel.js";
+import { ItemVeiculoHistorico } from "./ItemVeiculoHistorico.js";
+export function ItemVeiculo(veiculo) {
+    var _a;
     return `
     <div class="row mb-3 border">
 
         <!-- ESQUREDA | IMAGEM -->
         <div class="col-xl-4 col-lg-4 col-md-12 col-sm-12 m-3">
-            ${createItemVeiculoCarousel(veiculo)}            
+            ${ItemVeiculoCarousel(veiculo)}            
         </div>
 
         <!-- DIREITA | DESCRICAO -->
@@ -20,19 +21,21 @@ function createItemVeiculo(veiculo) {
                     </h5>
 
                     <div class="form-check form-switch">
-                        <input class="form-check-input veiculo-status" type="checkbox" data-veiculo_id="${veiculo.id}" checked>
+                        <input class="form-check-input veiculo-status" type="checkbox" data-veiculo_id="${veiculo.id}" checked
+                        onchange="setCheckBoxChangeStatusEvent()"
+                        >
                     </div>
                 </div>
 
                 <div mb-3 bg-body-tertiary w-100">
                     <hr class="hr"/>
-                    ${createItemVeiculoHistoricoList(veiculo)}
+                    ${(_a = veiculo.historicos) === null || _a === void 0 ? void 0 : _a.map((historico) => ItemVeiculoHistorico(historico)).join("")}
                 </div>
             </div>
         </div>
     </div>
     `;
 }
-export function createItemVeiculoList(veiculos) {
-    return veiculos.map((veiculo) => createItemVeiculo(veiculo)).join("");
-}
+// export function createItemVeiculoList(veiculos: any) {
+//   return veiculos.map((veiculo: any) => createItemVeiculo(veiculo)).join("");
+// }

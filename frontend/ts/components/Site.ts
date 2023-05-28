@@ -1,7 +1,8 @@
-import { createItemVeiculoList } from "./ItemVeiculo.js";
+import { ItemVeiculo } from "./ItemVeiculo.js";
+import { SiteSchema } from "../schemas.js";
 
-export function createSite(site: any) {
-  return `
+export function Site(site: SiteSchema) {
+    return `
     <div class="accordion-item">
 
         <h2 class="accordion-header">
@@ -10,7 +11,7 @@ export function createSite(site: any) {
                 aria-controls="accordion-${site.nome}">
                 <h5>
                     <span class="badge rounded-pill bg-danger">${
-                      site.veiculos.length
+                        site.veiculos?.length
                     }</span>
                     ${site.nome}
                 </h5>
@@ -19,10 +20,12 @@ export function createSite(site: any) {
 
         <!-- ITEM DO SITE | CORPO (LISTA) -->
         <div id="accordion-${
-          site.nome
+            site.nome
         }" class="accordion-collapse collapse" data-bs-parent="#accordionFlush">
             <div class="accordion-body">
-                ${createItemVeiculoList(site.veiculos)}
+                ${site.veiculos
+                    ?.map((veiculo) => ItemVeiculo(veiculo))
+                    .join("")}
             </div>
         </div>
     </div>

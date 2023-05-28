@@ -1,5 +1,6 @@
-import { createItemVeiculoList } from "./ItemVeiculo.js";
-export function createSite(site) {
+import { ItemVeiculo } from "./ItemVeiculo.js";
+export function Site(site) {
+    var _a, _b;
     return `
     <div class="accordion-item">
 
@@ -8,7 +9,7 @@ export function createSite(site) {
                 data-bs-target="#accordion-${site.nome}" aria-expanded="false"
                 aria-controls="accordion-${site.nome}">
                 <h5>
-                    <span class="badge rounded-pill bg-danger">${site.veiculos.length}</span>
+                    <span class="badge rounded-pill bg-danger">${(_a = site.veiculos) === null || _a === void 0 ? void 0 : _a.length}</span>
                     ${site.nome}
                 </h5>
             </button>
@@ -17,7 +18,7 @@ export function createSite(site) {
         <!-- ITEM DO SITE | CORPO (LISTA) -->
         <div id="accordion-${site.nome}" class="accordion-collapse collapse" data-bs-parent="#accordionFlush">
             <div class="accordion-body">
-                ${createItemVeiculoList(site.veiculos)}
+                ${(_b = site.veiculos) === null || _b === void 0 ? void 0 : _b.map((veiculo) => ItemVeiculo(veiculo)).join("")}
             </div>
         </div>
     </div>

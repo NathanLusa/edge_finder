@@ -1,13 +1,14 @@
-import { createItemVeiculoCarousel } from "./ItemVeiculoCarousel.js";
-import { createItemVeiculoHistoricoList } from "./ItemVeiculoHistorico.js";
+import { VeiculoSchema } from "../schemas";
+import { ItemVeiculoCarousel } from "./ItemVeiculoCarousel.js";
+import { ItemVeiculoHistorico } from "./ItemVeiculoHistorico.js";
 
-function createItemVeiculo(veiculo: any) {
-  return `
+export function ItemVeiculo(veiculo: VeiculoSchema) {
+    return `
     <div class="row mb-3 border">
 
         <!-- ESQUREDA | IMAGEM -->
         <div class="col-xl-4 col-lg-4 col-md-12 col-sm-12 m-3">
-            ${createItemVeiculoCarousel(veiculo)}            
+            ${ItemVeiculoCarousel(veiculo)}            
         </div>
 
         <!-- DIREITA | DESCRICAO -->
@@ -18,20 +19,24 @@ function createItemVeiculo(veiculo: any) {
                     <a href="/veiculo/${veiculo.id}" target="_blank">
                         ${veiculo.id} - ${veiculo.titulo}</a>
                     <a href="${
-                      veiculo.url
+                        veiculo.url
                     }" target="_blank"><i class="fa-solid fa-up-right-from-square"></i></a>
                     </h5>
 
                     <div class="form-check form-switch">
                         <input class="form-check-input veiculo-status" type="checkbox" data-veiculo_id="${
-                          veiculo.id
-                        }" checked>
+                            veiculo.id
+                        }" checked
+                        onchange="setCheckBoxChangeStatusEvent()"
+                        >
                     </div>
                 </div>
 
                 <div mb-3 bg-body-tertiary w-100">
                     <hr class="hr"/>
-                    ${createItemVeiculoHistoricoList(veiculo)}
+                    ${veiculo.historicos
+                        ?.map((historico) => ItemVeiculoHistorico(historico))
+                        .join("")}
                 </div>
             </div>
         </div>
@@ -39,6 +44,6 @@ function createItemVeiculo(veiculo: any) {
     `;
 }
 
-export function createItemVeiculoList(veiculos: any) {
-  return veiculos.map((veiculo: any) => createItemVeiculo(veiculo)).join("");
-}
+// export function createItemVeiculoList(veiculos: any) {
+//   return veiculos.map((veiculo: any) => createItemVeiculo(veiculo)).join("");
+// }
