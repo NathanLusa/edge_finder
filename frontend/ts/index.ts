@@ -1,12 +1,12 @@
-import { Site } from "./components/Site.js";
-import { SiteSchema } from "./schemas.js";
-import { get_veiculos, verificar_imagens } from "./services.js";
+import { Site } from "./components/Site";
+import { SiteSchema } from "./schemas";
+import { get_veiculos, verificar_imagens } from "./services";
 import {
     arrayHasValue,
     orderByNumber,
     orderByString,
     orderByFloat,
-} from "./utils.js";
+} from "./utils";
 
 const divFilter = document.getElementById("filter");
 const teste = document.getElementById("accordionFlush");
@@ -178,3 +178,14 @@ get_veiculos().then((data) => {
 });
 
 // window.onload = async () => await render();
+
+// const App = () => (
+//     <div>
+//       <Button onClick={() => alert(1)}>Click 11</Button>
+//       <Button onClick={() => alert(2)}>Click 12</Button>
+//       <Button onClick={() => alert(3)}>Click 13</Button>
+//     </div>
+//   );
+
+//   const rootElement = document.getElementById("root");
+//   rootElement.appendChild(<App />);
