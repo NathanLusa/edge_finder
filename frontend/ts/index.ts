@@ -1,12 +1,13 @@
-import { Site } from "./components/Site";
-import { SiteSchema } from "./schemas";
-import { get_veiculos, verificar_imagens } from "./services";
+import { Site } from "./components/Site.js";
+import Hello from "./components/Teste.js";
+import { SiteSchema } from "./schemas.js";
+import { get_veiculos, verificar_imagens } from "./services.js";
 import {
     arrayHasValue,
     orderByNumber,
     orderByString,
     orderByFloat,
-} from "./utils";
+} from "./utils.js";
 
 const divFilter = document.getElementById("filter");
 const teste = document.getElementById("accordionFlush");
@@ -175,6 +176,8 @@ get_veiculos().then((data) => {
     render();
 
     makeFilters(sites);
+
+    // if (teste) teste.innerHTML = teste.innerHTML + Hello("Olá mundo");
 });
 
 // window.onload = async () => await render();

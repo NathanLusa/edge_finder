@@ -1,12 +1,3 @@
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 import { Site } from "./components/Site.js";
 import { get_veiculos } from "./services.js";
 import { arrayHasValue, orderByNumber, orderByString, orderByFloat, } from "./utils.js";
@@ -46,21 +37,19 @@ if (btn) {
         render();
     };
 }
-function render() {
-    return __awaiter(this, void 0, void 0, function* () {
-        let _html = "";
-        console.log("start");
-        for (const site of sites) {
-            _html += Site(site);
-        }
-        console.log("end");
-        console.log("start innerHTML");
-        if (teste)
-            teste.innerHTML = _html;
-        console.log("end innerHTML");
-        addImageSrc();
-        // setCheckBoxChangeStatusEvent();
-    });
+async function render() {
+    let _html = "";
+    console.log("start");
+    for (const site of sites) {
+        _html += Site(site);
+    }
+    console.log("end");
+    console.log("start innerHTML");
+    if (teste)
+        teste.innerHTML = _html;
+    console.log("end innerHTML");
+    addImageSrc();
+    // setCheckBoxChangeStatusEvent();
 }
 function onVisible(element, callback) {
     new IntersectionObserver((entries, observer) => {
@@ -72,19 +61,17 @@ function onVisible(element, callback) {
         });
     }).observe(element);
 }
-function addImageSrc() {
-    return __awaiter(this, void 0, void 0, function* () {
-        console.log("start image");
-        const carousel_list = [...document.getElementsByClassName("carousel")];
-        console.log(carousel_list);
-        carousel_list.map((carousel) => {
-            onVisible(carousel, () => {
-                const image_list = [...carousel.getElementsByTagName("img")];
-                image_list.map((img) => (img.src = img.getAttribute("data-src")));
-            });
+async function addImageSrc() {
+    console.log("start image");
+    const carousel_list = [...document.getElementsByClassName("carousel")];
+    console.log(carousel_list);
+    carousel_list.map((carousel) => {
+        onVisible(carousel, () => {
+            const image_list = [...carousel.getElementsByTagName("img")];
+            image_list.map((img) => (img.src = img.getAttribute("data-src")));
         });
-        console.log("end image");
     });
+    console.log("end image");
 }
 function makeFilters(_sites) {
     console.log("start makeFilter");
@@ -146,5 +133,15 @@ get_veiculos().then((data) => {
     console.log("finish");
     render();
     makeFilters(sites);
+    // if (teste) teste.innerHTML = teste.innerHTML + Hello("Olá mundo");
 });
 // window.onload = async () => await render();
+// const App = () => (
+//     <div>
+//       <Button onClick={() => alert(1)}>Click 11</Button>
+//       <Button onClick={() => alert(2)}>Click 12</Button>
+//       <Button onClick={() => alert(3)}>Click 13</Button>
+//     </div>
+//   );
+//   const rootElement = document.getElementById("root");
+//   rootElement.appendChild(<App />);
