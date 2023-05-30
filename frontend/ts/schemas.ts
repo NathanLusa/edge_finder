@@ -1,14 +1,14 @@
 export interface SiteSchema {
-    id: Number;
+    id: number;
     nome: string;
     veiculos?: VeiculoSchema[];
 }
 
 export interface VeiculoSchema {
-    id: Number;
+    id: number;
     marca: string;
     modelo: string;
-    ano: Number;
+    ano: number;
     url: string;
     titulo: string;
     site: string;
@@ -18,17 +18,17 @@ export interface VeiculoSchema {
 }
 
 export interface VeiculoHistoricoSchema {
-    id: Number;
-    valor: Number;
-    quilometragem: Number;
+    id: number;
+    valor: number;
+    quilometragem: number;
     descricao: string;
     datahora: string;
-    veiculo_id: Number;
+    veiculo_id: number;
 }
 
 export interface VeiculoImagemSchema {
-    id: Number;
+    id: number;
     url: string;
     status: string;
-    veiculo_id: Number;
+    veiculo_id: number;
 }

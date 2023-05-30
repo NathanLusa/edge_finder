@@ -1,5 +1,6 @@
 import requests
 from fastapi import Depends, FastAPI, Request
+from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from sqlalchemy import desc
@@ -14,6 +15,24 @@ from app.router.veiculo import historico_router, imagem_router, veiculo_router
 templates = Jinja2Templates(directory='templates')
 
 app = FastAPI()
+
+origins = [
+    # "http://localhost.tiangolo.com",
+    # "https://localhost.tiangolo.com",
+    "http://localhost",
+    # "http://localhost:8080",
+    "http://localhost:5173"
+]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+
 app.mount('/static', StaticFiles(directory='static'), name='static')
 
 # app.include_router(UsuarioRouter)
