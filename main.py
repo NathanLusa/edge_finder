@@ -12,7 +12,8 @@ from app.models.veiculo import VeiculoHistoricoModel, VeiculoImagemModel, Veicul
 from app.router.usuario import router as UsuarioRouter
 from app.router.veiculo import historico_router, imagem_router, veiculo_router
 
-templates = Jinja2Templates(directory='templates')
+templates = Jinja2Templates(directory='frontend/dist')
+templatesBackend = Jinja2Templates(directory='templates')
 
 app = FastAPI()
 
@@ -34,6 +35,7 @@ app.add_middleware(
 
 
 app.mount('/static', StaticFiles(directory='static'), name='static')
+app.mount('/assets', StaticFiles(directory='frontend/dist/assets'), name='assets')
 
 # app.include_router(UsuarioRouter)
 app.include_router(veiculo_router, prefix='/api')
@@ -178,7 +180,7 @@ async def veiculo_view(request: Request, item_id: int, db: Session = Depends(get
     # veiculo.imagens = [x for x in veiculo.imagens if x.status == VeiculoImagemStatus.ativo]
     # print(len(veiculo.imagens))
     
-    return templates.TemplateResponse(
+    return templatesBackend.TemplateResponse(
         'veiculo.html',
         {
             'request': request,
