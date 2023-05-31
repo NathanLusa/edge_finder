@@ -1,4 +1,4 @@
-export function arrayHasValue<T>(array: Array<T>, value: T): Boolean {
+export function arrayHasValue<T>(array: Array<T>, value: T): boolean {
     return array.filter((item) => item === value).length > 0;
 }
 
