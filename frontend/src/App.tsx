@@ -66,17 +66,45 @@ function App() {
         },
     ];
 
+    // return (
+    //     <div className="container h-screen mx-auto bg-sky-700">
+    //         <div className="bg-green-400">Teste 1</div>
+    //         <div className="bg-green-400">Teste 2</div>
+    //         <div className="bg-green-400">Teste 3</div>
+    //     </div>
+    // );
+
     return (
-        <div className="container row-auto flex-row h-screen bg-sky-800 border">
+        <div className="container row-auto flex-row h-screen mx-auto bg-sky-800 border">
             {/* TITLE */}
-            <h1 className="text-center bg-blue-500">Edge finder</h1>
+            <h1 className="text-center collapse bg-blue-500">
+                Edge finder none
+            </h1>
+            <h1 className="text-center collapse sm:visible bg-blue-500">
+                Edge finder sm
+            </h1>
+            <h1 className="text-center collapse md:visible bg-blue-500">
+                Edge finder md
+            </h1>
+            <h1 className="text-center collapse lg:visible bg-blue-500">
+                Edge finder lg
+            </h1>
+            <h1 className="text-center collapse xl:visible bg-blue-500">
+                Edge finder xl
+            </h1>
+            <h1 className="text-center collapse 2xl:visible bg-blue-500">
+                Edge finder 2xl
+            </h1>
+            <h1 className="text-center collapse 3xl:visible bg-blue-500">
+                Edge finder 3xl
+            </h1>
 
             {/* MAIN */}
-            <main className="grid grid-flow-row grid-cols-1 md:grid-cols-2 pt-2 gap-4 px-4 h-screen justify-center bg-red-600">
+            <main className="flex flex-wrap justify-center gap-y-4 gap-x-2 pt-4 xl:px-0 bg-red-600">
                 {veiculos.map((veiculo, key) => (
                     <div
                         key={key}
-                        className="flex-col rounded-lg max-w-md px-1 bg-yellow-300"
+                        className="flex-col rounded-lg max-w-md px-1 basis-full xl:basis-3/12 bg-yellow-300"
                     >
                         <div className="h-40 bg-green-400">
                             <p>Imagem</p>
