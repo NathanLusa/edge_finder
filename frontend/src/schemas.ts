@@ -13,6 +13,7 @@ export interface VeiculoSchema {
     titulo: string;
     site: string;
     status: string;
+    created_at: string;
     historicos?: VeiculoHistoricoSchema[];
     imagens?: VeiculoImagemSchema[];
 }
@@ -24,6 +25,7 @@ export interface VeiculoHistoricoSchema {
     descricao: string;
     datahora: string;
     veiculo_id: number;
+    created_at: string;
 }
 
 export interface VeiculoImagemSchema {
@@ -31,4 +33,5 @@ export interface VeiculoImagemSchema {
     url: string;
     status: string;
     veiculo_id: number;
+    created_at: string;
 }
