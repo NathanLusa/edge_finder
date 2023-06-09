@@ -2,7 +2,7 @@
 import DropdownButton from "./components/DropdownButton";
 import { useEffect, useState } from "react";
 import { SiteSchema, VeiculoSchema } from "./schemas";
-import { getVeiculos } from "./services";
+import { getVeiculos, updateStatusveiculo } from "./services";
 // import Site from './components_old/Site'
 
 function App() {
@@ -14,7 +14,7 @@ function App() {
     }, []);
 
     const GetVeiculosAxios = async () => {
-        const carregar = false;
+        const carregar = true;
         let _veiculos: VeiculoSchema[] = [];
         if (carregar) {
             const sites = await getVeiculos();
@@ -2569,6 +2569,29 @@ function App() {
         useVeiculos(_veiculos);
     };
 
+    const onClickCheckVeiculo = (id: number) => {
+        // veiculo.status = "inativo";
+
+        const newList = veiculos.map((veiculo) => {
+            if (veiculo.id === id) {
+                const updatedItem = {
+                    ...veiculo,
+                    status: veiculo.status != "ativo" ? "ativo" : "inativo",
+                };
+
+                updateStatusveiculo(updatedItem.id, updatedItem.status).then(
+                    (response) => console.log(response)
+                );
+
+                return updatedItem;
+            }
+
+            return veiculo;
+        });
+
+        useVeiculos(newList);
+    };
+
     return (
         <div className="container row-auto flex-row h-auto mx-auto">
             {/* TITLE */}
@@ -2600,23 +2623,37 @@ function App() {
                             />
                         </div>
                         <div className="col-span-2 h-28 mt-1 p-2 rounded-sm bg-slate-200 ">
-                            <a href={veiculo.url} target="_blank">
-                                {veiculo.marca} {veiculo.modelo}{" "}
-                                {veiculo.status}
-                            </a>
-                            <div className="flex flex-col">
+                            <div className="flex text-lg font-medium place-content-between">
+                                <a href={veiculo.url} target="_blank">
+                                    {veiculo.marca} {veiculo.modelo}{" "}
+                                    {veiculo.status}
+                                </a>
+                                <div
+                                    onClick={() =>
+                                        onClickCheckVeiculo(veiculo.id)
+                                    }
+                                    className="hover:cursor-pointer"
+                                >
+                                    {veiculo.status != "ativo" ? (
+                                        <i className="fa-regular fa-circle-check"></i>
+                                    ) : (
+                                        <i className="fa-solid fa-circle-check"></i>
+                                    )}
+                                </div>
+                            </div>
+                            <div className="flex flex-col pt-0.5 border-t border-gray-400">
                                 {veiculo.historicos?.map((historico, index) => (
                                     <div
                                         key={index}
-                                        className="flex gap-2 xl:gap-1"
+                                        className="flex place-content-between"
                                     >
                                         <p className="">
                                             {new Date(
                                                 historico.datahora
                                             ).toLocaleDateString("sv")}
                                         </p>
-                                        <p>Preço: {historico.valor}</p>
                                         <p>KM: {historico.quilometragem}</p>
+                                        <p>Preço: {historico.valor}</p>
                                     </div>
                                 ))}
                             </div>
