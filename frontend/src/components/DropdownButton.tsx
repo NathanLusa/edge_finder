@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from "react";
+import { generateArray } from "../utils";
 
 function useComponentVisible(initialIsVisible: boolean) {
     const [isComponentVisible, setIsComponentVisible] =
@@ -38,10 +39,7 @@ function DropdownButton() {
     };
 
     return (
-        <div
-            ref={ref}
-            className="relative w-fit rounded-md shadow-md shadow-blue-700"
-        >
+        <div ref={ref} className="relative w-fit rounded-md shadow-sm ">
             <button
                 onClick={onClick}
                 type="button"
@@ -59,16 +57,19 @@ function DropdownButton() {
                 className={
                     "absolute " +
                     (isComponentVisible ? "" : "hidden") +
-                    " rounded min-w-max p-2 bg-white shadow-md shadow-blue-700"
+                    " rounded min-w-max bg-white shadow-sm "
                 }
             >
-                <ul className="">
-                    <li onClick={onClick}>Opção 1</li>
-                    <li onClick={onClick}>Opção 2</li>
-                    <li onClick={onClick}>Opção 3</li>
-                    <li onClick={onClick}>
-                        Opção 4 deve ser maior que o botão
-                    </li>
+                <ul className="" style={{ minWidth: "7rem" }}>
+                    {generateArray(4).map((item, key) => (
+                        <li
+                            key={key}
+                            onClick={onClick}
+                            className="w-auto py-1 px-2 hover:bg-gray-200"
+                        >
+                            Opção {item}
+                        </li>
+                    ))}
                 </ul>
             </div>
         </div>

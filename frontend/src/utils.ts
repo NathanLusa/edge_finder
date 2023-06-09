@@ -33,3 +33,7 @@ export function orderByNumber(array: any[], property?: any) {
         return nameA - nameB;
     });
 }
+
+export function generateArray(quantity: number): Array<number> {
+    return [...Array(quantity).keys()];
+}

@@ -14,7 +14,7 @@ function App() {
     }, []);
 
     const GetVeiculosAxios = async () => {
-        const carregar = true;
+        const carregar = false;
         let _veiculos: VeiculoSchema[] = [];
         if (carregar) {
             const sites = await getVeiculos();
@@ -2570,8 +2570,6 @@ function App() {
     };
 
     const onClickCheckVeiculo = (id: number) => {
-        // veiculo.status = "inativo";
-
         const newList = veiculos.map((veiculo) => {
             if (veiculo.id === id) {
                 const updatedItem = {
