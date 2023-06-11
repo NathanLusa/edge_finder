@@ -4,10 +4,21 @@ import { useEffect, useState } from "react";
 import { SiteSchema, VeiculoSchema } from "./schemas";
 import { getVeiculos, updateStatusveiculo } from "./services";
 // import Site from './components_old/Site'
+import { generateArray } from "./utils";
 
 function App() {
     const [sites, useSite] = useState<SiteSchema[]>([]);
     const [veiculos, useVeiculos] = useState<VeiculoSchema[]>([]);
+    const [filterSites, useFilterSites] = useState<Set<string>>(
+        new Set<string>()
+    );
+    const [filterMarca, useFilterMarca] = useState<Set<string>>(
+        new Set<string>()
+    );
+    const [filterModelo, useFilterModelo] = useState<Set<string>>(
+        new Set<string>()
+    );
+    const [filterAno, useFilterAno] = useState<Set<number>>(new Set<number>());
 
     useEffect(() => {
         GetVeiculosAxios();
@@ -16,12 +27,23 @@ function App() {
     const GetVeiculosAxios = async () => {
         const carregar = false;
         let _veiculos: VeiculoSchema[] = [];
+        let _sites = new Set<string>();
+        let _marcas = new Set<string>();
+        let _modelos = new Set<string>();
+        let _anos = new Set<number>();
+
         if (carregar) {
             const sites = await getVeiculos();
             useSite(sites);
 
             sites.map((site: SiteSchema) => {
-                site.veiculos?.map((veiculo) => _veiculos.push(veiculo));
+                _sites.add(site.nome);
+                site.veiculos?.map((veiculo) => {
+                    _marcas.add(veiculo.marca);
+                    _modelos.add(veiculo.modelo);
+                    _anos.add(veiculo.ano);
+                    _veiculos.push(veiculo);
+                });
             });
         } else {
             _veiculos = [
@@ -2567,6 +2589,10 @@ function App() {
             ];
         }
         useVeiculos(_veiculos);
+        useFilterSites(_sites);
+        useFilterMarca(_marcas);
+        useFilterModelo(_modelos);
+        useFilterAno(_anos);
     };
 
     const onClickCheckVeiculo = (id: number) => {
@@ -2597,7 +2623,58 @@ function App() {
 
             {/* FILTER */}
             <div className="flex justify-center border">
-                <DropdownButton />
+                <DropdownButton
+                    title="Site"
+                    items={[
+                        [...filterSites].map((item) => (
+                            <li
+                                // onClick={() => alert("teste")}
+                                className="w-auto py-1 px-2 hover:bg-gray-200"
+                            >
+                                {item}
+                            </li>
+                        )),
+                    ]}
+                />
+                <DropdownButton
+                    title="Marca"
+                    items={[
+                        [...filterMarca].map((item) => (
+                            <li
+                                // onClick={() => alert("teste")}
+                                className="w-auto py-1 px-2 hover:bg-gray-200"
+                            >
+                                {item}
+                            </li>
+                        )),
+                    ]}
+                />
+                <DropdownButton
+                    title="Modelo"
+                    items={[
+                        [...filterModelo].map((item) => (
+                            <li
+                                // onClick={() => alert("teste")}
+                                className="w-auto py-1 px-2 hover:bg-gray-200"
+                            >
+                                {item}
+                            </li>
+                        )),
+                    ]}
+                />
+                <DropdownButton
+                    title="Ano"
+                    items={[
+                        [...filterAno].map((item) => (
+                            <li
+                                // onClick={() => alert("teste")}
+                                className="w-auto py-1 px-2 hover:bg-gray-200"
+                            >
+                                {item}
+                            </li>
+                        )),
+                    ]}
+                />
             </div>
 
             {/* MAIN */}

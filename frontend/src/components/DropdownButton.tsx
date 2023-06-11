@@ -1,5 +1,4 @@
 import { useState, useEffect, useRef } from "react";
-import { generateArray } from "../utils";
 
 function useComponentVisible(initialIsVisible: boolean) {
     const [isComponentVisible, setIsComponentVisible] =
@@ -30,7 +29,12 @@ function useComponentVisible(initialIsVisible: boolean) {
     return { ref, isComponentVisible, setIsComponentVisible };
 }
 
-function DropdownButton() {
+interface DropdownButtonProp {
+    title: string;
+    items?: string[] | React.ReactNode[];
+}
+
+function DropdownButton(props: DropdownButtonProp) {
     const { ref, isComponentVisible, setIsComponentVisible } =
         useComponentVisible(false);
 
@@ -46,7 +50,7 @@ function DropdownButton() {
                 className="flex items-center border border-gray-500 h-8 rounded-md font-semibold bg-blue-400 hover:bg-zinc-300"
             >
                 <div className="flex-shrink-0 border-r border-gray-500 px-2 ">
-                    Teste
+                    {props.title}
                 </div>
                 <div className="w-8">
                     <i className="fa-solid fa-chevron-down"></i>
@@ -61,14 +65,14 @@ function DropdownButton() {
                 }
             >
                 <ul className="" style={{ minWidth: "7rem" }}>
-                    {generateArray(4).map((item, key) => (
-                        <li
+                    {props.items?.map((item, key) => (
+                        <div
                             key={key}
                             onClick={onClick}
-                            className="w-auto py-1 px-2 hover:bg-gray-200"
+                            className="cursor-pointer"
                         >
-                            Opção {item}
-                        </li>
+                            {item}
+                        </div>
                     ))}
                 </ul>
             </div>
