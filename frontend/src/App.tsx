@@ -2,46 +2,46 @@
 import DropdownButton from "./components/DropdownButton";
 import { useEffect, useState } from "react";
 import { SiteSchema, VeiculoSchema } from "./schemas";
-import { getVeiculos, updateStatusveiculo } from "./services";
+import {
+    getVeiculos,
+    updateStatusveiculo,
+    verificarStatusImagens,
+} from "./services";
 // import Site from './components_old/Site'
 import { generateArray } from "./utils";
 
 function App() {
-    const [sites, useSite] = useState<SiteSchema[]>([]);
-    const [veiculos, useVeiculos] = useState<VeiculoSchema[]>([]);
-    const [filterSites, useFilterSites] = useState<Set<string>>(
-        new Set<string>()
-    );
-    const [filterMarca, useFilterMarca] = useState<Set<string>>(
-        new Set<string>()
-    );
-    const [filterModelo, useFilterModelo] = useState<Set<string>>(
-        new Set<string>()
-    );
-    const [filterAno, useFilterAno] = useState<Set<number>>(new Set<number>());
+    let filterSites = new Set<string>();
+    let filterMarca = new Set<string>();
+    let filterModelo = new Set<string>();
+    let filterAno = new Set<number>();
+
+    const [sites, setSite] = useState<SiteSchema[]>([]);
+    const [veiculos, setVeiculos] = useState<VeiculoSchema[]>([]);
 
     useEffect(() => {
         GetVeiculosAxios();
     }, []);
 
     const GetVeiculosAxios = async () => {
-        const carregar = false;
+        const carregar = true;
         let _veiculos: VeiculoSchema[] = [];
-        let _sites = new Set<string>();
-        let _marcas = new Set<string>();
-        let _modelos = new Set<string>();
-        let _anos = new Set<number>();
+
+        filterSites.clear();
+        filterMarca.clear();
+        filterModelo.clear();
+        filterAno.clear();
 
         if (carregar) {
             const sites = await getVeiculos();
-            useSite(sites);
+            setSite(sites);
 
             sites.map((site: SiteSchema) => {
-                _sites.add(site.nome);
+                filterSites.add(site.nome);
                 site.veiculos?.map((veiculo) => {
-                    _marcas.add(veiculo.marca);
-                    _modelos.add(veiculo.modelo);
-                    _anos.add(veiculo.ano);
+                    filterMarca.add(veiculo.marca);
+                    filterModelo.add(veiculo.modelo);
+                    filterAno.add(veiculo.ano);
                     _veiculos.push(veiculo);
                 });
             });
@@ -2588,11 +2588,9 @@ function App() {
                 },
             ];
         }
-        useVeiculos(_veiculos);
-        useFilterSites(_sites);
-        useFilterMarca(_marcas);
-        useFilterModelo(_modelos);
-        useFilterAno(_anos);
+
+        console.log(filterAno);
+        setVeiculos(_veiculos);
     };
 
     const onClickCheckVeiculo = (id: number) => {
@@ -2613,9 +2611,10 @@ function App() {
             return veiculo;
         });
 
-        useVeiculos(newList);
+        setVeiculos(newList);
     };
 
+    console.log(filterAno);
     return (
         <div className="container row-auto flex-row h-auto mx-auto">
             {/* TITLE */}
@@ -2623,6 +2622,12 @@ function App() {
 
             {/* FILTER */}
             <div className="flex justify-center border">
+                <button
+                    onClick={() => verificarStatusImagens()}
+                    className="relative w-fit rounded-md shadow-sm border border-gray-500 h-8 px-2 font-semibold bg-blue-400 hover:bg-zinc-300"
+                >
+                    Atualizar Imagens
+                </button>
                 <DropdownButton
                     title="Site"
                     items={[
