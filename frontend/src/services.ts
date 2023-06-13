@@ -19,10 +19,6 @@ export async function verificarStatusImagens() {
 }
 
 export async function updateStatusveiculo(id: number, status: string) {
-    const response = await instance.post(
-        `api/veiculo/${id}/status`,
-        { status: status },
-        { headers: { "Content-Type": "application/json" } }
-    );
+    const response = await instance.post(`api/veiculo/${id}/status`, { status: status }, { headers: { "Content-Type": "application/json" } });
     return response;
 }
