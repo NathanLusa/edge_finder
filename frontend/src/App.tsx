@@ -8,13 +8,18 @@ import {
     verificarStatusImagens,
 } from "./services";
 // import Site from './components_old/Site'
-import { generateArray } from "./utils";
 
 function App() {
-    let filterSites = new Set<string>();
-    let filterMarca = new Set<string>();
-    let filterModelo = new Set<string>();
-    let filterAno = new Set<number>();
+    const [filterSites, setFilterSites] = useState<Set<string>>(
+        new Set<string>()
+    );
+    const [filterMarca, setFilterMarca] = useState<Set<string>>(
+        new Set<string>()
+    );
+    const [filterModelo, setFilterModelo] = useState<Set<string>>(
+        new Set<string>()
+    );
+    const [filterAno, setFilterAno] = useState<Set<number>>(new Set<number>());
 
     const [sites, setSite] = useState<SiteSchema[]>([]);
     const [veiculos, setVeiculos] = useState<VeiculoSchema[]>([]);
@@ -27,10 +32,10 @@ function App() {
         const carregar = true;
         let _veiculos: VeiculoSchema[] = [];
 
-        filterSites.clear();
-        filterMarca.clear();
-        filterModelo.clear();
-        filterAno.clear();
+        const filterSites = new Set<string>();
+        const filterMarca = new Set<string>();
+        const filterModelo = new Set<string>();
+        const filterAno = new Set<number>();
 
         if (carregar) {
             const sites = await getVeiculos();
@@ -2589,8 +2594,12 @@ function App() {
             ];
         }
 
-        console.log(filterAno);
+        // console.log(filterAno);
         setVeiculos(_veiculos);
+        setFilterSites(filterSites);
+        setFilterMarca(filterMarca);
+        setFilterModelo(filterModelo);
+        setFilterAno(filterAno);
     };
 
     const onClickCheckVeiculo = (id: number) => {
@@ -2614,7 +2623,6 @@ function App() {
         setVeiculos(newList);
     };
 
-    console.log(filterAno);
     return (
         <div className="container row-auto flex-row h-auto mx-auto">
             {/* TITLE */}
