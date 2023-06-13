@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import Checkbox from "./components/Checkbox";
 import DropdownButton from "./components/DropdownButton";
 import { SiteSchema, VeiculoSchema } from "./schemas";
 import { getVeiculos, updateStatusveiculo } from "./services";
@@ -75,6 +76,11 @@ export default function App() {
         <div className="container row-auto flex-row h-auto mx-auto">
             {/* TITLE */}
             <h1 className="text-center text-3xl p-4">Edge finder</h1>
+            <div className="text-center border">
+                <Checkbox name="checkbox1" title="Checkbox 1" />
+                <Checkbox name="checkbox2" title="Checkbox 2" />
+                <Checkbox name="checkbox3" title="Checkbox 3" />
+            </div>
 
             {/* FILTER */}
             <div className="flex justify-center border">
