@@ -62,11 +62,19 @@ export default function App() {
         setVeiculos(newList);
     }
 
+    function handleCheckFiltro(e: any, list: string[] | number[], item: string | number) {
+        // alert("Filtrei " + e);
+        console.log(e);
+        console.log(e.target.checked);
+        console.log(list);
+        console.log(item);
+    }
+
     function getItemsDropdownButton(list: string[] | number[]) {
         return [
             list.map((item, key) => (
                 <li key={key} className="w-auto py-1 px-2 hover:bg-gray-200">
-                    {item}
+                    <Checkbox name={item.toString() + "-" + key.toString()} title={item.toString()} onChange={e => handleCheckFiltro(e, list, item)} />
                 </li>
             )),
         ];
@@ -76,11 +84,6 @@ export default function App() {
         <div className="container row-auto flex-row h-auto mx-auto">
             {/* TITLE */}
             <h1 className="text-center text-3xl p-4">Edge finder</h1>
-            <div className="text-center border">
-                <Checkbox name="checkbox1" title="Checkbox 1" />
-                <Checkbox name="checkbox2" title="Checkbox 2" />
-                <Checkbox name="checkbox3" title="Checkbox 3" />
-            </div>
 
             {/* FILTER */}
             <div className="flex justify-center border">
