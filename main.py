@@ -130,6 +130,7 @@ async def veiculo_lista(db: Session = Depends(get_db)):
         db.query(VeiculoModel)
         .join(VeiculoHistoricoModel)
         .filter(VeiculoModel.status == VeiculoStatus.ativo)
+        .filter(VeiculoModel.id >= 1050)
         .order_by(order)
     )
     # .outerjoin(VeiculoImagemModel, onclause=( (VeiculoModel.id == VeiculoImagemModel.veiculo_id) & (VeiculoImagemModel.status != VeiculoImagemStatus.ativo) ))
@@ -139,6 +140,7 @@ async def veiculo_lista(db: Session = Depends(get_db)):
         {
             'id': 1,
             'nome': 'Olx',
+            'url': 'https://www.olx.com.br',
             'veiculos': veiculos.filter(
                 VeiculoModel.site == 'https://www.olx.com.br'
             ).all(),
@@ -146,6 +148,7 @@ async def veiculo_lista(db: Session = Depends(get_db)):
         {
             'id': 2,
             'nome': 'Facebook',
+            'url': 'https://www.facebook.com',
             'veiculos': veiculos.filter(
                 VeiculoModel.site == 'https://www.facebook.com'
             ).all(),
@@ -153,6 +156,7 @@ async def veiculo_lista(db: Session = Depends(get_db)):
         {
             'id': 3,
             'nome': 'SoCarrao',
+            'url': 'https://www.socarrao.com.br',
             'veiculos': veiculos.filter(
                 VeiculoModel.site == 'https://www.socarrao.com.br'
             ).all(),

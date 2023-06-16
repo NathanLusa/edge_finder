@@ -16,74 +16,74 @@ class Filter<T> {
 
     toggleItem(id: T) {
         let _allChecked = true;
-        this.list = this.list.map(item => {
+        // this.list =
+        this.list.map(item => {
             if (item.id === id) {
                 item.checked = !item.checked;
             }
 
             _allChecked = _allChecked && item.checked;
-            return item;
+            // return item;
         });
         this.allChecked = _allChecked;
     }
 
     add({ ...props }: FilterItem<T>) {
-        this.list?.push(props);
+        let _hasId = false;
+        this.list.map(item => (_hasId = _hasId || item.id === props.id));
+        if (!_hasId) this.list?.push(props);
+    }
+
+    getList(): T[] {
+        const _list: T[] = [];
+        this.list.map(item => _list.push(item.id));
+        return _list;
     }
 }
 
 export default function App() {
-    let anoFilter = new Filter<string>();
+    const [filterSites, setFilterSites] = useState<Filter<string>>(new Filter<string>());
+    const [filterMarca, setFilterMarca] = useState<Filter<string>>(new Filter<string>());
+    const [filterModelo, setFilterModelo] = useState<Filter<string>>(new Filter<string>());
+    const [filterAno, setFilterAno] = useState<Filter<string>>(new Filter<string>());
 
-    const [filterSites, setFilterSites] = useState<string[]>([]);
-    const [filterMarca, setFilterMarca] = useState<string[]>([]);
-    const [filterModelo, setFilterModelo] = useState<string[]>([]);
-    const [filterAno, setFilterAno] = useState<number[]>([]);
-
-    const [sites, setSite] = useState<SiteSchema[]>([]);
+    const [veiculosReadOnly, setVeiculosReadOnly] = useState<VeiculoSchema[]>([]);
     const [veiculos, setVeiculos] = useState<VeiculoSchema[]>([]);
 
     useEffect(() => {
         loadVeiculosAxios();
     }, []);
 
-    useEffect(() => {
-        console.log("useEffect sites");
-        const _veiculos: VeiculoSchema[] = [];
-        const filterSites = new Set<string>();
-        const filterMarca = new Set<string>();
-        const filterModelo = new Set<string>();
-        const filterAno = new Set<number>();
+    async function loadVeiculosAxios() {
+        const _sites: SiteSchema[] = await getVeiculos();
+        afterLoadVeiculosAxios(_sites);
+        // setSite(_sites);
+    }
 
-        sites.map(site => {
-            filterSites.add(site.nome);
+    function afterLoadVeiculosAxios(_sites: SiteSchema[]) {
+        console.log("setSite");
+        const _veiculos: VeiculoSchema[] = [];
+        const _filterSites = new Filter<string>();
+        const _filterMarca = new Filter<string>();
+        const _filterModelo = new Filter<string>();
+        const _filterAno = new Filter<string>();
+
+        _sites.map(site => {
+            _filterSites.add({ id: site.url, title: site.nome, checked: false });
             site.veiculos?.map(veiculo => {
-                filterMarca.add(veiculo.marca);
-                filterModelo.add(veiculo.modelo);
-                filterAno.add(veiculo.ano);
+                _filterMarca.add({ id: veiculo.marca, title: veiculo.marca, checked: false });
+                _filterModelo.add({ id: veiculo.modelo, title: veiculo.modelo, checked: false });
+                _filterAno.add({ id: veiculo.ano.toString(), title: veiculo.ano.toString(), checked: false });
                 _veiculos.push(veiculo);
             });
         });
 
+        setVeiculosReadOnly(_veiculos);
         setVeiculos(_veiculos);
-        setFilterSites([...filterSites]);
-        setFilterMarca([...filterMarca]);
-        setFilterModelo([...filterModelo]);
-        setFilterAno([...filterAno]);
-    }, [sites]);
-
-    useEffect(() => {
-        console.log("mudando o filtro do ano");
-        anoFilter.list = [];
-
-        filterAno.map(item => anoFilter.add({ id: item.toString(), title: item.toString(), checked: false }));
-
-        console.log("useEffect filterAno", anoFilter);
-    }, [filterAno]);
-
-    async function loadVeiculosAxios() {
-        const sites = await getVeiculos();
-        setSite(sites);
+        setFilterSites(_filterSites);
+        setFilterMarca(_filterMarca);
+        setFilterModelo(_filterModelo);
+        setFilterAno(_filterAno);
     }
 
     function handleCheckVeiculo(id: number) {
@@ -102,31 +102,56 @@ export default function App() {
         setVeiculos(newList);
     }
 
-    function handleCheckFiltro(item: string) {
-        anoFilter.toggleItem(item);
-        console.log("handleCheckFiltro", anoFilter);
+    function handleCheckFiltro(filter: Filter<string>, item: string) {
+        filter.toggleItem(item);
         filtrar();
     }
 
-    function getItemsDropdownButton(list: string[] | number[]) {
+    function getItemsDropdownButtonFilter(filter: Filter<string>) {
         return [
-            list.map((item, key) => (
-                <li key={key} className="w-auto py-1 px-2 hover:bg-gray-200">
-                    <Checkbox name={item.toString() + "-" + key.toString()} title={item.toString()} onChange={_ => handleCheckFiltro(item.toString())} />
-                </li>
-            )),
+            filter.list
+                .map(item => item.title)
+                .sort()
+                .map((item, key) => (
+                    <li key={key} className="w-auto py-1 px-2 hover:bg-gray-200">
+                        <Checkbox name={item.toString() + "-" + key.toString()} title={item.toString()} onChange={_ => handleCheckFiltro(filter, item.toString())} />
+                    </li>
+                )),
         ];
     }
 
     function filtrar() {
-        let _veiculos = veiculos.filter(item => {
-            let _ehAno = false;
-            anoFilter.list.map(_ano => (_ehAno = _ehAno || (_ano.checked && _ano.id === item.ano.toString())));
-            return _ehAno;
-        });
+        let _veiculos = veiculosReadOnly;
+
+        const _sites = [...filterSites.list.filter(_site => _site.checked).map(_site => _site.id)];
+        const _marcas = [...filterMarca.list.filter(_marca => _marca.checked).map(_marca => _marca.id)];
+        const _modelos = [...filterModelo.list.filter(_modelo => _modelo.checked).map(_modelo => _modelo.id)];
+        const _anos = [...filterAno.list.filter(_ano => _ano.checked).map(_ano => _ano.id)];
+
+        console.log(_sites, filterSites);
+        if (!filterSites.allChecked && _sites.length > 0) {
+            _veiculos = _veiculos.filter(veiculo => {
+                console.log(veiculo.site, _sites.indexOf(veiculo.site));
+                return _sites.indexOf(veiculo.site) >= 0;
+            });
+        }
+
+        if (!filterMarca.allChecked && _marcas.length > 0) {
+            _veiculos = _veiculos.filter(veiculo => _marcas.indexOf(veiculo.marca) >= 0);
+        }
+
+        if (!filterModelo.allChecked && _modelos.length > 0) {
+            _veiculos = _veiculos.filter(veiculo => _modelos.indexOf(veiculo.modelo) >= 0);
+        }
+
+        if (!filterAno.allChecked && _anos.length > 0) {
+            _veiculos = _veiculos.filter(veiculo => _anos.indexOf(veiculo.ano.toString()) >= 0);
+        }
+
         setVeiculos(_veiculos);
     }
 
+    console.log("Render", filterAno);
     return (
         <div className="container row-auto flex-row h-auto mx-auto">
             {/* TITLE */}
@@ -134,10 +159,10 @@ export default function App() {
 
             {/* FILTER */}
             <div className="flex justify-center border">
-                <DropdownButton title="Site" items={getItemsDropdownButton(filterSites)} />
-                <DropdownButton title="Marca" items={getItemsDropdownButton(filterMarca)} />
-                <DropdownButton title="Modelo" items={getItemsDropdownButton(filterModelo)} />
-                <DropdownButton title="Ano" items={getItemsDropdownButton(filterAno)} />
+                <DropdownButton title="Site" items={getItemsDropdownButtonFilter(filterSites)} />
+                <DropdownButton title="Marca" items={getItemsDropdownButtonFilter(filterMarca)} />
+                <DropdownButton title="Modelo" items={getItemsDropdownButtonFilter(filterModelo)} />
+                <DropdownButton title="Ano" items={getItemsDropdownButtonFilter(filterAno)} />
             </div>
 
             {/* MAIN */}

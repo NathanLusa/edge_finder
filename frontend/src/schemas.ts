@@ -1,6 +1,7 @@
 export interface SiteSchema {
     id: number;
     nome: string;
+    url: string;
     veiculos?: VeiculoSchema[];
 }
 
