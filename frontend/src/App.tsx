@@ -4,7 +4,37 @@ import DropdownButton from "./components/DropdownButton";
 import { SiteSchema, VeiculoSchema } from "./schemas";
 import { getVeiculos, updateStatusveiculo } from "./services";
 
+interface FilterItem<T> {
+    id: T;
+    title: string;
+    checked: boolean;
+}
+
+class Filter<T> {
+    list: FilterItem<T>[] = [];
+    allChecked = false;
+
+    toggleItem(id: T) {
+        let _allChecked = true;
+        this.list = this.list.map(item => {
+            if (item.id === id) {
+                item.checked = !item.checked;
+            }
+
+            _allChecked = _allChecked && item.checked;
+            return item;
+        });
+        this.allChecked = _allChecked;
+    }
+
+    add({ ...props }: FilterItem<T>) {
+        this.list?.push(props);
+    }
+}
+
 export default function App() {
+    let anoFilter = new Filter<string>();
+
     const [filterSites, setFilterSites] = useState<string[]>([]);
     const [filterMarca, setFilterMarca] = useState<string[]>([]);
     const [filterModelo, setFilterModelo] = useState<string[]>([]);
@@ -18,6 +48,7 @@ export default function App() {
     }, []);
 
     useEffect(() => {
+        console.log("useEffect sites");
         const _veiculos: VeiculoSchema[] = [];
         const filterSites = new Set<string>();
         const filterMarca = new Set<string>();
@@ -41,6 +72,15 @@ export default function App() {
         setFilterAno([...filterAno]);
     }, [sites]);
 
+    useEffect(() => {
+        console.log("mudando o filtro do ano");
+        anoFilter.list = [];
+
+        filterAno.map(item => anoFilter.add({ id: item.toString(), title: item.toString(), checked: false }));
+
+        console.log("useEffect filterAno", anoFilter);
+    }, [filterAno]);
+
     async function loadVeiculosAxios() {
         const sites = await getVeiculos();
         setSite(sites);
@@ -62,22 +102,29 @@ export default function App() {
         setVeiculos(newList);
     }
 
-    function handleCheckFiltro(e: any, list: string[] | number[], item: string | number) {
-        // alert("Filtrei " + e);
-        console.log(e);
-        console.log(e.target.checked);
-        console.log(list);
-        console.log(item);
+    function handleCheckFiltro(item: string) {
+        anoFilter.toggleItem(item);
+        console.log("handleCheckFiltro", anoFilter);
+        filtrar();
     }
 
     function getItemsDropdownButton(list: string[] | number[]) {
         return [
             list.map((item, key) => (
                 <li key={key} className="w-auto py-1 px-2 hover:bg-gray-200">
-                    <Checkbox name={item.toString() + "-" + key.toString()} title={item.toString()} onChange={e => handleCheckFiltro(e, list, item)} />
+                    <Checkbox name={item.toString() + "-" + key.toString()} title={item.toString()} onChange={_ => handleCheckFiltro(item.toString())} />
                 </li>
             )),
         ];
+    }
+
+    function filtrar() {
+        let _veiculos = veiculos.filter(item => {
+            let _ehAno = false;
+            anoFilter.list.map(_ano => (_ehAno = _ehAno || (_ano.checked && _ano.id === item.ano.toString())));
+            return _ehAno;
+        });
+        setVeiculos(_veiculos);
     }
 
     return (
