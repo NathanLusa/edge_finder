@@ -130,7 +130,7 @@ async def veiculo_lista(db: Session = Depends(get_db)):
         db.query(VeiculoModel)
         .join(VeiculoHistoricoModel)
         .filter(VeiculoModel.status == VeiculoStatus.ativo)
-        .filter(VeiculoModel.id >= 1050)
+        # .filter(VeiculoModel.id >= 950)
         .order_by(order)
     )
     # .outerjoin(VeiculoImagemModel, onclause=( (VeiculoModel.id == VeiculoImagemModel.veiculo_id) & (VeiculoImagemModel.status != VeiculoImagemStatus.ativo) ))

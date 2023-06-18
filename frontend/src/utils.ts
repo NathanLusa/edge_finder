@@ -1,5 +1,5 @@
 export function arrayHasValue<T>(array: Array<T>, value: T): boolean {
-    return array.filter((item) => item === value).length > 0;
+    return array.filter(item => item === value).length > 0;
 }
 
 export function orderByString(array: any[], property?: any) {

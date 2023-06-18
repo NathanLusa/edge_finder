@@ -3,6 +3,7 @@ import Checkbox from "./components/Checkbox";
 import DropdownButton from "./components/DropdownButton";
 import { SiteSchema, VeiculoSchema } from "./schemas";
 import { getVeiculos, updateStatusveiculo } from "./services";
+import { orderByString } from "./utils";
 
 interface FilterItem<T> {
     id: T;
@@ -16,14 +17,13 @@ class Filter<T> {
 
     toggleItem(id: T) {
         let _allChecked = true;
-        // this.list =
+
         this.list.map(item => {
             if (item.id === id) {
                 item.checked = !item.checked;
             }
 
             _allChecked = _allChecked && item.checked;
-            // return item;
         });
         this.allChecked = _allChecked;
     }
@@ -108,15 +108,14 @@ export default function App() {
     }
 
     function getItemsDropdownButtonFilter(filter: Filter<string>) {
+        orderByString(filter.list, "title");
         return [
-            filter.list
-                .map(item => item.title)
-                .sort()
-                .map((item, key) => (
-                    <li key={key} className="w-auto py-1 px-2 hover:bg-gray-200">
-                        <Checkbox name={item.toString() + "-" + key.toString()} title={item.toString()} onChange={_ => handleCheckFiltro(filter, item.toString())} />
-                    </li>
-                )),
+            filter.list.map((item, key) => (
+                <li key={key} className="w-auto py-1 px-2 hover:bg-gray-200">
+                    {/* <Checkbox name={item.toString() + "-" + key.toString()} title={item.toString()} onChange={_ => handleCheckFiltro(filter, item.toString())} /> */}
+                    <Checkbox name={item.title + "-" + key.toString()} title={item.title} onChange={_ => handleCheckFiltro(filter, item.id.toString())} />
+                </li>
+            )),
         ];
     }
 
@@ -128,12 +127,9 @@ export default function App() {
         const _modelos = [...filterModelo.list.filter(_modelo => _modelo.checked).map(_modelo => _modelo.id)];
         const _anos = [...filterAno.list.filter(_ano => _ano.checked).map(_ano => _ano.id)];
 
-        console.log(_sites, filterSites);
+        // console.log(_sites, filterSites);
         if (!filterSites.allChecked && _sites.length > 0) {
-            _veiculos = _veiculos.filter(veiculo => {
-                console.log(veiculo.site, _sites.indexOf(veiculo.site));
-                return _sites.indexOf(veiculo.site) >= 0;
-            });
+            _veiculos = _veiculos.filter(veiculo => _sites.indexOf(veiculo.site) >= 0);
         }
 
         if (!filterMarca.allChecked && _marcas.length > 0) {
@@ -151,7 +147,7 @@ export default function App() {
         setVeiculos(_veiculos);
     }
 
-    console.log("Render", filterAno);
+    console.log("Render");
     return (
         <div className="container row-auto flex-row h-auto mx-auto">
             {/* TITLE */}
