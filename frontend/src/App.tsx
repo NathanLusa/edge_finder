@@ -2,7 +2,11 @@ import { useEffect, useState } from "react";
 import Checkbox from "./components/Checkbox";
 import DropdownButton from "./components/DropdownButton";
 import { SiteSchema, VeiculoSchema } from "./schemas";
-import { getVeiculos, updateStatusveiculo, verificarStatusImagens } from "./services";
+import {
+    getVeiculos,
+    updateStatusveiculo,
+    // verificarStatusImagens
+} from "./services";
 import { orderByString } from "./utils";
 
 interface FilterItem<T> {
@@ -49,9 +53,10 @@ export default function App() {
 
     const [filterDateFrom, setFilterDateFrom] = useState<string>("");
     const [filterDateTo, setFilterDateTo] = useState<string>("");
-
     const [filterValueFrom, setFilterValueFrom] = useState<number>(0);
     const [filterValueTo, setFilterValueTo] = useState<number>(0);
+    const [filterKMFrom, setFilterKMFrom] = useState<number>(0);
+    const [filterKMTo, setFilterKMTo] = useState<number>(0);
 
     const [veiculosReadOnly, setVeiculosReadOnly] = useState<VeiculoSchema[]>([]);
     const [veiculos, setVeiculos] = useState<VeiculoSchema[]>([]);
@@ -62,7 +67,7 @@ export default function App() {
 
     useEffect(() => {
         filtrar();
-    }, [filterDateFrom, filterDateTo, filterValueFrom, filterValueTo]);
+    }, [filterDateFrom, filterDateTo, filterValueFrom, filterValueTo, filterKMFrom, filterKMTo]);
 
     async function loadVeiculosAxios() {
         const _sites: SiteSchema[] = await getVeiculos();
@@ -206,6 +211,16 @@ export default function App() {
             _veiculos = _veiculos.filter(veiculo => (veiculo.historicos?.filter(historico => historico.valor <= filterValueTo) || []).length > 0);
         }
 
+        // if (filterKMFrom > 0) {
+        //     _veiculos = _veiculos.filter(veiculo => (veiculo.historicos?.filter(historico => historico.quilometragem >= filterKMFrom) || []).length > 0);
+        // }
+
+        if (filterKMTo > 0) {
+            _veiculos = _veiculos.filter(
+                veiculo => (veiculo.historicos?.filter(historico => historico.quilometragem <= filterKMTo && historico.quilometragem >= filterKMFrom) || []).length > 0
+            );
+        }
+
         setVeiculos(_veiculos);
     }
 
@@ -236,7 +251,14 @@ export default function App() {
                     <label htmlFor="value-filter-to">To</label>
                     <input onChange={e => setFilterValueTo(+e.target.value)} type="currency" name="value-filter-to" className="mx-1" value={filterValueTo} />
                 </div>
-                <button onClick={() => verificarStatusImagens()}>ATUALIZAR</button>
+                <div className="flex items-center ml-4">
+                    <label htmlFor="km-filter-from">Form</label>
+                    <input onChange={e => setFilterKMFrom(+e.target.value)} type="currency" name="km-filter-from" className="mx-1" value={filterKMFrom} />
+
+                    <label htmlFor="km-filter-to">To</label>
+                    <input onChange={e => setFilterKMTo(+e.target.value)} type="currency" name="km-filter-to" className="mx-1" value={filterKMTo} />
+                </div>
+                {/* <button onClick={() => verificarStatusImagens()}>ATUALIZAR</button> */}
             </div>
 
             {/* MAIN */}
