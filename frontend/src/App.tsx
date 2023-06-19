@@ -3,7 +3,7 @@ import Checkbox from "./components/Checkbox";
 import DropdownButton from "./components/DropdownButton";
 import { SiteSchema, VeiculoSchema } from "./schemas";
 import { getVeiculos, updateStatusveiculo } from "./services";
-import { orderByString } from "./utils";
+import { orderByString, orderByStringNested } from "./utils";
 
 interface FilterItem<T> {
     id: T;
@@ -108,12 +108,48 @@ export default function App() {
     }
 
     function getItemsDropdownButtonFilter(filter: Filter<string>) {
-        orderByString(filter.list, "title");
+        orderByString(filter.list, false, "title");
+        // orderByStringNested(filter.list, false, ["title"]);
         return [
             filter.list.map((item, key) => (
                 <li key={key} className="w-auto py-1 px-2 hover:bg-gray-200">
-                    {/* <Checkbox name={item.toString() + "-" + key.toString()} title={item.toString()} onChange={_ => handleCheckFiltro(filter, item.toString())} /> */}
-                    <Checkbox name={item.title + "-" + key.toString()} title={item.title} onChange={_ => handleCheckFiltro(filter, item.id.toString())} />
+                    <Checkbox name={item.title + "-" + key.toString()} title={item.title} checked={item.checked} onChange={_ => handleCheckFiltro(filter, item.id.toString())} />
+                </li>
+            )),
+        ];
+    }
+
+    function getItemsDropdownButtonOrder() {
+        const _ordenacao = [
+            {
+                title: "Menor data",
+                onChange: () => {
+                    let _veiculos = veiculos;
+                    console.log("iniciei");
+                    orderByStringNested(veiculos, true, [
+                        { name: "historicos", desc: true },
+                        { name: "valor", desc: true },
+                    ]);
+                    console.log("terminei");
+                    setVeiculos(_veiculos);
+                },
+            },
+            {
+                title: "Menor id",
+                onChange: () => {
+                    let _veiculos = veiculos;
+                    orderByStringNested(_veiculos, false, ["id"]);
+                    setVeiculos(_veiculos);
+                },
+            },
+            { title: "Maior data", onChange: () => orderByString(veiculos, false, "data") },
+            { title: "Menor preço", onChange: () => orderByString(veiculos, false, "data") },
+            { title: "Maior preço", onChange: () => orderByString(veiculos, false, "data") },
+        ];
+        return [
+            _ordenacao.map((item, key) => (
+                <li key={key} className="w-auto py-1 px-2 hover:bg-gray-200">
+                    <p onClick={item.onChange}>{item.title}</p>
                 </li>
             )),
         ];
@@ -159,6 +195,7 @@ export default function App() {
                 <DropdownButton title="Marca" items={getItemsDropdownButtonFilter(filterMarca)} />
                 <DropdownButton title="Modelo" items={getItemsDropdownButtonFilter(filterModelo)} />
                 <DropdownButton title="Ano" items={getItemsDropdownButtonFilter(filterAno)} />
+                <DropdownButton title="Ordenação" items={[getItemsDropdownButtonOrder()]} />
             </div>
 
             {/* MAIN */}
@@ -179,7 +216,7 @@ export default function App() {
                         <div className="col-span-2 h-28 mt-1 p-2 rounded-sm bg-slate-200 ">
                             <div className="flex text-lg font-medium place-content-between">
                                 <a href={veiculo.url} target="_blank">
-                                    {veiculo.marca} {veiculo.modelo} {veiculo.status}
+                                    {veiculo.id} - {veiculo.marca} {veiculo.modelo} {veiculo.status}
                                 </a>
                                 <div onClick={() => handleCheckVeiculo(veiculo.id)} className="hover:cursor-pointer">
                                     <i className={(veiculo.status != "ativo" ? "fa-regular" : "fa-solid") + " fa-circle-check"} />
