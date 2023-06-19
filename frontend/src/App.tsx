@@ -2,8 +2,8 @@ import { useEffect, useState } from "react";
 import Checkbox from "./components/Checkbox";
 import DropdownButton from "./components/DropdownButton";
 import { SiteSchema, VeiculoSchema } from "./schemas";
-import { getVeiculos, updateStatusveiculo } from "./services";
-import { orderByString, orderByStringNested } from "./utils";
+import { getVeiculos, updateStatusveiculo, verificarStatusImagens } from "./services";
+import { orderByString } from "./utils";
 
 interface FilterItem<T> {
     id: T;
@@ -47,12 +47,22 @@ export default function App() {
     const [filterModelo, setFilterModelo] = useState<Filter<string>>(new Filter<string>());
     const [filterAno, setFilterAno] = useState<Filter<string>>(new Filter<string>());
 
+    const [filterDateFrom, setFilterDateFrom] = useState<string>("");
+    const [filterDateTo, setFilterDateTo] = useState<string>("");
+
+    const [filterValueFrom, setFilterValueFrom] = useState<number>(0);
+    const [filterValueTo, setFilterValueTo] = useState<number>(0);
+
     const [veiculosReadOnly, setVeiculosReadOnly] = useState<VeiculoSchema[]>([]);
     const [veiculos, setVeiculos] = useState<VeiculoSchema[]>([]);
 
     useEffect(() => {
         loadVeiculosAxios();
     }, []);
+
+    useEffect(() => {
+        filtrar();
+    }, [filterDateFrom, filterDateTo, filterValueFrom, filterValueTo]);
 
     async function loadVeiculosAxios() {
         const _sites: SiteSchema[] = await getVeiculos();
@@ -71,6 +81,7 @@ export default function App() {
         _sites.map(site => {
             _filterSites.add({ id: site.url, title: site.nome, checked: false });
             site.veiculos?.map(veiculo => {
+                if (veiculo.historicos) orderByString(veiculo.historicos, true, "datahora");
                 _filterMarca.add({ id: veiculo.marca, title: veiculo.marca, checked: false });
                 _filterModelo.add({ id: veiculo.modelo, title: veiculo.modelo, checked: false });
                 _filterAno.add({ id: veiculo.ano.toString(), title: veiculo.ano.toString(), checked: false });
@@ -118,41 +129,41 @@ export default function App() {
         ];
     }
 
-    function getItemsDropdownButtonOrder() {
-        const _ordenacao = [
-            {
-                title: "Menor data",
-                onChange: () => {
-                    let _veiculos = veiculos;
-                    console.log("iniciei");
-                    orderByStringNested(veiculos, true, [
-                        { name: "historicos", desc: true },
-                        { name: "valor", desc: true },
-                    ]);
-                    console.log("terminei");
-                    setVeiculos(_veiculos);
-                },
-            },
-            {
-                title: "Menor id",
-                onChange: () => {
-                    let _veiculos = veiculos;
-                    orderByStringNested(_veiculos, false, ["id"]);
-                    setVeiculos(_veiculos);
-                },
-            },
-            { title: "Maior data", onChange: () => orderByString(veiculos, false, "data") },
-            { title: "Menor preço", onChange: () => orderByString(veiculos, false, "data") },
-            { title: "Maior preço", onChange: () => orderByString(veiculos, false, "data") },
-        ];
-        return [
-            _ordenacao.map((item, key) => (
-                <li key={key} className="w-auto py-1 px-2 hover:bg-gray-200">
-                    <p onClick={item.onChange}>{item.title}</p>
-                </li>
-            )),
-        ];
-    }
+    // function getItemsDropdownButtonOrder() {
+    //     const _ordenacao = [
+    //         {
+    //             title: "Menor data",
+    //             onChange: () => {
+    //                 let _veiculos = veiculos;
+    //                 console.log("iniciei");
+    //                 orderByStringNested(veiculos, true, [
+    //                     { name: "historicos", desc: true },
+    //                     { name: "valor", desc: true },
+    //                 ]);
+    //                 console.log("terminei");
+    //                 setVeiculos(_veiculos);
+    //             },
+    //         },
+    //         {
+    //             title: "Menor id",
+    //             onChange: () => {
+    //                 let _veiculos = veiculos;
+    //                 orderByStringNested(_veiculos, false, ["id"]);
+    //                 setVeiculos(_veiculos);
+    //             },
+    //         },
+    //         { title: "Maior data", onChange: () => orderByString(veiculos, false, "data") },
+    //         { title: "Menor preço", onChange: () => orderByString(veiculos, false, "data") },
+    //         { title: "Maior preço", onChange: () => orderByString(veiculos, false, "data") },
+    //     ];
+    //     return [
+    //         _ordenacao.map((item, key) => (
+    //             <li key={key} className="w-auto py-1 px-2 hover:bg-gray-200">
+    //                 <p onClick={item.onChange}>{item.title}</p>
+    //             </li>
+    //         )),
+    //     ];
+    // }
 
     function filtrar() {
         let _veiculos = veiculosReadOnly;
@@ -179,6 +190,22 @@ export default function App() {
             _veiculos = _veiculos.filter(veiculo => _anos.indexOf(veiculo.ano.toString()) >= 0);
         }
 
+        if (filterDateFrom != "") {
+            _veiculos = _veiculos.filter(veiculo => (veiculo.historicos?.filter(historico => historico.datahora >= filterDateFrom) || []).length > 0);
+        }
+
+        if (filterDateTo != "") {
+            _veiculos = _veiculos.filter(veiculo => (veiculo.historicos?.filter(historico => historico.datahora <= filterDateTo) || []).length > 0);
+        }
+
+        if (filterValueFrom > 0) {
+            _veiculos = _veiculos.filter(veiculo => (veiculo.historicos?.filter(historico => historico.valor >= filterValueFrom) || []).length > 0);
+        }
+
+        if (filterValueTo > 0) {
+            _veiculos = _veiculos.filter(veiculo => (veiculo.historicos?.filter(historico => historico.valor <= filterValueTo) || []).length > 0);
+        }
+
         setVeiculos(_veiculos);
     }
 
@@ -194,7 +221,22 @@ export default function App() {
                 <DropdownButton title="Marca" items={getItemsDropdownButtonFilter(filterMarca)} />
                 <DropdownButton title="Modelo" items={getItemsDropdownButtonFilter(filterModelo)} />
                 <DropdownButton title="Ano" items={getItemsDropdownButtonFilter(filterAno)} />
-                <DropdownButton title="Ordenação" items={[getItemsDropdownButtonOrder()]} />
+                {/* <DropdownButton title="Ordenação" items={[getItemsDropdownButtonOrder()]} /> */}
+                <div className="flex items-center ml-4">
+                    <label htmlFor="date-filter-from">Form</label>
+                    <input onChange={e => setFilterDateFrom(e.target.value)} type="date" name="date-filter-from" className="mx-1" value={filterDateFrom} />
+
+                    <label htmlFor="date-filter-to">To</label>
+                    <input onChange={e => setFilterDateTo(e.target.value)} type="date" name="date-filter-to" className="mx-1" value={filterDateTo} />
+                </div>
+                <div className="flex items-center ml-4">
+                    <label htmlFor="value-filter-from">Form</label>
+                    <input onChange={e => setFilterValueFrom(+e.target.value)} type="currency" name="value-filter-from" className="mx-1" value={filterValueFrom} />
+
+                    <label htmlFor="value-filter-to">To</label>
+                    <input onChange={e => setFilterValueTo(+e.target.value)} type="currency" name="value-filter-to" className="mx-1" value={filterValueTo} />
+                </div>
+                <button onClick={() => verificarStatusImagens()}>ATUALIZAR</button>
             </div>
 
             {/* MAIN */}
