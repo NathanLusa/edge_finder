@@ -109,7 +109,6 @@ export default function App() {
 
     function getItemsDropdownButtonFilter(filter: Filter<string>) {
         orderByString(filter.list, false, "title");
-        // orderByStringNested(filter.list, false, ["title"]);
         return [
             filter.list.map((item, key) => (
                 <li key={key} className="w-auto py-1 px-2 hover:bg-gray-200">
