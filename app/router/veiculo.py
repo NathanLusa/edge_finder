@@ -43,6 +43,9 @@ imagem_router = CRUDRouter(
 class VeiculoStatusRequest(BaseModel):
     status: VeiculoStatus
 
+class VeiculoFavoritoRequest(BaseModel):
+    favorito: bool
+
 
 @veiculo_router.post('/{item_id}/status', response_model=Veiculo)
 def update_status(
@@ -58,11 +61,11 @@ def update_status(
 
 @veiculo_router.post('/{item_id}/favorito', response_model=Veiculo)
 def update_favorito(
-    item_id: int, favorito: bool, db: Session = Depends(get_db)
+    item_id: int, favorito: VeiculoFavoritoRequest, db: Session = Depends(get_db)
 ):
     veiculo = db.query(VeiculoModel).filter(VeiculoModel.id == item_id).first()
     if veiculo is None:
         raise HTTPException(status_code=404, detail='Veiculo não encontrado')
-    veiculo.favorito = favorito
+    veiculo.favorito = favorito.favorito
     db.commit()
     return veiculo

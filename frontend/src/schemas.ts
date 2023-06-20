@@ -15,6 +15,7 @@ export interface VeiculoSchema {
     site: string;
     status: string;
     created_at: string;
+    favorito: boolean;
     historicos?: VeiculoHistoricoSchema[];
     imagens?: VeiculoImagemSchema[];
 }

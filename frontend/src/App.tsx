@@ -5,6 +5,7 @@ import { SiteSchema, VeiculoSchema } from "./schemas";
 import {
     getVeiculos,
     updateStatusveiculo,
+    updateVeiculoFavorito,
     // verificarStatusImagens
 } from "./services";
 import { orderByString } from "./utils";
@@ -50,6 +51,7 @@ export default function App() {
     const [filterMarca, setFilterMarca] = useState<Filter<string>>(new Filter<string>());
     const [filterModelo, setFilterModelo] = useState<Filter<string>>(new Filter<string>());
     const [filterAno, setFilterAno] = useState<Filter<string>>(new Filter<string>());
+    const [filterFavorito, setFilterFavorito] = useState<boolean>(false);
 
     const [filterDateFrom, setFilterDateFrom] = useState<string>("");
     const [filterDateTo, setFilterDateTo] = useState<string>("");
@@ -67,7 +69,7 @@ export default function App() {
 
     useEffect(() => {
         filtrar();
-    }, [filterDateFrom, filterDateTo, filterValueFrom, filterValueTo, filterKMFrom, filterKMTo]);
+    }, [filterFavorito, filterDateFrom, filterDateTo, filterValueFrom, filterValueTo, filterKMFrom, filterKMTo]);
 
     async function loadVeiculosAxios() {
         const _sites: SiteSchema[] = await getVeiculos();
@@ -116,6 +118,35 @@ export default function App() {
         });
 
         setVeiculos(newList);
+    }
+
+    function handleVeiculoFavorito(id: number) {
+        const newList = veiculos.map(veiculo => {
+            if (veiculo.id === id) {
+                const updatedItem = {
+                    ...veiculo,
+                    favorito: !veiculo.favorito,
+                };
+                updateVeiculoFavorito(updatedItem.id, updatedItem.favorito).then(response => console.log(response));
+                return updatedItem;
+            }
+            return veiculo;
+        });
+
+        setVeiculos(newList);
+
+        const newListReadOnly = veiculosReadOnly.map(veiculo => {
+            if (veiculo.id === id) {
+                const updatedItem = {
+                    ...veiculo,
+                    favorito: !veiculo.favorito,
+                };
+                return updatedItem;
+            }
+            return veiculo;
+        });
+
+        setVeiculosReadOnly(newListReadOnly);
     }
 
     function handleCheckFiltro(filter: Filter<string>, item: string) {
@@ -179,6 +210,10 @@ export default function App() {
         const _anos = [...filterAno.list.filter(_ano => _ano.checked).map(_ano => _ano.id)];
 
         // console.log(_sites, filterSites);
+        if (filterFavorito) {
+            _veiculos = _veiculos.filter(veiculo => veiculo.favorito);
+        }
+
         if (!filterSites.allChecked && _sites.length > 0) {
             _veiculos = _veiculos.filter(veiculo => _sites.indexOf(veiculo.site) >= 0);
         }
@@ -236,6 +271,7 @@ export default function App() {
                 <DropdownButton title="Marca" items={getItemsDropdownButtonFilter(filterMarca)} />
                 <DropdownButton title="Modelo" items={getItemsDropdownButtonFilter(filterModelo)} />
                 <DropdownButton title="Ano" items={getItemsDropdownButtonFilter(filterAno)} />
+                <Checkbox name="favorito" title="Favorito" checked={filterFavorito} onChange={_ => setFilterFavorito(!filterFavorito)} />
                 {/* <DropdownButton title="Ordenação" items={[getItemsDropdownButtonOrder()]} /> */}
                 <div className="flex items-center ml-4">
                     <label htmlFor="date-filter-from">Form</label>
@@ -281,8 +317,13 @@ export default function App() {
                                 <a href={veiculo.url} target="_blank">
                                     {veiculo.id} - {veiculo.marca} {veiculo.modelo} {veiculo.status}
                                 </a>
-                                <div onClick={() => handleCheckVeiculo(veiculo.id)} className="hover:cursor-pointer">
-                                    <i className={(veiculo.status != "ativo" ? "fa-regular" : "fa-solid") + " fa-circle-check"} />
+                                <div className="flex gap-1">
+                                    <div onClick={() => handleCheckVeiculo(veiculo.id)} className="hover:cursor-pointer">
+                                        <i className={(veiculo.status != "ativo" ? "fa-regular" : "fa-solid") + " fa-circle-check"} />
+                                    </div>
+                                    <div onClick={() => handleVeiculoFavorito(veiculo.id)} className="hover:cursor-pointer">
+                                        <i className={(veiculo.favorito ? "fa-solid" : "fa-regular") + " fa-star"} />
+                                    </div>
                                 </div>
                             </div>
                             <div className="flex flex-col pt-0.5 border-t border-gray-400">
