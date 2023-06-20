@@ -54,3 +54,15 @@ def update_status(
     veiculo.status = status.status
     db.commit()
     return veiculo
+
+
+@veiculo_router.post('/{item_id}/favorito', response_model=Veiculo)
+def update_favorito(
+    item_id: int, favorito: bool, db: Session = Depends(get_db)
+):
+    veiculo = db.query(VeiculoModel).filter(VeiculoModel.id == item_id).first()
+    if veiculo is None:
+        raise HTTPException(status_code=404, detail='Veiculo não encontrado')
+    veiculo.favorito = favorito
+    db.commit()
+    return veiculo

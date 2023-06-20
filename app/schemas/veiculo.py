@@ -32,6 +32,7 @@ class Veiculo(BaseSchema):
     url: str
     titulo: str
     site: str
+    favorito: bool
     status: VeiculoStatus
     # historicos: List[VeiculoHistorico] = []
     # imagens: List[VeiculoImagem] = []

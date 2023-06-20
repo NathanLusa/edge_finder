@@ -1,4 +1,5 @@
 from sqlalchemy import (
+    Boolean,
     Column,
     DateTime,
     Enum,
@@ -24,6 +25,7 @@ class VeiculoModel(Base):
     titulo = Column(String(500))
     site = Column(String(500))
     status = Column(Enum(VeiculoStatus), default=VeiculoStatus.ativo)
+    favorito = Column(Boolean())
     historicos = relationship(
         'VeiculoHistoricoModel', backref='veiculo', lazy='joined'
     )
