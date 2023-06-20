@@ -7,6 +7,14 @@ HISTORICO_ENDPOINT = ENDPOINT_API + '/veiculohistorico'
 IMAGEM_ENDPOINT = ENDPOINT_API + '/veiculoimagem'
 
 
+def _post(url, json):
+    response = requests.post(url, json=json)
+    if response.status_code != 200:
+        print(response.status_code, response)
+
+    return response
+
+
 def get_veiculos():
     response = requests.get(VEICULO_ENDPOINT)
     return response.json()
@@ -23,23 +31,23 @@ def get_imagens():
 
 
 def post_veiculo(veiculo):
-    response = requests.post(VEICULO_ENDPOINT, json=veiculo)
+    response = _post(VEICULO_ENDPOINT, json=veiculo)
     return response.json()
 
 
 def post_veiculo_historico(veiculo_historico):
-    response = requests.post(HISTORICO_ENDPOINT, json=veiculo_historico)
+    response = _post(HISTORICO_ENDPOINT, json=veiculo_historico)
     res = response
     return response.json()
 
 
 def post_veiculo_imagem(veiculo_imagem):
-    response = requests.post(IMAGEM_ENDPOINT, json=veiculo_imagem)
+    response = _post(IMAGEM_ENDPOINT, json=veiculo_imagem)
     return response.json()
 
 
 def post_veiculo_status(veiculo_id, status):
-    response = requests.post(
+    response = _post(
         f'{VEICULO_ENDPOINT}/{veiculo_id}/status', json={'status': status}
     )
     return response.json()

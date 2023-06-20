@@ -37,6 +37,7 @@ def _find(veiculos, url, force):
                     titulo=title,
                     site=SITE,
                     status='ativo',
+                    favorito=False,
                 )
                 veiculo_json = post_veiculo(veiculo_schema.to_json())
                 veiculo = Veiculo()

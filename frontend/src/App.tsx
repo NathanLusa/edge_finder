@@ -266,33 +266,33 @@ export default function App() {
             <h1 className="text-center text-3xl p-4">Edge finder</h1>
 
             {/* FILTER */}
-            <div className="flex justify-center border">
+            <div className="flex justify-center items-center gap-1 border">
+                <Checkbox name="favorito" title="Favoritos" checked={filterFavorito} onChange={_ => setFilterFavorito(!filterFavorito)} />
                 <DropdownButton title="Site" items={getItemsDropdownButtonFilter(filterSites)} />
                 <DropdownButton title="Marca" items={getItemsDropdownButtonFilter(filterMarca)} />
                 <DropdownButton title="Modelo" items={getItemsDropdownButtonFilter(filterModelo)} />
                 <DropdownButton title="Ano" items={getItemsDropdownButtonFilter(filterAno)} />
-                <Checkbox name="favorito" title="Favorito" checked={filterFavorito} onChange={_ => setFilterFavorito(!filterFavorito)} />
                 {/* <DropdownButton title="Ordenação" items={[getItemsDropdownButtonOrder()]} /> */}
-                <div className="flex items-center ml-4">
-                    <label htmlFor="date-filter-from">Form</label>
-                    <input onChange={e => setFilterDateFrom(e.target.value)} type="date" name="date-filter-from" className="mx-1" value={filterDateFrom} />
-
-                    <label htmlFor="date-filter-to">To</label>
-                    <input onChange={e => setFilterDateTo(e.target.value)} type="date" name="date-filter-to" className="mx-1" value={filterDateTo} />
+                <div className="flex flex-col w-72 border-2">
+                    <p className="text-lg self-center">Data</p>
+                    <div className="flex items-center">
+                        <input onChange={e => setFilterDateFrom(e.target.value)} type="date" name="date-filter-from" className="mx-1" value={filterDateFrom} />
+                        <input onChange={e => setFilterDateTo(e.target.value)} type="date" name="date-filter-to" className="mx-1" value={filterDateTo} />
+                    </div>
                 </div>
-                <div className="flex items-center ml-4">
-                    <label htmlFor="value-filter-from">Form</label>
-                    <input onChange={e => setFilterValueFrom(+e.target.value)} type="currency" name="value-filter-from" className="mx-1" value={filterValueFrom} />
-
-                    <label htmlFor="value-filter-to">To</label>
-                    <input onChange={e => setFilterValueTo(+e.target.value)} type="currency" name="value-filter-to" className="mx-1" value={filterValueTo} />
+                <div className="flex flex-col border-2">
+                    <p className="text-lg self-center">Valor</p>
+                    <div className="flex items-center">
+                        <input onChange={e => setFilterValueFrom(+e.target.value)} type="currency" name="value-filter-from" className="w-20 mx-1" value={filterValueFrom} />
+                        <input onChange={e => setFilterValueTo(+e.target.value)} type="currency" name="value-filter-to" className="w-20 mx-1" value={filterValueTo} />
+                    </div>
                 </div>
-                <div className="flex items-center ml-4">
-                    <label htmlFor="km-filter-from">Form</label>
-                    <input onChange={e => setFilterKMFrom(+e.target.value)} type="currency" name="km-filter-from" className="mx-1" value={filterKMFrom} />
-
-                    <label htmlFor="km-filter-to">To</label>
-                    <input onChange={e => setFilterKMTo(+e.target.value)} type="currency" name="km-filter-to" className="mx-1" value={filterKMTo} />
+                <div className="flex flex-col border-2">
+                    <p className="text-lg self-center">KM</p>
+                    <div className="flex items-center">
+                        <input onChange={e => setFilterKMFrom(+e.target.value)} type="currency" name="km-filter-from" className="w-20 mx-1" value={filterKMFrom} />
+                        <input onChange={e => setFilterKMTo(+e.target.value)} type="currency" name="km-filter-to" className="w-20 mx-1" value={filterKMTo} />
+                    </div>
                 </div>
                 {/* <button onClick={() => verificarStatusImagens()}>ATUALIZAR</button> */}
             </div>
