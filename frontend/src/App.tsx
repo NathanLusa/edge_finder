@@ -165,42 +165,6 @@ export default function App() {
         ];
     }
 
-    // function getItemsDropdownButtonOrder() {
-    //     const _ordenacao = [
-    //         {
-    //             title: "Menor data",
-    //             onChange: () => {
-    //                 let _veiculos = veiculos;
-    //                 console.log("iniciei");
-    //                 orderByStringNested(veiculos, true, [
-    //                     { name: "historicos", desc: true },
-    //                     { name: "valor", desc: true },
-    //                 ]);
-    //                 console.log("terminei");
-    //                 setVeiculos(_veiculos);
-    //             },
-    //         },
-    //         {
-    //             title: "Menor id",
-    //             onChange: () => {
-    //                 let _veiculos = veiculos;
-    //                 orderByStringNested(_veiculos, false, ["id"]);
-    //                 setVeiculos(_veiculos);
-    //             },
-    //         },
-    //         { title: "Maior data", onChange: () => orderByString(veiculos, false, "data") },
-    //         { title: "Menor preço", onChange: () => orderByString(veiculos, false, "data") },
-    //         { title: "Maior preço", onChange: () => orderByString(veiculos, false, "data") },
-    //     ];
-    //     return [
-    //         _ordenacao.map((item, key) => (
-    //             <li key={key} className="w-auto py-1 px-2 hover:bg-gray-200">
-    //                 <p onClick={item.onChange}>{item.title}</p>
-    //             </li>
-    //         )),
-    //     ];
-    // }
-
     function filtrar() {
         let _veiculos = veiculosReadOnly;
 
@@ -266,13 +230,12 @@ export default function App() {
             <h1 className="text-center text-3xl p-4">Edge finder</h1>
 
             {/* FILTER */}
-            <div className="flex justify-center items-center gap-1 border">
+            <div className="flex flex-wrap justify-center items-center gap-1 border">
                 <Checkbox name="favorito" title="Favoritos" checked={filterFavorito} onChange={_ => setFilterFavorito(!filterFavorito)} />
                 <DropdownButton title="Site" items={getItemsDropdownButtonFilter(filterSites)} />
                 <DropdownButton title="Marca" items={getItemsDropdownButtonFilter(filterMarca)} />
                 <DropdownButton title="Modelo" items={getItemsDropdownButtonFilter(filterModelo)} />
                 <DropdownButton title="Ano" items={getItemsDropdownButtonFilter(filterAno)} />
-                {/* <DropdownButton title="Ordenação" items={[getItemsDropdownButtonOrder()]} /> */}
                 <div className="flex flex-col w-72 border-2">
                     <p className="text-lg self-center">Data</p>
                     <div className="flex items-center">
@@ -306,6 +269,7 @@ export default function App() {
                             <img
                                 className="flex-shrink-0 mx-auto max-h-80 w-fist m-auto rounded-md"
                                 alt=""
+                                // src=""
                                 src={veiculo.imagens && veiculo.imagens.length > 0 ? veiculo.imagens[0].url : ""}
                                 loading="lazy"
                             />
