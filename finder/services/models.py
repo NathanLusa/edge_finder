@@ -76,6 +76,7 @@ class Veiculo(BaseModel):
     titulo: str
     site: str
     status: str
+    favorito: bool
     historicos: VeiculoHistoricoList
     imagens: VeiculoImagemList
 
@@ -93,6 +94,7 @@ class Veiculo(BaseModel):
             self.titulo = veiculo['titulo']
             self.site = veiculo['site']
             self.status = veiculo['status']
+            self.favorito = veiculo['favorito']
 
             # self.url = self.url.split('?')[0]
 

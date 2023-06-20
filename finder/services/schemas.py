@@ -40,6 +40,7 @@ class VeiculoSchema(BaseSchema):
     titulo: str
     site: str
     status: str = 'ativo'
+    favorito: bool = False
 
     # def __init__(self, **kwargs):
     #     super().__init__(**kwargs)
