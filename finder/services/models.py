@@ -11,7 +11,12 @@ class BaseModel:
     def to_json(self):
         # breakpoint()
         # print((lambda o: o.__dict__))
-        return json.loads(json.dumps(self, default=lambda o: o.__dict__,))
+        return json.loads(
+            json.dumps(
+                self,
+                default=lambda o: o.__dict__,
+            )
+        )
 
 
 class VeiculoHistorico(BaseModel):
@@ -73,7 +78,7 @@ class Veiculo(BaseModel):
     status: str
     historicos: VeiculoHistoricoList
     imagens: VeiculoImagemList
-    
+
     def __init__(self) -> None:
         self.historicos = VeiculoHistoricoList()
         self.imagens = VeiculoImagemList()

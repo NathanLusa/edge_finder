@@ -11,7 +11,7 @@ from services.services import (
     get_veiculos,
     post_veiculo_historico,
     post_veiculo_imagem,
-    post_veiculo_status
+    post_veiculo_status,
 )
 from utils import get_content
 
@@ -36,9 +36,12 @@ def _find(veiculo, force):
     # print(main_list['data-json'])
     # breakpoint()
     json_data = json.loads(main_list['data-json'])
-    if not 'images' in json_data['ad']: print(json_data)
+    if not 'images' in json_data['ad']:
+        print(json_data)
 
-    for img in json_data['ad']['images'] if 'images' in json_data['ad'] else []:
+    for img in (
+        json_data['ad']['images'] if 'images' in json_data['ad'] else []
+    ):
         imagem = veiculo.get_imagem(img['original'])
         if not imagem:
             imagem_schema = VeiculoImagemSchema(
@@ -48,10 +51,18 @@ def _find(veiculo, force):
             veiculo.add_imagem(imagem_json)
 
     description = json_data['ad']['body'] if 'body' in json_data['ad'] else ''
-    price = round(float(json_data['ad']['priceValue'].split(' ')[1]) * 1000, 2) if 'priceValue' in json_data['ad'] else 0.0
+    price = (
+        round(float(json_data['ad']['priceValue'].split(' ')[1]) * 1000, 2)
+        if 'priceValue' in json_data['ad']
+        else 0.0
+    )
 
     km = 0
-    for prop in json_data['ad']['properties'] if 'properties' in json_data['ad'] else []:
+    for prop in (
+        json_data['ad']['properties']
+        if 'properties' in json_data['ad']
+        else []
+    ):
         if prop['name'] == 'mileage':
             km = prop['value']
             km = int(km) * 1000 if int(km) <= 1000 else int(km)
@@ -75,7 +86,9 @@ def find_form(force):
     historicos = get_historicos()
     imagens = get_imagens()
 
-    veiculo_list = [x for x in veiculo_list if x['site'] == SITE and x['status'] == 'ativo']
+    veiculo_list = [
+        x for x in veiculo_list if x['site'] == SITE and x['status'] == 'ativo'
+    ]
 
     veiculos = VeiculoList()
     veiculos.load_from_json(veiculo_list, historicos, imagens)

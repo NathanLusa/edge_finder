@@ -1,11 +1,16 @@
-import dukpy
 import os
+
+import dukpy
 
 typescript_path = os.path.join(os.path.curdir)
 typescript_path = os.path.join(os.path.curdir, '_typescript/')
 print(typescript_path)
 
-files = [os.path.join(typescript_path, f) for f in os.listdir(typescript_path) if os.path.isfile(os.path.join(typescript_path, f)) ]
+files = [
+    os.path.join(typescript_path, f)
+    for f in os.listdir(typescript_path)
+    if os.path.isfile(os.path.join(typescript_path, f))
+]
 print(files)
 
 files = [f for f in files if '.ts' in f]

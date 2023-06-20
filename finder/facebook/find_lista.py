@@ -70,8 +70,8 @@ class Selenium:
             # Get the page source.
             page_source = self.browser.page_source or ''
 
-            status_code = 200 
-            
+            status_code = 200
+
             return status_code, page_source
 
         # Catch any exceptions.
@@ -178,12 +178,27 @@ class Selenium:
                 else ''
             )
 
+            year = 0
+            if d.find('span', 'x1lliihq x6ikm8r x10wlt62 x1n2onr6'):
+                def get_year(text):
+                    try:
+                        _year = text.split(' ')
+                        _year = _year[0] if len(_year) > 0 else 0
+                        return int(_year)
+                    except:
+                        print('Deu erro na busca do ano: ', _year)
+                        return 0
+
+                _year = d.find('span', 'x1lliihq x6ikm8r x10wlt62 x1n2onr6').text
+                year = get_year(_year)
+
             lista.append(
                 {
                     'titulo': title,
                     'preco': price,
                     'imagem': image,
                     'url': url,
+                    'year': year
                 }
             )
 
@@ -247,7 +262,7 @@ class Selenium:
                     class_='x193iq5w xeuugli x13faqbe x1vvkbs xlh3980 xvmahel x1n0sxbx x1lliihq x1s928wv xhkezso x1gmr53x x1cpjm7i x1fgarty x1943h6x x4zkp8e x3x7a5m x6prxxf xvq8zen xo1l8bm xzsf02u',
                 )
                 km = span_km.text if span_km else ''
-                km = float(km.split(' ')[0])*1000 if km else 0.0
+                km = float(km.split(' ')[0]) * 1000 if km else 0.0
 
             div_price = div_lateral.find('div', class_='x1xmf6yo')
             span_price = div_price.find(
@@ -285,7 +300,7 @@ class Selenium:
                 'description': desc,
                 'km': km,
                 'price': price,
-                'image': imagens
+                'image': imagens,
             }
         except:
             breakpoint()
@@ -345,7 +360,7 @@ def find_facebook(force):
                 # year_span = li.find('span', {'aria-label': re.compile(r'Ano')})
                 # year = year_span.text if year_span else ''
 
-                year = 0
+                year = i['year']
                 url = i['url']
                 title = i['titulo']
                 # price = i['preco']
@@ -375,6 +390,9 @@ def find_facebook(force):
                     veiculo = Veiculo()
                     veiculo.load_from_json(veiculo_json, [], [])
                     veiculos.append(veiculo)
+                elif veiculo.ano != year:
+                    veiculo.ano = year
+                    update_veiculo(veiculo.to_json())
 
                 # imagem = veiculo.get_imagem(image)
                 # if not imagem:
@@ -412,10 +430,14 @@ def find_facebook(force):
 
         # sel = Selenium(scroll_times=scroll_times)
         # veiculos_ativos = [x for x in veiculos if x.status == 'ativo']
-        veiculos_ativos = [x for x in veiculos if x.status == 'ativo' and x.id >= 1050]
+        veiculos_ativos = [
+            x for x in veiculos if x.status == 'ativo' and x.id >= 1063
+        ]
         for veiculo in veiculos_ativos:
             sel.scroll_times = 0
-            item = sel.scrape_facebook_marketplace_item(veiculo.url, _need_login, force)
+            item = sel.scrape_facebook_marketplace_item(
+                veiculo.url, _need_login, force
+            )
 
             if not item:
                 print('Url not found?', url)
@@ -429,7 +451,6 @@ def find_facebook(force):
                     )
                     imagem_json = post_veiculo_imagem(imagem_schema.to_json())
                     veiculo.add_imagem(imagem_json)
-
 
             hist = VeiculoHistoricoSchema(
                 veiculo_id=veiculo.id,

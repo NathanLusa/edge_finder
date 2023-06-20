@@ -1,12 +1,13 @@
 from facebook.find_lista import find_facebook
 from olx.finder_form import find_form as find_olx_form
 from olx.finder_lista import find_lista as find_olx
-from socarrao.finder import find_socarrao
+from services.models import *
+from services.schemas import *
 
 ##
 from services.services import *
-from services.models import *
-from services.schemas import *
+from socarrao.finder import find_socarrao
+
 
 def ajustar_duplicados():
     veiculo_list = get_veiculos()
@@ -14,7 +15,7 @@ def ajustar_duplicados():
     imagens = get_imagens()
 
     veiculo_list = [x for x in veiculo_list if x['status'] == 'ativo']
-    
+
     veiculos = VeiculoList()
     veiculos.load_from_json(veiculo_list, historicos, imagens)
 
@@ -24,7 +25,11 @@ def ajustar_duplicados():
 
     for veiculo in veiculos:
         _url = veiculo.url.split('?')[0]
-        dup = [v for v in veiculos if v.url.split('?')[0] == _url and v.id != veiculo.id]            
+        dup = [
+            v
+            for v in veiculos
+            if v.url.split('?')[0] == _url and v.id != veiculo.id
+        ]
         for veiculo_duplicado in dup:
             for historico in veiculo_duplicado.historicos:
                 veiculo.historicos.append(historico)
@@ -36,7 +41,6 @@ def ajustar_duplicados():
             duplicados.append(veiculo_duplicado)
             veiculos.remove(veiculo_duplicado)
 
-    
     for v in duplicados:
         if v.status != 'duplicado':
             v.status = 'duplicado'
@@ -60,7 +64,6 @@ def ajustar_duplicados():
             v.url = v.url.split('?')[0]
             response = update_veiculo(v.to_json())
             print(response)
-
 
     print(len(atualizados))
     print(len(duplicados))
