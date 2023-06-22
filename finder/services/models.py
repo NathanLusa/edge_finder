@@ -77,6 +77,7 @@ class Veiculo(BaseModel):
     site: str
     status: str
     favorito: bool
+    cidade: str
     historicos: VeiculoHistoricoList
     imagens: VeiculoImagemList
 
@@ -95,6 +96,7 @@ class Veiculo(BaseModel):
             self.site = veiculo['site']
             self.status = veiculo['status']
             self.favorito = veiculo['favorito']
+            self.cidade = veiculo['cidade']
 
             # self.url = self.url.split('?')[0]
 

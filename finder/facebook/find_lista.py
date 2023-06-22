@@ -166,7 +166,7 @@ class Selenium:
                 else ''
             )
             url = f'{SITE}{url}'
-            location = (
+            city = (
                 d.find(
                     'span',
                     'x193iq5w xeuugli x13faqbe x1vvkbs xlh3980 xvmahel x1n0sxbx x1lliihq x1s928wv xhkezso x1gmr53x x1cpjm7i x1fgarty x1943h6x x4zkp8e x676frb x1nxh6w3 x1sibtaa xo1l8bm xi81zsa',
@@ -177,6 +177,7 @@ class Selenium:
                 )
                 else ''
             )
+            city = city.split(',')[0] if city else ''
 
             year = 0
             if d.find('span', 'x1lliihq x6ikm8r x10wlt62 x1n2onr6'):
@@ -198,7 +199,8 @@ class Selenium:
                     'preco': price,
                     'imagem': image,
                     'url': url,
-                    'year': year
+                    'year': year,
+                    'city': city,
                 }
             )
 
@@ -363,6 +365,7 @@ def find_facebook(force):
                 year = i['year']
                 url = i['url']
                 title = i['titulo']
+                city = i['city']
                 # price = i['preco']
                 # image = i['imagem']
 
@@ -386,13 +389,19 @@ def find_facebook(force):
                         site=SITE,
                         status='ativo',
                         favorito=False,
+                        cidade=city,
                     )
                     veiculo_json = post_veiculo(veiculo_schema.to_json())
                     veiculo = Veiculo()
                     veiculo.load_from_json(veiculo_json, [], [])
                     veiculos.append(veiculo)
-                elif veiculo.ano != year:
+
+                if str(veiculo.ano) != str(year):
                     veiculo.ano = year
+                    update_veiculo(veiculo.to_json())
+
+                if veiculo.cidade != city:
+                    veiculo.cidade = city
                     update_veiculo(veiculo.to_json())
 
                 # imagem = veiculo.get_imagem(image)
@@ -432,7 +441,7 @@ def find_facebook(force):
         # sel = Selenium(scroll_times=scroll_times)
         # veiculos_ativos = [x for x in veiculos if x.status == 'ativo']
         veiculos_ativos = [
-            x for x in veiculos if x.status == 'ativo' and x.id >= 1063
+            x for x in veiculos if x.status == 'ativo' and x.id >= 1079
         ]
         for veiculo in veiculos_ativos:
             sel.scroll_times = 0

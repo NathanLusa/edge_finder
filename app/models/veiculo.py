@@ -26,6 +26,7 @@ class VeiculoModel(Base):
     site = Column(String(500))
     status = Column(Enum(VeiculoStatus), default=VeiculoStatus.ativo)
     favorito = Column(Boolean())
+    cidade = Column(String(100), nullable=False)
     historicos = relationship(
         'VeiculoHistoricoModel', backref='veiculo', lazy='joined'
     )

@@ -10,6 +10,7 @@ from services.services import (
     post_veiculo,
     post_veiculo_historico,
     post_veiculo_imagem,
+    update_veiculo,
 )
 from unidecode import unidecode
 from utils import get_content
@@ -47,11 +48,21 @@ def _find(veiculos, url, force):
                 site=SITE,
                 status='ativo',
                 favorito=False,
+                cidade=_veiculo["cidade_nome"],
             )
             veiculo_json = post_veiculo(veiculo_schema.to_json())
             veiculo = Veiculo()
             veiculo.load_from_json(veiculo_json, [], [])
             veiculos.append(veiculo)
+
+        if str(veiculo.ano) != str(year):
+            veiculo.ano = year
+            veiculo_json = update_veiculo(veiculo.to_json())
+
+        if veiculo.cidade != _veiculo["cidade_nome"]:
+            veiculo.cidade = _veiculo["cidade_nome"]
+            veiculo_json = update_veiculo(veiculo.to_json())
+
 
         for img in _veiculo['veiculo_foto']:
             img_url = f'{URL_FOTOS}/{_veiculo["revenda_id"]}/{_veiculo["veiculo_id"]}/{img}'

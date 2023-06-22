@@ -51,6 +51,7 @@ export default function App() {
     const [filterMarca, setFilterMarca] = useState<Filter<string>>(new Filter<string>());
     const [filterModelo, setFilterModelo] = useState<Filter<string>>(new Filter<string>());
     const [filterAno, setFilterAno] = useState<Filter<string>>(new Filter<string>());
+    const [filterCidade, setFilterCidade] = useState<Filter<string>>(new Filter<string>());
     const [filterFavorito, setFilterFavorito] = useState<boolean>(false);
 
     const [filterDateFrom, setFilterDateFrom] = useState<string>("");
@@ -84,6 +85,7 @@ export default function App() {
         const _filterMarca = new Filter<string>();
         const _filterModelo = new Filter<string>();
         const _filterAno = new Filter<string>();
+        const _filterCidade = new Filter<string>();
 
         _sites.map(site => {
             _filterSites.add({ id: site.url, title: site.nome, checked: false });
@@ -92,6 +94,7 @@ export default function App() {
                 _filterMarca.add({ id: veiculo.marca, title: veiculo.marca, checked: false });
                 _filterModelo.add({ id: veiculo.modelo, title: veiculo.modelo, checked: false });
                 _filterAno.add({ id: veiculo.ano.toString(), title: veiculo.ano.toString(), checked: false });
+                _filterCidade.add({ id: veiculo.cidade, title: veiculo.cidade, checked: false });
                 _veiculos.push(veiculo);
             });
         });
@@ -102,6 +105,7 @@ export default function App() {
         setFilterMarca(_filterMarca);
         setFilterModelo(_filterModelo);
         setFilterAno(_filterAno);
+        setFilterCidade(_filterCidade);
     }
 
     function handleCheckVeiculo(id: number) {
@@ -172,6 +176,7 @@ export default function App() {
         const _marcas = [...filterMarca.list.filter(_marca => _marca.checked).map(_marca => _marca.id)];
         const _modelos = [...filterModelo.list.filter(_modelo => _modelo.checked).map(_modelo => _modelo.id)];
         const _anos = [...filterAno.list.filter(_ano => _ano.checked).map(_ano => _ano.id)];
+        const _cidades = [...filterCidade.list.filter(_cidade => _cidade.checked).map(_cidade => _cidade.id)];
 
         // console.log(_sites, filterSites);
         if (filterFavorito) {
@@ -192,6 +197,10 @@ export default function App() {
 
         if (!filterAno.allChecked && _anos.length > 0) {
             _veiculos = _veiculos.filter(veiculo => _anos.indexOf(veiculo.ano.toString()) >= 0);
+        }
+
+        if (!filterCidade.allChecked && _cidades.length > 0) {
+            _veiculos = _veiculos.filter(veiculo => _cidades.indexOf(veiculo.cidade) >= 0);
         }
 
         if (filterDateFrom != "") {
@@ -236,6 +245,7 @@ export default function App() {
                 <DropdownButton title="Marca" items={getItemsDropdownButtonFilter(filterMarca)} />
                 <DropdownButton title="Modelo" items={getItemsDropdownButtonFilter(filterModelo)} />
                 <DropdownButton title="Ano" items={getItemsDropdownButtonFilter(filterAno)} />
+                <DropdownButton title="Cidade" items={getItemsDropdownButtonFilter(filterCidade)} />
                 <div className="flex flex-col w-72 border-2">
                     <p className="text-lg self-center">Data</p>
                     <div className="flex items-center">
@@ -319,7 +329,7 @@ export default function App() {
                                 <span className="badge">
                                     <i className="fa-solid fa-clock"></i>
                                 </span>{" "}
-                                Pato Branco - PR
+                                {veiculo.cidade}
                             </h6>
                         </div>
                     </div>

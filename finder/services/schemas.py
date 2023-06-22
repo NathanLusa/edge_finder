@@ -39,6 +39,7 @@ class VeiculoSchema(BaseSchema):
     url: str
     titulo: str
     site: str
+    cidade: str
     status: str = 'ativo'
     favorito: bool = False
 
