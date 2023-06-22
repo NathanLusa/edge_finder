@@ -73,7 +73,7 @@ def _find(veiculos, url, force):
             datahora=datetime.now().isoformat(),
             valor=price,
             quilometragem=km,
-            descricao=description,
+            descricao=description[:50],
         )
         historico = veiculo.get_historico(hist.to_json())
         if not historico:

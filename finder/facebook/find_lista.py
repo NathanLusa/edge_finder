@@ -458,7 +458,7 @@ def find_facebook(force):
                 datahora=datetime.now().isoformat(),
                 valor=item['price'],
                 quilometragem=item['km'],
-                descricao=item['description'],
+                descricao=item['description'][:50],
             )
             print(hist.veiculo_id, hist.descricao[:10])
             historico = veiculo.get_historico(hist.to_json())
