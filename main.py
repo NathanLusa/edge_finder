@@ -46,8 +46,8 @@ app.include_router(veiculo_router, prefix='/api')
 app.include_router(historico_router, prefix='/api')
 app.include_router(imagem_router, prefix='/api')
 
-for base_declarative in BaseDeclarativeList:
-    base_declarative.metadata.create_all(bind=engine)
+# for base_declarative in BaseDeclarativeList:
+#     base_declarative.metadata.create_all(bind=engine)
 
 
 @app.post('/verificarimagens')

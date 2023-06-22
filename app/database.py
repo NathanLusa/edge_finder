@@ -6,7 +6,9 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 
 engine = create_engine(
-    'sqlite:///./edge.db', connect_args={'check_same_thread': False}
+    'postgresql+psycopg2://postgres:Nathan251410*@192.168.0.112:5432/edge_finder',
+    # 'sqlite:///./edge.db', 
+    # connect_args={'check_same_thread': False}
 )
 
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)

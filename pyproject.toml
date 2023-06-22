@@ -20,6 +20,7 @@ selenium = "^4.9.1"
 webdriver-manager = "^3.8.6"
 unidecode = "^1.3.6"
 alembic = "^1.11.1"
+psycopg2 = "^2.9.6"
 
 [tool.poetry.group.dev.dependencies]
 taskipy = "^1.10.4"
