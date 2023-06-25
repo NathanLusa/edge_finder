@@ -14,6 +14,7 @@ interface FilterItem<T> {
     id: T;
     title: string;
     checked: boolean;
+    quantity: number;
 }
 
 class Filter<T> {
@@ -43,6 +44,10 @@ class Filter<T> {
         const _list: T[] = [];
         this.list.map(item => _list.push(item.id));
         return _list;
+    }
+
+    clearItemQuantity() {
+        this.list.map(item => (item.quantity = 0));
     }
 }
 
@@ -88,24 +93,25 @@ export default function App() {
         const _filterCidade = new Filter<string>();
 
         _sites.map(site => {
-            _filterSites.add({ id: site.url, title: site.nome, checked: false });
+            _filterSites.add({ id: site.url, title: site.nome, checked: false, quantity: 1 });
             site.veiculos?.map(veiculo => {
                 if (veiculo.historicos) orderByString(veiculo.historicos, true, "datahora");
-                _filterMarca.add({ id: veiculo.marca, title: veiculo.marca, checked: false });
-                _filterModelo.add({ id: veiculo.modelo, title: veiculo.modelo, checked: false });
-                _filterAno.add({ id: veiculo.ano.toString(), title: veiculo.ano.toString(), checked: false });
-                _filterCidade.add({ id: veiculo.cidade, title: veiculo.cidade, checked: false });
+                _filterMarca.add({ id: veiculo.marca, title: veiculo.marca, checked: false, quantity: 1 });
+                _filterModelo.add({ id: veiculo.modelo, title: veiculo.modelo, checked: false, quantity: 1 });
+                _filterAno.add({ id: veiculo.ano.toString(), title: veiculo.ano.toString(), checked: false, quantity: 1 });
+                _filterCidade.add({ id: veiculo.cidade, title: veiculo.cidade, checked: false, quantity: 1 });
                 _veiculos.push(veiculo);
             });
         });
 
-        setVeiculosReadOnly(_veiculos);
-        setVeiculos(_veiculos);
         setFilterSites(_filterSites);
         setFilterMarca(_filterMarca);
         setFilterModelo(_filterModelo);
         setFilterAno(_filterAno);
         setFilterCidade(_filterCidade);
+        setFilterQuantity(_veiculos);
+        setVeiculosReadOnly(_veiculos);
+        setVeiculos(_veiculos);
     }
 
     function handleCheckVeiculo(id: number) {
@@ -162,8 +168,10 @@ export default function App() {
         orderByString(filter.list, false, "title");
         return [
             filter.list.map((item, key) => (
-                <li key={key} className="w-auto py-1 px-2 hover:bg-gray-200">
+                <li key={key} className="flex w-auto py-1 px-2 gap-2 hover:bg-gray-200">
                     <Checkbox name={item.title + "-" + key.toString()} title={item.title} checked={item.checked} onChange={_ => handleCheckFiltro(filter, item.id.toString())} />
+                    {/* <span className="inline-flex items-center justify-center px-2 py-1 mr-2 text-xs font-bold leading-none text-red-100 bg-red-600 rounded-full">9</span> */}
+                    <div className="py-1 text-xs px-3 bg-red-200 text-red-800 rounded-full">{item.quantity}</div>
                 </li>
             )),
         ];
@@ -229,7 +237,25 @@ export default function App() {
             );
         }
 
+        setFilterQuantity(_veiculos);
+
         setVeiculos(_veiculos);
+    }
+
+    function setFilterQuantity(_veiculos: VeiculoSchema[]) {
+        filterSites.clearItemQuantity();
+        filterMarca.clearItemQuantity();
+        filterModelo.clearItemQuantity();
+        filterAno.clearItemQuantity();
+        filterCidade.clearItemQuantity();
+
+        _veiculos.map(veiculo => {
+            filterSites.list.map(site => (site.id === veiculo.site ? (site.quantity = site.quantity + 1) : (site.quantity = site.quantity)));
+            filterMarca.list.map(marca => (marca.id === veiculo.marca ? (marca.quantity = marca.quantity + 1) : (marca.quantity = marca.quantity)));
+            filterModelo.list.map(modelo => (modelo.id === veiculo.modelo ? (modelo.quantity = modelo.quantity + 1) : (modelo.quantity = modelo.quantity)));
+            filterAno.list.map(ano => (ano.id === veiculo.ano.toString() ? (ano.quantity = ano.quantity + 1) : (ano.quantity = ano.quantity)));
+            filterCidade.list.map(cidade => (cidade.id === veiculo.cidade ? (cidade.quantity = cidade.quantity + 1) : (cidade.quantity = cidade.quantity)));
+        });
     }
 
     console.log("Render");
