@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom";
 import { useEffect, useState } from "react";
 import Checkbox from "./components/Checkbox";
 import DropdownButton from "./components/DropdownButton";
@@ -318,11 +319,14 @@ export default function App() {
                                     {veiculo.id} - {veiculo.marca} {veiculo.modelo} {veiculo.status}
                                 </a>
                                 <div className="flex gap-1">
+                                    <Link to={`vehicle/${veiculo.id}`} target="_blank">
+                                        ...
+                                    </Link>
                                     <div onClick={() => handleCheckVeiculo(veiculo.id)} className="hover:cursor-pointer">
-                                        <i className={(veiculo.status != "ativo" ? "fa-regular" : "fa-solid") + " fa-circle-check"} />
+                                        <i className={veiculo.status != "ativo" ? "fa-regular fa-circle-xmark text-red-700" : "fa-solid fa-circle-check text-green-700"} />
                                     </div>
                                     <div onClick={() => handleVeiculoFavorito(veiculo.id)} className="hover:cursor-pointer">
-                                        <i className={(veiculo.favorito ? "fa-solid" : "fa-regular") + " fa-star"} />
+                                        <i className={(veiculo.favorito ? "fa-solid" : "fa-regular") + " fa-star text-yellow-500"} />
                                     </div>
                                 </div>
                             </div>
