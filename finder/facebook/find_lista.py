@@ -441,7 +441,7 @@ def find_facebook(force):
         # sel = Selenium(scroll_times=scroll_times)
         # veiculos_ativos = [x for x in veiculos if x.status == 'ativo']
         veiculos_ativos = [
-            x for x in veiculos if x.status == 'ativo' and x.id >= 1079
+            x for x in veiculos if x.status == 'ativo' and x.id >= 1171
         ]
         for veiculo in veiculos_ativos:
             sel.scroll_times = 0
