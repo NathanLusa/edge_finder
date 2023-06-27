@@ -1,3 +1,4 @@
+from typing import List
 from fastapi import Depends, HTTPException
 from fastapi_crudrouter import SQLAlchemyCRUDRouter as CRUDRouter
 from pydantic import BaseModel
@@ -69,3 +70,15 @@ def update_favorito(
     veiculo.favorito = favorito.favorito
     db.commit()
     return veiculo
+
+
+@veiculo_router.get('/{veiculo_id}/historicos', response_model=List[VeiculoHistorico])
+def get_historicos(veiculo_id: int, db: Session = Depends(get_db)):
+    historicos = db.query(VeiculoHistoricoModel).filter(VeiculoHistoricoModel.veiculo_id == veiculo_id).all()
+    return historicos
+
+
+@veiculo_router.get('/{veiculo_id}/imagens', response_model=List[VeiculoImagem])
+def get_imagens(veiculo_id: int, db: Session = Depends(get_db)):
+    imagens = db.query(VeiculoImagemModel).filter(VeiculoImagemModel.veiculo_id == veiculo_id).all()
+    return imagens

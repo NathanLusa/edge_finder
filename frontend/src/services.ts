@@ -9,6 +9,21 @@ export async function getVeiculos() {
     return response.data;
 }
 
+export async function getVeiculo(id: string) {
+    const response = await instance.get(`api/veiculo/${id}`);
+    return response.data;
+}
+
+export async function getVeiculoHistoricos(id: string) {
+    const response = await instance.get(`api/veiculo/${id}/historicos`);
+    return response.data;
+}
+
+export async function getVeiculoImagens(id: string) {
+    const response = await instance.get(`api/veiculo/${id}/imagens`);
+    return response.data;
+}
+
 export async function verificarStatusImagens() {
     const response = await instance.post("verificarimagens", {
         headers: {
