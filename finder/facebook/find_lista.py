@@ -264,7 +264,11 @@ class Selenium:
                     class_='x193iq5w xeuugli x13faqbe x1vvkbs xlh3980 xvmahel x1n0sxbx x1lliihq x1s928wv xhkezso x1gmr53x x1cpjm7i x1fgarty x1943h6x x4zkp8e x3x7a5m x6prxxf xvq8zen xo1l8bm xzsf02u',
                 )
                 km = span_km.text if span_km else ''
-                km = float(km.split(' ')[0]) * 1000 if km else 0.0
+                try:                
+                    km = float(km.split(' ')[0]) * 1000 if km else 0.0
+                except:
+                    print('O km do negócio é: ', km)
+                    km = 0
 
             div_price = div_lateral.find('div', class_='x1xmf6yo')
             span_price = div_price.find(
@@ -441,7 +445,7 @@ def find_facebook(force):
         # sel = Selenium(scroll_times=scroll_times)
         # veiculos_ativos = [x for x in veiculos if x.status == 'ativo']
         veiculos_ativos = [
-            x for x in veiculos if x.status == 'ativo' and x.id >= 1171
+            x for x in veiculos if x.status == 'ativo' and x.id >= 1195
         ]
         for veiculo in veiculos_ativos:
             sel.scroll_times = 0
