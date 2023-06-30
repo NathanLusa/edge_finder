@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { VeiculoSchema } from "../schemas";
-import { getVeiculo, getVeiculoHistoricos, getVeiculoImagens } from "../services";
+import { getVeiculo, getVeiculoHistoricos, getVeiculoImagens, verificarImagensVeiculo } from "../services";
 
 export default function VehiclePage() {
     const [veiculo, setVeiculo] = useState<VeiculoSchema>();
@@ -22,10 +22,15 @@ export default function VehiclePage() {
         }
     }
 
+    function handleCheckImages(id: number) {
+        verificarImagensVeiculo(id).then(response => console.log(response.data));
+    }
+
     return (
         <>
             {veiculo ? (
                 <div className="container row-auto flex-row h-auto mx-auto text-center">
+                    {/* HEADER */}
                     <div className="flex text-center text-3xl gap-1 items-center justify-center">
                         <h1 className="p-4">Veículo {id}</h1>
                         <div className="hover:cursor-pointer">
@@ -34,8 +39,13 @@ export default function VehiclePage() {
                         <div className="hover:cursor-pointer">
                             <i className={(veiculo.favorito ? "fa-solid" : "fa-regular") + " fa-star text-yellow-500"} />
                         </div>
+
+                        <div onClick={() => handleCheckImages(veiculo.id)} className="hover:cursor-pointer">
+                            <i className={"fa-solid fa-circle-check text-green-700"} />
+                        </div>
                     </div>
 
+                    {/* DESCRICAO */}
                     <ul>
                         <li>{veiculo.titulo}</li>
                         <li>
@@ -50,6 +60,7 @@ export default function VehiclePage() {
                         </li>
                     </ul>
 
+                    {/* HISTÓRICO */}
                     <div className="flex flex-col pt-0.5 border-t mb-5 border-gray-400">
                         {veiculo.historicos?.map((historico, index) => (
                             <div key={index} className="flex place-content-between gap-5 px-4 sm:place-content-center border-b border-gray-400">
@@ -61,6 +72,7 @@ export default function VehiclePage() {
                         ))}
                     </div>
 
+                    {/* IMAGENS */}
                     <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 p-2 border-2 border-gray-600">
                         {veiculo.imagens?.map(imagem => (
                             <img key={imagem.id} className="w-auto" src={imagem.url} />

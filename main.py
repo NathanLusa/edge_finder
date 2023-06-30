@@ -61,12 +61,14 @@ async def verificar_imagens(db: Session = Depends(get_db)):
 
     for imagem in imagens:
         response = requests.get(imagem.url)
-        print(imagem.url, imagem.status, response.status_code)
+
         status = imagem.status
         if response.status_code == 403:
             status = VeiculoImagemStatus.token_invalido
         elif response.status_code == 404:
             status = VeiculoImagemStatus.inativo
+
+        print(imagem.id, imagem.status, status, response.status_code)
 
         imagem.status = status
         db.commit()
@@ -136,6 +138,9 @@ async def veiculo_lista(db: Session = Depends(get_db)):
     )
     # .outerjoin(VeiculoImagemModel, onclause=( (VeiculoModel.id == VeiculoImagemModel.veiculo_id) & (VeiculoImagemModel.status != VeiculoImagemStatus.ativo) ))
     # .filter(VeiculoImagemModel.status != VeiculoImagemStatus.ativo)
+
+    for veiculo in veiculos:
+        veiculo.imagens = [x for x in veiculo.imagens if x.status == VeiculoImagemStatus.ativo]
 
     sites = [
         {

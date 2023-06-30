@@ -43,3 +43,11 @@ export async function updateVeiculoFavorito(id: number, _favorito: boolean) {
     const response = await instance.post(`api/veiculo/${id}/favorito`, { favorito: _favorito }, { headers: { "Content-Type": "application/json" } });
     return response;
 }
+
+export async function verificarImagensVeiculo(id: number) {
+    const response = await instance.post(
+        `api/veiculo/${id}/verificarimagens`
+        // { headers: { "Content-Type": "application/json" } }
+    );
+    return response;
+}

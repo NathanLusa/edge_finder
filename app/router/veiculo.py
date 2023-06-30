@@ -1,3 +1,4 @@
+import requests
 from typing import List
 from fastapi import Depends, HTTPException
 from fastapi_crudrouter import SQLAlchemyCRUDRouter as CRUDRouter
@@ -5,7 +6,7 @@ from pydantic import BaseModel
 from sqlalchemy.orm import Session
 
 from app.database import get_db
-from app.enums import VeiculoStatus
+from app.enums import VeiculoStatus, VeiculoImagemStatus
 from app.models.veiculo import VeiculoHistoricoModel, VeiculoImagemModel, VeiculoModel
 from app.schemas.veiculo import Veiculo, VeiculoHistorico, VeiculoImagem
 
@@ -80,5 +81,38 @@ def get_historicos(veiculo_id: int, db: Session = Depends(get_db)):
 
 @veiculo_router.get('/{veiculo_id}/imagens', response_model=List[VeiculoImagem])
 def get_imagens(veiculo_id: int, db: Session = Depends(get_db)):
-    imagens = db.query(VeiculoImagemModel).filter(VeiculoImagemModel.veiculo_id == veiculo_id).all()
+    imagens = db.query(VeiculoImagemModel).filter(VeiculoImagemModel.veiculo_id == veiculo_id).filter(VeiculoImagemModel.status == VeiculoImagemStatus.ativo).all()
     return imagens
+
+
+@veiculo_router.post('/{item_id}/verificarimagens')
+def verificar_imagens_veiculo(item_id: int, db: Session = Depends(get_db)):
+    imagens = (
+        db.query(VeiculoImagemModel)
+        .filter(VeiculoImagemModel.veiculo_id == item_id)
+        .filter(VeiculoImagemModel.status == VeiculoImagemStatus.ativo)
+        .filter(VeiculoImagemModel.url.like('%fbcdn%'))
+        .all()
+    )
+
+    for imagem in imagens:
+        response = requests.get(imagem.url)
+        status = imagem.status
+        if response.status_code == 403:
+            status = VeiculoImagemStatus.token_invalido
+        elif response.status_code == 404:
+            status = VeiculoImagemStatus.inativo
+
+        print(imagem.id, imagem.status, status, response.status_code)
+
+        imagem.status = status
+        db.commit()
+
+    imagens = (
+        db.query(VeiculoImagemModel)
+        .filter(VeiculoImagemModel.veiculo_id == item_id)
+        .filter(VeiculoImagemModel.status != VeiculoImagemStatus.ativo)
+        .all()
+    )
+
+    return {'status': 'ok', 'imagens': imagens}

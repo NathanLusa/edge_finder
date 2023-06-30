@@ -351,12 +351,6 @@ export default function App() {
                             </h6>
                             <h6>
                                 <span className="badge">
-                                    <i className="fa-regular fa-gauge"></i>
-                                </span>{" "}
-                                12000
-                            </h6>
-                            <h6>
-                                <span className="badge">
                                     <i className="fa-solid fa-clock"></i>
                                 </span>{" "}
                                 {veiculo.cidade}
