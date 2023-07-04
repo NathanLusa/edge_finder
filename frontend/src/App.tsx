@@ -316,7 +316,8 @@ export default function App() {
                         <div className="col-span-2 h-28 mt-1 p-2 rounded-sm bg-slate-200 ">
                             <div className="flex text-lg font-medium place-content-between">
                                 <a href={veiculo.url} target="_blank">
-                                    {veiculo.id} - {veiculo.marca} {veiculo.modelo} {veiculo.status}
+                                    {/* {veiculo.id} - {veiculo.marca} {veiculo.modelo} {veiculo.status} */}
+                                    {veiculo.ano} / {veiculo.cidade} / {veiculo.historicos?.[0]?.valor}
                                 </a>
                                 <div className="flex gap-1">
                                     <Link to={`vehicle/${veiculo.id}`} target="_blank">
@@ -333,7 +334,8 @@ export default function App() {
                             <div className="flex flex-col pt-0.5 border-t border-gray-400">
                                 {veiculo.historicos?.map((historico, index) => (
                                     <div key={index} className="flex place-content-between">
-                                        <p className="">{new Date(historico.datahora).toLocaleDateString("sv")}</p>
+                                        {/* <p className="">{new Date(historico.datahora).toLocaleDateString("sv")}</p> */}
+                                        <p className="">{new Date(historico.datahora).toLocaleString("sv")}</p>
                                         <p>KM: {historico.quilometragem}</p>
                                         <p>Preço: {historico.valor}</p>
                                     </div>
@@ -347,7 +349,8 @@ export default function App() {
                                 <span className="badge">
                                     <i className="fa-solid fa-sack-dollar"></i>
                                 </span>{" "}
-                                {veiculo.ano}
+                                {/* {veiculo.ano} */}
+                                {veiculo.id}
                             </h6>
                             <h6>
                                 <span className="badge">
