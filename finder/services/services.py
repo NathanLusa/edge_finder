@@ -1,6 +1,8 @@
+import os
 import requests
 
-ENDPOINT = 'http://localhost:8000'
+# ENDPOINT = 'http://localhost:8000'
+ENDPOINT = f"{os.getenv('API_HTTP_PROTOCOL', 'http')}://{os.getenv('API_URL', 'localhost')}:{os.getenv('API_PORT', '8000')}"
 ENDPOINT_API = ENDPOINT + '/api'
 VEICULO_ENDPOINT = ENDPOINT_API + '/veiculo'
 HISTORICO_ENDPOINT = ENDPOINT_API + '/veiculohistorico'

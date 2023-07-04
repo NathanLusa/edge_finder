@@ -10,7 +10,8 @@ function useComponentVisible(initialIsVisible: boolean) {
         }
     };
 
-    const handleClickOutside = event => {
+    const handleClickOutside = (event: any) => {
+        // @ts-ignore
         if (ref.current && !ref.current.contains(event.target)) {
             setIsComponentVisible(false);
         }

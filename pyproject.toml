@@ -35,13 +35,19 @@ build-backend = "poetry.core.masonry.api"
 [tool.isort]
 profile = "black"
 
+[tool.taskipy.settings]
+use_vars = true
+runner = "set -a; source .env; set +a &&"
+
 [tool.taskipy.tasks]
 format = "blue . && isort ."
 lint = "blue --check --diff . && isort --check --diff ."
-run = "uvicorn main:app --reload"
+run = "uvicorn main:app --host 0.0.0.0 --port 5151 --reload"
 commit = "git add . && git commit -m '.' && git push"
 finder = "clear && cd finder && python finder.py"
 build = "cd frontend && yarn build"
 dev = "cd frontend && yarn dev"
 buildw = "cd frontend && yarn build:watch"
 makemigrations = "alembic revision --autogenerate"
+docker_clear = "docker stop mycontainer && docker rm mycontainer && docker image rm my-image"
+docker = "docker build -t my-image . && docker run -d --name mycontainer -p 5151:5151 my-image"

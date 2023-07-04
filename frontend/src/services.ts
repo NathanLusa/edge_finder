@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const instance = axios.create({
-    baseURL: "http://localhost:8000",
+    baseURL: `${import.meta.env.VITE_API_HTTP_PROTOCOL}://${import.meta.env.VITE_API_URL}:${import.meta.env.VITE_API_PORT}`,
 });
 
 export async function getVeiculos() {

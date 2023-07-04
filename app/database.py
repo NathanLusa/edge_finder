@@ -1,3 +1,4 @@
+import os
 from datetime import datetime, timezone
 from typing import Any
 
@@ -6,7 +7,8 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 
 engine = create_engine(
-    'postgresql+psycopg2://postgres:Nathan251410*@192.168.0.112:5432/edge_finder',
+    os.getenv('DATABASE_URL', 'sqlite:///./edge.db')
+    # 'postgresql+psycopg2://postgres:Nathan251410*@192.168.0.112:5432/edge_finder',
     # 'sqlite:///./edge.db', 
     # connect_args={'check_same_thread': False}
 )

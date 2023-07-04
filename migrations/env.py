@@ -1,3 +1,4 @@
+import os
 from logging.config import fileConfig
 
 from sqlalchemy import engine_from_config
@@ -29,6 +30,15 @@ target_metadata = [x.metadata for x in BaseDeclarativeList]
 # ... etc.
 
 
+def get_url():
+    return os.getenv('DATABASE_URL', 'sqlite:///./edge.db')
+    # user = os.getenv("POSTGRES_USER", "postgres")
+    # password = os.getenv("POSTGRES_PASSWORD", "")
+    # server = os.getenv("POSTGRES_SERVER", "db")
+    # db = os.getenv("POSTGRES_DB", "app")
+    # return f"postgresql://{user}:{password}@{server}/{db}"
+
+
 def run_migrations_offline() -> None:
     """Run migrations in 'offline' mode.
 
@@ -41,7 +51,8 @@ def run_migrations_offline() -> None:
     script output.
 
     """
-    url = config.get_main_option("sqlalchemy.url")
+    # url = config.get_main_option("sqlalchemy.url")
+    url = get_url()
     context.configure(
         url=url,
         target_metadata=target_metadata,
@@ -61,8 +72,10 @@ def run_migrations_online() -> None:
     and associate a connection with the context.
 
     """
+    configuration = config.get_section(config.config_ini_section, {})
+    configuration["sqlalchemy.url"] = get_url()
     connectable = engine_from_config(
-        config.get_section(config.config_ini_section, {}),
+        configuration,
         prefix="sqlalchemy.",
         poolclass=pool.NullPool,
     )
