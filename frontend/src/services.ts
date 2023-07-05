@@ -14,6 +14,11 @@ export async function getVeiculo(id: string) {
     return response.data;
 }
 
+export async function updateVeiculo(id: number, veiculo: JSON) {
+    const response = await instance.put(`api/veiculo/${id}`, veiculo, { headers: { "Content-Type": "application/json" } });
+    return response.data;
+}
+
 export async function getVeiculoHistoricos(id: string) {
     const response = await instance.get(`api/veiculo/${id}/historicos`);
     return response.data;

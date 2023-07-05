@@ -1,15 +1,30 @@
 import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { VeiculoSchema } from "../schemas";
-import { getVeiculo, getVeiculoHistoricos, getVeiculoImagens, verificarImagensVeiculo } from "../services";
+import { getVeiculo, getVeiculoHistoricos, getVeiculoImagens, verificarImagensVeiculo, updateVeiculo } from "../services";
 
 export default function VehiclePage() {
     const [veiculo, setVeiculo] = useState<VeiculoSchema>();
+    const [formulario, setFormulario] = useState({
+        titulo: "",
+        modelo: "",
+        marca: "",
+    });
     const { id } = useParams();
+
+    enum VeiculoProperties {
+        TITULO = "titulo",
+        MARCA = "marca",
+        MODELO = "modelo",
+    }
 
     useEffect(() => {
         loadVeiculosAxios();
     }, []);
+
+    useEffect(() => {
+        console.log("Effect veiculo");
+    }, [formulario]);
 
     async function loadVeiculosAxios() {
         if (id) {
@@ -19,13 +34,23 @@ export default function VehiclePage() {
 
             console.log(_veiculo);
             setVeiculo(_veiculo);
+            setFormulario({ titulo: _veiculo?.titulo, marca: _veiculo.marca, modelo: _veiculo.modelo });
         }
     }
 
-    function handleCheckImages(id: number) {
-        verificarImagensVeiculo(id).then(response => console.log(response.data));
+    function inputChanged(value: any, property: VeiculoProperties) {
+        setFormulario({ ...formulario, [property]: value });
     }
 
+    // function saveVeiculo() {
+    //     updateVeiculo(veiculo?.id, {})
+    // }
+
+    // function handleCheckImages(id: number) {
+    //     verificarImagensVeiculo(id).then(response => console.log(response.data));
+    // }
+
+    console.log("render");
     return (
         <>
             {veiculo ? (
@@ -40,25 +65,46 @@ export default function VehiclePage() {
                             <i className={(veiculo.favorito ? "fa-solid" : "fa-regular") + " fa-star text-yellow-500"} />
                         </div>
 
-                        <div onClick={() => handleCheckImages(veiculo.id)} className="hover:cursor-pointer">
+                        {/* <div onClick={() => handleCheckImages(veiculo.id)} className="hover:cursor-pointer">
                             <i className={"fa-solid fa-circle-check text-green-700"} />
-                        </div>
+                        </div> */}
                     </div>
 
                     {/* DESCRICAO */}
-                    <ul>
-                        <li>{veiculo.titulo}</li>
-                        <li>
-                            {veiculo.marca} {veiculo.modelo} {veiculo.ano}
-                            {"  "}
-                        </li>
-                        <li>{veiculo.cidade}</li>
-                        <li>
-                            <a href={veiculo.url} target="_blank">
-                                Link
-                            </a>
-                        </li>
-                    </ul>
+                    <form
+                        action="put"
+                        onSubmit={(event: React.FormEvent<HTMLFormElement>) => {
+                            event.preventDefault();
+                            alert(formulario.titulo);
+                        }}
+                    >
+                        <ul>
+                            <li>
+                                <input
+                                    id="veiculo_titulo"
+                                    onChange={e => {
+                                        e.preventDefault();
+                                        inputChanged(e.target.value, VeiculoProperties.TITULO);
+                                    }}
+                                    type="text"
+                                    value={formulario.titulo}
+                                />
+                            </li>
+                            <li>
+                                {veiculo.marca} {veiculo.modelo} {veiculo.ano}
+                                {"  "}
+                            </li>
+                            <li>{veiculo.cidade}</li>
+                            <li>
+                                <a href={veiculo.url} target="_blank">
+                                    Link
+                                </a>
+                            </li>
+                            <li>
+                                <button type="submit">Save</button>
+                            </li>
+                        </ul>
+                    </form>
 
                     {/* HISTÓRICO */}
                     <div className="flex flex-col pt-0.5 border-t mb-5 border-gray-400">
