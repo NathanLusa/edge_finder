@@ -89,6 +89,10 @@ export default function VehiclePage() {
                                     type="text"
                                     value={formulario.titulo}
                                 />
+                                <select name="veiculo_status" id="veiculo_status">
+                                    <div>Teste</div>
+                                    <div>Teste2</div>
+                                </select>
                             </li>
                             <li>
                                 {veiculo.marca} {veiculo.modelo} {veiculo.ano}

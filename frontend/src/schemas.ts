@@ -1,3 +1,17 @@
+export enum VeiculoStatus {
+    ativo = "ativo",
+    inativo = "inativo",
+    vendido = "vendido",
+    indisponivel = "indisponivel",
+    duplicado = "duplicado",
+}
+// class VeiculoStatus(enum.Enum):
+//     ativo = 'ativo'
+//     inativo = 'inativo'
+//     vendido = 'vendido'
+//     indisponivel = 'indisponivel'
+//     duplicado = 'duplicado'
+
 export interface SiteSchema {
     id: number;
     nome: string;
@@ -13,7 +27,7 @@ export interface VeiculoSchema {
     url: string;
     titulo: string;
     site: string;
-    status: string;
+    status: VeiculoStatus;
     created_at: string;
     favorito: boolean;
     cidade: string;
