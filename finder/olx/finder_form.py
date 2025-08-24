@@ -42,13 +42,14 @@ def _find(veiculo, force):
     for img in (
         json_data['ad']['images'] if 'images' in json_data['ad'] else []
     ):
-        imagem = veiculo.get_imagem(img['original'])
-        if not imagem:
-            imagem_schema = VeiculoImagemSchema(
-                veiculo_id=veiculo.id, url=img['original'], status='ativo'
-            )
-            imagem_json = post_veiculo_imagem(imagem_schema.to_json())
-            veiculo.add_imagem(imagem_json)
+        if 'original' in img:
+            imagem = veiculo.get_imagem(img['original'])
+            if not imagem:
+                imagem_schema = VeiculoImagemSchema(
+                    veiculo_id=veiculo.id, url=img['original'], status='ativo'
+                )
+                imagem_json = post_veiculo_imagem(imagem_schema.to_json())
+                veiculo.add_imagem(imagem_json)
 
     description = json_data['ad']['body'] if 'body' in json_data['ad'] else ''
     price = (

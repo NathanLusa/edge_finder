@@ -34,7 +34,7 @@ class Selenium:
         # Add a user data directory as an argument for options.
         # chrome_options.add_argument(f"--user-data-dir=C:\\Users\\{USER}\\AppData\\Local\\Google\\Chrome\\User Data")
         chrome_options.add_argument(
-            '--user-data-dir=/usr/local/share/chromedriver'
+            '--user-data-dir=/opt/homebrew/bin/chromedriver'
         )
         chrome_options.add_argument('profile-directory=Default')
         chrome_options.add_argument('--disable-dev-shm-usage')
@@ -43,7 +43,7 @@ class Selenium:
 
         # Initialize the Chrome browser using the ChromeDriverManager.
         self.browser = webdriver.Chrome(
-            ChromeDriverManager().install(), options=chrome_options
+            # ChromeDriverManager().install(), options=chrome_options
         )
 
     def get_page_source(self, url):
@@ -91,7 +91,7 @@ class Selenium:
         login_input = self.browser.find_element(by=By.ID, value='email')
         pass_input = self.browser.find_element(by=By.ID, value='pass')
         btn_login = self.browser.find_element(
-            by=By.XPATH, value='//*[@data-testid="royal_login_button"]'
+            by=By.XPATH, value='//*[@data-testid="royal-login-button"]'
         )
         login_input.send_keys('ceviu1234@gmail.com') if login_input else None
         pass_input.send_keys('YZL7dTV62WRkkM8Y6#t$') if pass_input else None
@@ -122,6 +122,7 @@ class Selenium:
 
         soup = self.get_soup(url, force)
 
+        breakpoint()
         div = soup.find('div', class_='xkrivgy x1gryazu x1n2onr6')
         div = div.find_all(
             'div',
@@ -318,28 +319,21 @@ class Selenium:
 
 def find_facebook(force):
     _need_login = False
-    urls = [
-        {
-            'url': 'https://www.facebook.com/marketplace/curitiba/search/?query=ford%20edge&exact=true',  # Curitiba
-            'scroll_times': 7,
-        },
-        {
-            'url': 'https://www.facebook.com/marketplace/105615689472731/search/?query=ford%20edge&exact=true',  # Pato Branco
-            'scroll_times': 2,
-        },
-        {
-            'url': 'https://www.facebook.com/marketplace/florianopolis/search/?query=ford%20edge&exact=true',  # Florianápolis
-            'scroll_times': 5,
-        },
-        {
-            'url': 'https://www.facebook.com/marketplace/109342319085733/search/?query=ford%20edge&exact=true',  # São Sosé
-            'scroll_times': 5,
-        },
-        {
-            'url': 'https://www.facebook.com/marketplace/113399188670230/search/?query=ford%20edge&exact=true',  # Chapecó
-            'scroll_times': 4,
-        },
+    _query = 'C4%20Cactus%20THP'
+    _cidades = [
+        '108230002530767', # Camboriu
+        # 'curitiba', 
+        # '105615689472731', # Pato Branco
+        # 'florianopolis', 
+        # '109342319085733', # São José
+        # '113399188670230', # Chapecó
+        # '107825789240416', # Itajaí
+        # '106081109431806', # Blumenau
+        # '101884336520624', # Itapema
     ]
+    urls = []
+    for _cidade in _cidades:
+        urls += [{'url': f'https://www.facebook.com/marketplace/{_cidade}/search/?query={_query}&exact=true', 'scroll_times': 3,}]
 
     veiculo_list = get_veiculos()
     veiculo_list = [x for x in veiculo_list if x['site'] == SITE]

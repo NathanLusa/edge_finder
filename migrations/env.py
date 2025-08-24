@@ -31,7 +31,7 @@ target_metadata = [x.metadata for x in BaseDeclarativeList]
 
 
 def get_url():
-    return os.getenv('DATABASE_URL', 'sqlite:///./edge.db')
+    return os.getenv('DATABASE_URL', 'sqlite:///./database.db')
     # user = os.getenv("POSTGRES_USER", "postgres")
     # password = os.getenv("POSTGRES_PASSWORD", "")
     # server = os.getenv("POSTGRES_SERVER", "db")

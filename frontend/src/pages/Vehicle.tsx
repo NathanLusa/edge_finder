@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { VeiculoSchema } from "../schemas";
-import { getVeiculo, getVeiculoHistoricos, getVeiculoImagens, verificarImagensVeiculo, updateVeiculo } from "../services";
+import { getVeiculo, getVeiculoHistoricos, getVeiculoImagens } from "../services";
 
 export default function VehiclePage() {
     const [veiculo, setVeiculo] = useState<VeiculoSchema>();

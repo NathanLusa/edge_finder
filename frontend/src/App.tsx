@@ -2,7 +2,7 @@ import { Link } from "react-router-dom";
 import { useEffect, useState } from "react";
 import Checkbox from "./components/Checkbox";
 import DropdownButton from "./components/DropdownButton";
-import { SiteSchema, VeiculoSchema } from "./schemas";
+import { SiteSchema, VeiculoSchema, VeiculoStatus } from "./schemas";
 import {
     getVeiculos,
     updateStatusveiculo,
@@ -116,11 +116,11 @@ export default function App() {
     }
 
     function handleCheckVeiculo(id: number) {
-        const newList = veiculos.map(veiculo => {
+        const newList: VeiculoSchema[] = veiculos.map(veiculo => {
             if (veiculo.id === id) {
-                const updatedItem = {
+                const updatedItem: VeiculoSchema = {
                     ...veiculo,
-                    status: veiculo.status != "ativo" ? "ativo" : "inativo",
+                    status: veiculo.status != VeiculoStatus.ativo ? VeiculoStatus.ativo : VeiculoStatus.inativo,
                 };
                 updateStatusveiculo(updatedItem.id, updatedItem.status).then(response => console.log(response));
                 return updatedItem;
@@ -263,7 +263,7 @@ export default function App() {
     return (
         <div className="container row-auto flex-row h-auto mx-auto">
             {/* TITLE */}
-            <h1 className="text-center text-3xl p-4">Edge finder</h1>
+            <h1 className="text-center text-3xl p-4">Car finder {veiculos.length}</h1>
 
             {/* FILTER */}
             <div className="flex flex-wrap justify-center items-center gap-1 border">

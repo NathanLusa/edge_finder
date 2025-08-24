@@ -1,4 +1,5 @@
 import axios from "axios";
+import { VeiculoStatus } from "./schemas";
 
 const instance = axios.create({
     baseURL: `${import.meta.env.VITE_API_HTTP_PROTOCOL}://${import.meta.env.VITE_API_URL}:${import.meta.env.VITE_API_PORT}`,
@@ -38,7 +39,7 @@ export async function verificarStatusImagens() {
     return response;
 }
 
-export async function updateStatusveiculo(id: number, status: string) {
+export async function updateStatusveiculo(id: number, status: VeiculoStatus) {
     const response = await instance.post(`api/veiculo/${id}/status`, { status: status }, { headers: { "Content-Type": "application/json" } });
     return response;
 }

@@ -13,27 +13,31 @@ def _find(veiculos, url, force):
     print(url)
     status_code, content, _ = get_content(url, force=force)
     soup = BeautifulSoup(content, 'html5lib')
-    main_list = soup.find(id='ad-list')
-    item_list = main_list.find_all('li') if main_list else []
+    # main_list = soup.find(id='ad-list')
+    main_list = soup.find('div', class_=lambda x: x and 'adListContainer' in x)
+    section_list = main_list.find_all('section') if main_list else []
 
-    for li in item_list:
-        if not li.a:
-            continue
+    item_list = []
+    for section in section_list:
+        item_list += section.find_all('div', class_='olx-adcard__content')
 
-        url = li.a['href']
-        title = li.find('h2').text
-        year_span = li.find('span', {'aria-label': re.compile(r'Ano')})
-        year = year_span.text.strip() if year_span else 0
-        city = li.find('div', class_='horizontal sc-dREXXX foFQDs').find('p').text or ''
-        city = city.split(',')[0] if city else ''
+    for div in item_list:
+
+        url = div.div.a['href']
+        title = div.div.a['title']
+        # year_span = li.find('span', {'aria-label': re.compile(r'Ano')})
+        # year = year_span.text.strip() if year_span else 0
+        year=0
+        city = div.find('p', class_='olx-adcard__location').text or ''
+        city = city.split(',')[0].strip() if city else ''
 
         try:
             url = url.split('?')[0]
             veiculo = veiculos.get_veiculo(url)
             if not veiculo:
                 veiculo_schema = VeiculoSchema(
-                    marca='Ford',
-                    modelo='Edge',
+                    marca='Citroen',
+                    modelo='C4 Cactus',
                     ano=year,
                     url=url,
                     titulo=title,
@@ -70,11 +74,13 @@ def find_lista(force):
     veiculos.load_from_json(veiculo_list, [], [])
 
     _ufs = ['pr', 'sc']
+    _versions = ['c4-cactus-shine-pack-16-turbo-flex-aut', 'c4-cactus-shine-16-turbo-flex-aut']
     for _uf in _ufs:
-        for page in range(1,3):
-            _find(
-                veiculos,
-                # f'https://www.olx.com.br/autos-e-pecas/carros-vans-e-utilitarios/ford/edge/estado-{_uf}?pe=80000&re=33&rs=29',
-                f'https://www.olx.com.br/autos-e-pecas/carros-vans-e-utilitarios/ford/edge/estado-{_uf}?rs=29&o={page}',
-                force,
-            )
+        for _version in _versions:
+            for page in range(1,3):
+                _find(
+                    veiculos,
+                    # f'https://www.olx.com.br/autos-e-pecas/carros-vans-e-utilitarios/ford/edge/estado-{_uf}?pe=80000&re=33&rs=29',
+                    f'https://www.olx.com.br/autos-e-pecas/carros-vans-e-utilitarios/citroen/c4_cactus/{_version}/estado-{_uf}?rs=29&o={page}',
+                    force,
+                )
