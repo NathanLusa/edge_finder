@@ -96,7 +96,8 @@ class Selenium:
         login_input.send_keys('ceviu1234@gmail.com') if login_input else None
         pass_input.send_keys('YZL7dTV62WRkkM8Y6#t$') if pass_input else None
         btn_login.click() if btn_login else None
-        sleep(5)
+        sleep(10)
+        breakpoint()
         print('Login realizado com sucesso!')
 
     def get_soup(self, url, force):
@@ -319,6 +320,7 @@ class Selenium:
 
 def find_facebook(force):
     _need_login = False
+    # _need_login = True
     _query = 'C4%20Cactus%20THP'
     _cidades = [
         '108230002530767', # Camboriu

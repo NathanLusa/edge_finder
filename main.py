@@ -167,6 +167,14 @@ async def veiculo_lista(db: Session = Depends(get_db)):
                 VeiculoModel.site == 'https://www.socarrao.com.br'
             ).all(),
         },
+        {
+            'id': 4,
+            'nome': 'Barigui',
+            'url': 'https://www.bariguiseminovos.com.br',
+            'veiculos': veiculos.filter(
+                VeiculoModel.site == 'https://www.bariguiseminovos.com.br'
+            ).all(),
+        },
     ]
 
     # return []
