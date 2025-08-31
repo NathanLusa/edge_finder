@@ -28,11 +28,11 @@ def _find(veiculo, force):
         return
 
     soup = BeautifulSoup(content, 'html5lib')
-    main = soup.find(id='main-body')
+    main = soup
 
-    img = main.find('div', class_='img-carousel-stock')
+    img = main.find('div', class_='slide-gallery-car')
     if img:
-        img = main.find('div', class_='img-carousel-stock').img['data-src']
+        img = img.img['data-src']
         imagem = veiculo.get_imagem(img)
         if not imagem:
             imagem_schema = VeiculoImagemSchema(
@@ -41,16 +41,20 @@ def _find(veiculo, force):
             imagem_json = post_veiculo_imagem(imagem_schema.to_json())
             veiculo.add_imagem(imagem_json)
 
-    price = main.find('p', class_='vehicle-detail-price')
+    price = main.find('p', class_='card-about-price')
     if price:
-        price = main.find('p', class_='vehicle-detail-price').text
-        price = float(price.split(' ')[1].replace('.', '').replace(',', '.'))
+        price = price.strong.text
+        price = float(price.split(' ')[-1].replace('.', '').replace(',', '.'))
 
-    km = main.find('div', class_='char-info-mileage')
-    if km:
-        km = main.find('div', class_='char-info-mileage').div
-        km = km.find_all('span')[1].text.replace('km', '').replace('.', '')
-        km = int(km) * 1000 if int(km) <= 1000 else int(km)
+    km = None
+    km_list = main.find_all('div', class_='card-about-icon')
+    for km in km_list:
+        if not 'Km' in km.small.text:
+            continue
+
+        km = km.small.text.strip().split(' ')[-1]
+        km = int(km)
+        break
 
     description = ''
 
@@ -61,6 +65,7 @@ def _find(veiculo, force):
         quilometragem=km if km else 0,
         descricao=description[:50],
     )
+    breakpoint()
     historico = veiculo.get_historico(hist.to_json())
     if not historico:
         historico_json = post_veiculo_historico(hist.to_json())

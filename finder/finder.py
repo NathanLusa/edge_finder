@@ -86,7 +86,7 @@ if __name__ == '__main__':
     # find_barigui(_force)
     # find_barigui_form(_force)
 
-    find_breitkopf(_force)
-    # find_breitkopf_form(_force)
+    # find_breitkopf(_force)
+    find_breitkopf_form(_force)
 
     # ajustar_duplicados()

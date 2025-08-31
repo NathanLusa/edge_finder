@@ -175,6 +175,22 @@ async def veiculo_lista(db: Session = Depends(get_db)):
                 VeiculoModel.site == 'https://www.bariguiseminovos.com.br'
             ).all(),
         },
+        {
+            'id': 4,
+            'nome': 'Breitkopf',
+            'url': 'https://seminovos.breitkopf.com.br',
+            'veiculos': veiculos.filter(
+                VeiculoModel.site == 'https://seminovos.breitkopf.com.br'
+            ).all(),
+        },
+        {
+            'id': 5,
+            'nome': 'Globo Nissan',
+            'url': 'https://www.globonissan.com.br/',
+            'veiculos': veiculos.filter(
+                VeiculoModel.site == 'https://www.globonissan.com.br/'
+            ).all(),
+        }
     ]
 
     # return []

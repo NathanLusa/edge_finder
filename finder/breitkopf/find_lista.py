@@ -1,37 +1,40 @@
+import json
 import re
 
 from bs4 import BeautifulSoup
+from breitkopf.endpoint import url, headers, data
 from services.models import Veiculo, VeiculoList
 from services.schemas import VeiculoSchema
 from services.services import get_veiculos, post_veiculo, update_veiculo
-from utils import get_content
+from utils import post_content
 
 SITE = 'https://seminovos.breitkopf.com.br'
 
 
 def _find(veiculos, url, force):
     print(url)
-    status_code, content, _ = get_content(url, force=force)
-    soup = BeautifulSoup(content, 'html5lib')
-    breakpoint()
+    status_code, content, _ = post_content(url, headers, data, force=force)
 
-    main_list = soup.find_all('div', class_='card-car')
+    content = json.loads(content)
 
-    for card in main_list:
-        url = card.a['href']
+    soup = BeautifulSoup(content['#listCars'], 'html5lib')
+    for card in soup.find_all('div', class_='card-car'):
+        card_body = card.find('div', class_='card-car-body')
 
-        adiv = card.a.find('p', class_='card-car-name')
+        url = card_body.parent['href']
+
+        adiv = card_body.find('p', class_='card-car-name')
 
         title = adiv.find('strong').text or ''
         title += adiv.find('small').text or ''
 
-        breakpoint()
-
-        year = adiv.find('span', class_='c-stock-card__year')
+        year = card_body.find('p', class_='card-car-icon')
         if year:
-            year = year.text.split('/')[1]
+            year = year.small.strong.text.split('/')[1]
 
-        city = adiv.find('p', class_='c-stock-card__location').text or ''
+        city = card_body.find('p', class_='card-car-location').text or ''
+        city = city.split(':')
+        city = city[1].strip() if len(city) > 0 else ''
 
         try:
             veiculo = veiculos.get_veiculo(url)
@@ -74,9 +77,4 @@ def find_lista(force):
     veiculos = VeiculoList()
     veiculos.load_from_json(veiculo_list, [], [])
 
-    for page in range(1,3):
-        _find(
-            veiculos,
-            f'https://seminovos.breitkopf.com.br/seminovos/citroën/c4%20cactus?busca=&brand=Citroën&model=C4+Cactus&limit=48&page={page}',
-            force,
-        )
+    _find(veiculos, url, force, )

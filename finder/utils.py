@@ -1,4 +1,5 @@
 import hashlib
+import json
 import os
 import time
 
@@ -54,3 +55,33 @@ def get_content(url, get_content_method=None, force=False):
         save_content(url, content, 'wb')
 
     return status_code, content, file_name
+
+
+def post_content(url, headers, data, force):
+    status_code = 200
+    content = None
+    data_str = json.dumps(data)
+    file_name = f'{get_file_name(url + data_str)}.html'
+
+    if not os.path.exists(FILE_PATH):
+        os.makedirs(FILE_PATH)
+
+    if os.path.exists(FILE_PATH + file_name) and not force:
+        with open(FILE_PATH + file_name, 'rb') as f:
+            content = f.read()
+    else:
+        print(url)
+        print('Download')
+        time.sleep(2)
+        status_code, content = (
+            post_content_requests(url, headers, data)
+        )
+        content = content.encode('utf-8') if type(content) is str else content
+        save_content(url, content, 'wb')
+
+    return status_code, content, file_name
+
+
+def post_content_requests(url, headers, data):
+    response = requests.post(url, headers=headers, data=data)
+    return response.status_code, response.content
