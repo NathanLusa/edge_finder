@@ -186,9 +186,17 @@ async def veiculo_lista(db: Session = Depends(get_db)):
         {
             'id': 5,
             'nome': 'Globo Nissan',
-            'url': 'https://www.globonissan.com.br/',
+            'url': 'https://www.globonissan.com.br',
             'veiculos': veiculos.filter(
-                VeiculoModel.site == 'https://www.globonissan.com.br/'
+                VeiculoModel.site == 'https://www.globonissan.com.br'
+            ).all(),
+        },
+        {
+            'id': 6,
+            'nome': 'Strasbourg',
+            'url': 'https://www.seminovos.strasbourg.com.br',
+            'veiculos': veiculos.filter(
+                VeiculoModel.site == 'https://www.seminovos.strasbourg.com.br'
             ).all(),
         }
     ]
@@ -201,6 +209,7 @@ async def veiculo_lista(db: Session = Depends(get_db)):
 async def veiculo_view(
     request: Request, item_id: int, db: Session = Depends(get_db)
 ):
+    print('estou no back')
     veiculo = (
         db.query(VeiculoModel).filter(VeiculoModel.id == item_id)
         # .join(VeiculoImagemModel)

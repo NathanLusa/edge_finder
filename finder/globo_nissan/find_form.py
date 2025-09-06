@@ -15,7 +15,7 @@ from services.services import (
 )
 from utils import get_content
 
-SITE = 'https://seminovos.breitkopf.com.br'
+SITE = 'https://www.globonissan.com.br'
 
 
 
@@ -30,9 +30,9 @@ def _find(veiculo, force):
     soup = BeautifulSoup(content, 'html5lib')
     main = soup
 
-    img = main.find('div', class_='slide-gallery-car')
+    img = main.find('img', id='img_dest_veic')
     if img:
-        img = img.img['data-src']
+        img = img['src']
         imagem = veiculo.get_imagem(img)
         if not imagem:
             imagem_schema = VeiculoImagemSchema(
@@ -41,18 +41,19 @@ def _find(veiculo, force):
             imagem_json = post_veiculo_imagem(imagem_schema.to_json())
             veiculo.add_imagem(imagem_json)
 
-    price = main.find('p', class_='card-about-price')
+    price = main.find('div', class_='valr_carr_semi')
     if price:
-        price = price.strong.text
+        price = price.text.strip()
         price = float(price.split(' ')[-1].replace('.', '').replace(',', '.'))
 
     km = None
-    km_list = main.find_all('div', class_='card-about-icon')
-    for km in km_list:
-        if not 'Km' in km.small.text:
+    km_list = main.find('div', class_='info_semi_intr')
+    km_list = km_list.find_all('p')
+    for _km in km_list:
+        if not 'Km' in _km.text:
             continue
 
-        km = km.small.text.strip().split(' ')[-1]
+        km = _km.span.text.strip().split(' ')[-1]
         km = int(km)
         break
 

@@ -15,7 +15,7 @@ from services.services import (
 )
 from utils import get_content
 
-SITE = 'https://seminovos.breitkopf.com.br'
+SITE = 'https://www.seminovos.strasbourg.com.br'
 
 
 
@@ -28,11 +28,11 @@ def _find(veiculo, force):
         return
 
     soup = BeautifulSoup(content, 'html5lib')
-    main = soup
+    main = soup.find(id='main-body')
 
-    img = main.find('div', class_='slide-gallery-car')
+    img = main.find('div', class_='img-carousel-stock')
     if img:
-        img = img.img['data-src']
+        img = main.find('div', class_='img-carousel-stock').img['data-src']
         imagem = veiculo.get_imagem(img)
         if not imagem:
             imagem_schema = VeiculoImagemSchema(
@@ -41,20 +41,16 @@ def _find(veiculo, force):
             imagem_json = post_veiculo_imagem(imagem_schema.to_json())
             veiculo.add_imagem(imagem_json)
 
-    price = main.find('p', class_='card-about-price')
+    price = main.find('p', class_='vehicle-detail-price')
     if price:
-        price = price.strong.text
-        price = float(price.split(' ')[-1].replace('.', '').replace(',', '.'))
+        price = main.find('p', class_='vehicle-detail-price').text
+        price = float(price.split(' ')[1].replace('.', '').replace(',', '.'))
 
-    km = None
-    km_list = main.find_all('div', class_='card-about-icon')
-    for km in km_list:
-        if not 'Km' in km.small.text:
-            continue
-
-        km = km.small.text.strip().split(' ')[-1]
-        km = int(km)
-        break
+    km = main.find('div', class_='char-info-mileage')
+    if km:
+        km = main.find('div', class_='char-info-mileage').div
+        km = km.find_all('span')[1].text.replace('km', '').replace('.', '')
+        km = int(km) * 1000 if int(km) <= 1000 else int(km)
 
     description = ''
 
@@ -65,7 +61,6 @@ def _find(veiculo, force):
         quilometragem=km if km else 0,
         descricao=description[:50],
     )
-
     historico = veiculo.get_historico(hist.to_json())
     if not historico:
         historico_json = post_veiculo_historico(hist.to_json())

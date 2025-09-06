@@ -5,6 +5,10 @@ from barigui.find_lista import find_lista as find_barigui
 from barigui.find_form import find_form as find_barigui_form
 from breitkopf.find_lista import find_lista as find_breitkopf
 from breitkopf.find_form import find_form as find_breitkopf_form
+from globo_nissan.find_lista import find_lista as find_globo_nissan
+from globo_nissan.find_form import find_form as find_globo_nissan_form
+from strasbourg.find_lista import find_lista as find_strasbourg
+from strasbourg.find_form import find_form as find_strasbourg_form
 from services.models import *
 from services.schemas import *
 
@@ -76,17 +80,24 @@ def ajustar_duplicados():
 
 if __name__ == '__main__':
     _force = False
+    _force_lista = True
     # _force = True
 
     # find_socarrao(_force)
     # find_facebook(_force)
-    # find_olx(_force)
-    # find_olx_form(_force)
+    find_olx(_force_lista)
+    find_olx_form(_force)
     
-    # find_barigui(_force)
-    # find_barigui_form(_force)
+    find_barigui(_force_lista)
+    find_barigui_form(_force)
 
-    # find_breitkopf(_force)
+    find_breitkopf(_force_lista)
     find_breitkopf_form(_force)
+
+    find_globo_nissan(_force_lista)
+    find_globo_nissan_form(_force)
+
+    find_strasbourg(_force_lista)
+    find_strasbourg_form(_force)
 
     # ajustar_duplicados()
